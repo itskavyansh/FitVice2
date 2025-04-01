@@ -34,4 +34,4 @@ function WorkoutPlans() {
   );
 }
 
-export default WorkoutPlans; 
+export default WorkoutPlans;

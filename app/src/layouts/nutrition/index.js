@@ -34,4 +34,4 @@ function NutritionGuide() {
   );
 }
 
-export default NutritionGuide; 
+export default NutritionGuide;

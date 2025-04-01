@@ -34,4 +34,4 @@ function YogaClasses() {
   );
 }
 
-export default YogaClasses; 
+export default YogaClasses;

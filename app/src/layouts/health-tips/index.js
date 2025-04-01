@@ -34,4 +34,4 @@ function HealthTips() {
   );
 }
 
-export default HealthTips; 
+export default HealthTips;
