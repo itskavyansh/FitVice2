@@ -26,6 +26,63 @@ function PostureSense() {
   const [displayStage, setDisplayStage] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
 
+  const exercises = {
+    bicepCurls: {
+      name: "Bicep Curls",
+      downAngle: 160,
+      upAngle: 30,
+      invertStages: false,
+      isVertical: false,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions: "Stand with arms at sides, curl weights up to shoulders, then lower back down.",
+    },
+    pushups: {
+      name: "Push-ups",
+      downAngle: 90,
+      upAngle: 30,
+      invertStages: true,
+      isVertical: true,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions: "Keep body straight, lower chest to ground, then push back up.",
+    },
+    squats: {
+      name: "Squats",
+      downAngle: 90,
+      upAngle: 30,
+      invertStages: true,
+      isVertical: true,
+      joints: {
+        hip: 23,
+        knee: 25,
+        ankle: 27,
+      },
+      instructions:
+        "Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.",
+    },
+    shoulderPress: {
+      name: "Shoulder Press",
+      downAngle: 160,
+      upAngle: 50,
+      invertStages: false,
+      isVertical: true,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions:
+        "Start with weights at shoulder level, press overhead until arms are fully extended.",
+    },
+  };
+
   useEffect(() => {
     let video = null;
     let pose = null;
@@ -118,6 +175,7 @@ function PostureSense() {
               lineWidth: 2,
               radius: 2,
             });
+
             // Draw angle
             ctx.fillStyle = "white";
             ctx.font = "20px Arial";
@@ -142,6 +200,24 @@ function PostureSense() {
             ctx.fillStyle = "white";
             ctx.font = "20px Arial";
             ctx.fillText(stageRef.current || "", 100, 60);
+
+            // Draw landmarks with color-coded tracking
+            const isCorrectForm =
+              angle >= exercises.shoulderPress.upAngle &&
+              angle <= exercises.shoulderPress.downAngle;
+
+            const trackingColor = isCorrectForm ? "#4CAF50" : "#F44336"; // Green for correct, Red for incorrect
+            const formMessage = stageRef.current
+              ? `GO ${
+                  selectedExercise === "shoulderPress"
+                    ? stageRef.current === "DOWN"
+                      ? "DOWN"
+                      : "UP"
+                    : stageRef.current === "UP"
+                    ? "DOWN"
+                    : "UP"
+                }`
+              : "GO DOWN";
           }
         });
 
