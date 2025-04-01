@@ -26,6 +26,63 @@ function PostureSense() {
   const [displayStage, setDisplayStage] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
 
+  const exercises = {
+    bicepCurls: {
+      name: "Bicep Curls",
+      downAngle: 160,
+      upAngle: 30,
+      invertStages: false,
+      isVertical: false,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions: "Stand with arms at sides, curl weights up to shoulders, then lower back down.",
+    },
+    pushups: {
+      name: "Push-ups",
+      downAngle: 90,
+      upAngle: 30,
+      invertStages: true,
+      isVertical: true,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions: "Keep body straight, lower chest to ground, then push back up.",
+    },
+    squats: {
+      name: "Squats",
+      downAngle: 90,
+      upAngle: 30,
+      invertStages: true,
+      isVertical: true,
+      joints: {
+        hip: 23,
+        knee: 25,
+        ankle: 27,
+      },
+      instructions:
+        "Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.",
+    },
+    shoulderPress: {
+      name: "Shoulder Press",
+      downAngle: 160,
+      upAngle: 50,
+      invertStages: false,
+      isVertical: true,
+      joints: {
+        shoulder: 11,
+        elbow: 13,
+        wrist: 15,
+      },
+      instructions:
+        "Start with weights at shoulder level, press overhead until arms are fully extended.",
+    },
+  };
+
   useEffect(() => {
     let video = null;
     let pose = null;
@@ -46,53 +103,50 @@ function PostureSense() {
         });
 
         // Initialize MediaPipe Pose
-        const mp = await import('@mediapipe/pose');
-        const mp_drawing = await import('@mediapipe/drawing_utils');
-        
+        const mp = await import("@mediapipe/pose");
+        const mp_drawing = await import("@mediapipe/drawing_utils");
         pose = new mp.Pose({
           locateFile: (file) => {
             return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-          }
+          },
         });
 
         pose.setOptions({
           modelComplexity: 1,
           smoothLandmarks: true,
           minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5
+          minTrackingConfidence: 0.5,
         });
 
         pose.onResults((results) => {
           if (results.poseLandmarks) {
             const landmarks = results.poseLandmarks;
             const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            
+            const ctx = canvas.getContext("2d");
             // Set canvas size to match video
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            
             // Draw video frame
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
             // Get coordinates
             const shoulder = [
-              landmarks[11].x,  // LEFT_SHOULDER
-              landmarks[11].y
+              landmarks[11].x, // LEFT_SHOULDER
+              landmarks[11].y,
             ];
             const elbow = [
-              landmarks[13].x,  // LEFT_ELBOW
-              landmarks[13].y
+              landmarks[13].x, // LEFT_ELBOW
+              landmarks[13].y,
             ];
             const wrist = [
-              landmarks[15].x,  // LEFT_WRIST
-              landmarks[15].y
+              landmarks[15].x, // LEFT_WRIST
+              landmarks[15].y,
             ];
 
             // Calculate angle
-            let angle = Math.atan2(wrist[1] - elbow[1], wrist[0] - elbow[0]) - 
-                        Math.atan2(shoulder[1] - elbow[1], shoulder[0] - elbow[0]);
-            angle = Math.abs(angle * 180.0 / Math.PI);
+            let angle =
+              Math.atan2(wrist[1] - elbow[1], wrist[0] - elbow[0]) -
+              Math.atan2(shoulder[1] - elbow[1], shoulder[0] - elbow[0]);
+            angle = Math.abs((angle * 180.0) / Math.PI);
 
             if (angle > 180.0) {
               angle = 360 - angle;
@@ -112,39 +166,58 @@ function PostureSense() {
 
             // Draw landmarks
             mp_drawing.drawConnectors(ctx, results.poseLandmarks, mp.POSE_CONNECTIONS, {
-              color: '#F57542',
+              color: "#F57542",
               lineWidth: 2,
-              radius: 2
+              radius: 2,
             });
-            
             mp_drawing.drawLandmarks(ctx, results.poseLandmarks, {
-              color: '#F542E6',
+              color: "#F542E6",
               lineWidth: 2,
-              radius: 2
+              radius: 2,
             });
 
             // Draw angle
-            ctx.fillStyle = 'white';
-            ctx.font = '20px Arial';
-            ctx.fillText(`${Math.round(angle)}°`, elbow[0] * canvas.width, elbow[1] * canvas.height);
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText(
+              `${Math.round(angle)}°`,
+              elbow[0] * canvas.width,
+              elbow[1] * canvas.height
+            );
 
             // Draw counter and stage
-            ctx.fillStyle = 'rgba(100, 100, 100, 0.8)';
+            ctx.fillStyle = "rgba(100, 100, 100, 0.8)";
             ctx.fillRect(0, 0, 200, 70);
-            
-            ctx.fillStyle = 'black';
-            ctx.font = '16px Arial';
-            ctx.fillText('REPS', 20, 20);
-            ctx.fillStyle = 'white';
-            ctx.font = '24px Arial';
+            ctx.fillStyle = "black";
+            ctx.font = "16px Arial";
+            ctx.fillText("REPS", 20, 20);
+            ctx.fillStyle = "white";
+            ctx.font = "24px Arial";
             ctx.fillText(counterRef.current.toString(), 25, 60);
-            
-            ctx.fillStyle = 'black';
-            ctx.font = '16px Arial';
-            ctx.fillText('STAGE', 100, 20);
-            ctx.fillStyle = 'white';
-            ctx.font = '20px Arial';
-            ctx.fillText(stageRef.current || '', 100, 60);
+            ctx.fillStyle = "black";
+            ctx.font = "16px Arial";
+            ctx.fillText("STAGE", 100, 20);
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText(stageRef.current || "", 100, 60);
+
+            // Draw landmarks with color-coded tracking
+            const isCorrectForm =
+              angle >= exercises.shoulderPress.upAngle &&
+              angle <= exercises.shoulderPress.downAngle;
+
+            const trackingColor = isCorrectForm ? "#4CAF50" : "#F44336"; // Green for correct, Red for incorrect
+            const formMessage = stageRef.current
+              ? `GO ${
+                  selectedExercise === "shoulderPress"
+                    ? stageRef.current === "DOWN"
+                      ? "DOWN"
+                      : "UP"
+                    : stageRef.current === "UP"
+                    ? "DOWN"
+                    : "UP"
+                }`
+              : "GO DOWN";
           }
         });
 
@@ -170,7 +243,7 @@ function PostureSense() {
         cancelAnimationFrame(animationFrame);
       }
       if (video && video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
+        video.srcObject.getTracks().forEach((track) => track.stop());
       }
       if (pose) {
         pose.close();
@@ -237,4 +310,4 @@ function PostureSense() {
   );
 }
 
-export default PostureSense; 
+export default PostureSense;

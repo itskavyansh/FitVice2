@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useState, useRef } from "react";
+import PropTypes from "prop-types";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -26,19 +27,24 @@ const muscles = [
     name: "Biceps Brachii",
     description: "Located in the upper arm, responsible for forearm supination and elbow flexion.",
     exercises: ["Bicep Curls", "Hammer Curls", "Chin-ups"],
-    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
   },
+
   {
     name: "Quadriceps",
     description: "Group of four muscles in the front of the thigh, responsible for knee extension.",
     exercises: ["Squats", "Lunges", "Leg Press"],
-    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
   },
+
   {
     name: "Deltoids",
     description: "Shoulder muscles responsible for arm abduction and rotation.",
     exercises: ["Shoulder Press", "Lateral Raises", "Front Raises"],
-    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
   },
 ];
 
@@ -175,6 +181,15 @@ function MuscleCard({ muscle }) {
     </CardContainer>
   );
 }
+
+MuscleCard.propTypes = {
+  muscle: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    exercises: PropTypes.arrayOf(PropTypes.string).isRequired,
+    image: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 function MusclePedia() {
   return (
