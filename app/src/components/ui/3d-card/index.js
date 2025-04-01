@@ -27,4 +27,4 @@ export const CardBody = styled(Box)(({ theme }) => ({
 export const CardItem = styled(Box)(({ theme, translateZ = 0 }) => ({
   transform: `translateZ(${translateZ}px)`,
   transition: "all 0.3s ease-out",
-})); 
+}));
