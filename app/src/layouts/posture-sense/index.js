@@ -55,6 +55,7 @@ import Footer from "examples/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 // Date-fns
 import { format as formatDate } from "date-fns";
+import { PostureSenseService } from "../../services/api";
 
 // Icons
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
@@ -757,19 +758,28 @@ function PostureSense() {
       date: now.toISOString(),
       exercise: exercises[selectedExercise].name,
       reps: displayCounter,
-      targetReps: targetReps,
       duration: duration,
       calories: calories,
-      weight: currentWeight || "Not specified",
+      weight: currentWeight,
       accuracy: accuracyScore,
     };
     
+    // Local storage for offline functionality
     const updatedHistory = [workout, ...workoutHistory];
     setWorkoutHistory(updatedHistory);
     
-    // Save to localStorage
     try {
-      localStorage.setItem('postureSenseHistory', JSON.stringify(updatedHistory));
+      localStorage.setItem("postureSenseHistory", JSON.stringify(updatedHistory));
+      
+      // Save to backend if user is authenticated
+      PostureSenseService.saveWorkout(workout)
+        .then(() => {
+          console.log("Workout saved to backend successfully");
+        })
+        .catch((error) => {
+          console.error("Error saving workout to backend:", error);
+          // Still show success message as data is saved locally
+        });
     } catch (error) {
       console.error("Error saving workout history:", error);
     }
@@ -777,7 +787,7 @@ function PostureSense() {
     setNotification({
       open: true,
       message: "Workout saved successfully!",
-      color: "success"
+      color: "success",
     });
   };
   
@@ -878,13 +888,36 @@ function PostureSense() {
     };
   }, [isCameraActive, workoutStartTime, isPaused, displayCounter]);
   
-  // Load workout history from localStorage on component mount
+  // Load workout history from localStorage and backend on component mount
   useEffect(() => {
     try {
-      const savedHistory = localStorage.getItem('postureSenseHistory');
+      // First load from localStorage for offline functionality
+      const savedHistory = localStorage.getItem("postureSenseHistory");
       if (savedHistory) {
         setWorkoutHistory(JSON.parse(savedHistory));
       }
+      
+      // Then try to fetch from backend
+      PostureSenseService.getWorkoutHistory()
+        .then((backendHistory) => {
+          if (backendHistory && backendHistory.length > 0) {
+            // Merge backend and local data, removing duplicates by ID
+            const localIds = new Set(JSON.parse(savedHistory || '[]').map(w => w.id));
+            const uniqueBackendWorkouts = backendHistory.filter(w => !localIds.has(w.id));
+            
+            const mergedHistory = [
+              ...JSON.parse(savedHistory || '[]'), 
+              ...uniqueBackendWorkouts
+            ].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            setWorkoutHistory(mergedHistory);
+            localStorage.setItem("postureSenseHistory", JSON.stringify(mergedHistory));
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching workout history from backend:", error);
+          // Continue with local data only
+        });
     } catch (error) {
       console.error("Error loading workout history:", error);
     }
@@ -1852,9 +1885,21 @@ function PostureSense() {
                             <MDBox>
                               <IconButton onClick={() => {
                                 const updatedHistory = [...workoutHistory];
+                                const deletedWorkout = updatedHistory[index];
                                 updatedHistory.splice(index, 1);
                                 setWorkoutHistory(updatedHistory);
                                 localStorage.setItem("postureSenseHistory", JSON.stringify(updatedHistory));
+                                
+                                // Also delete from backend if possible
+                                if (deletedWorkout.id) {
+                                  PostureSenseService.deleteWorkout(deletedWorkout.id)
+                                    .then(() => {
+                                      console.log("Workout deleted from backend successfully");
+                                    })
+                                    .catch((error) => {
+                                      console.error("Error deleting workout from backend:", error);
+                                    });
+                                }
                               }}>
                                 <Icon color="error">delete</Icon>
                               </IconButton>
@@ -1873,10 +1918,19 @@ function PostureSense() {
                             if (window.confirm("Are you sure you want to clear all workout history?")) {
                               setWorkoutHistory([]);
                               localStorage.removeItem("postureSenseHistory");
+                              
+                              // Also clear from backend
+                              workoutHistory.forEach(workout => {
+                                if (workout.id) {
+                                  PostureSenseService.deleteWorkout(workout.id)
+                                    .catch(error => console.error(`Error deleting workout ${workout.id}:`, error));
+                                }
+                              });
+                              
                               setNotification({
                                 open: true,
                                 message: "Workout history cleared",
-                                color: "info"
+                                color: "info",
                               });
                             }
                           }}
