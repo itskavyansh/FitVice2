@@ -34,11 +34,22 @@ import routes from "routes";
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
 
+// Auth context and components
+import { AuthProvider, useAuth } from "context/AuthContext";
+import ProtectedRoute from "components/auth/ProtectedRoute";
+import PrivateRoute from "./components/auth/PrivateRoute";
+import SignIn from "./components/auth/SignIn";
+import SignUp from "./components/auth/SignUp";
+import Dashboard from "./components/dashboard/Dashboard";
+import Profile from "./components/profile/Profile";
+import Navbar from "./components/layout/Navbar";
+import NutritionGuide from "./components/nutrition/NutritionGuide";
+
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
-export default function App() {
+const AppContent = () => {
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -53,6 +64,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const { user } = useAuth();
 
   // Cache for the rtl
   useMemo(() => {
@@ -101,7 +113,16 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return (
+          <Route
+            exact
+            path={route.route}
+            element={
+              route.noAuth ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>
+            }
+            key={route.key}
+          />
+        );
       }
 
       return null;
@@ -131,34 +152,8 @@ export default function App() {
     </MDBox>
   );
 
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand=""
-              brandName="FitVice"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
-    <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
+  const renderApp = () => (
+    <>
       {layout === "dashboard" && (
         <>
           <Sidenav
@@ -176,8 +171,90 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
+        <Route
+          path="/signin"
+          element={
+            user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <SignIn />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <SignUp />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/nutrition"
+          element={
+            <PrivateRoute>
+              <NutritionGuide />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
+        />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
-    </ThemeProvider>
+    </>
+  );
+
+  return (
+    <>
+      {direction === "rtl" ? (
+        <CacheProvider value={rtlCache}>
+          <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
+            <CssBaseline />
+            {user && <Navbar />}
+            {renderApp()}
+          </ThemeProvider>
+        </CacheProvider>
+      ) : (
+        <ThemeProvider theme={darkMode ? themeDark : theme}>
+          <CssBaseline />
+          {user && <Navbar />}
+          {renderApp()}
+        </ThemeProvider>
+      )}
+    </>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
