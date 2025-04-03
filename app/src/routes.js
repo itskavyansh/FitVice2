@@ -48,10 +48,33 @@ import MusclePedia from "layouts/muscle-pedia";
 import Chatbot from "layouts/chatbot";
 import Profile from "layouts/profile";
 
+// Auth components
+import SignIn from "components/auth/SignIn";
+import SignUp from "components/auth/SignUp";
+import AuthProfile from "components/auth/Profile";
+
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 const routes = [
+  {
+    type: "collapse",
+    name: "Sign In",
+    key: "signin",
+    icon: <Icon fontSize="small">login</Icon>,
+    route: "/signin",
+    component: <SignIn />,
+    noAuth: true,
+  },
+  {
+    type: "collapse",
+    name: "Sign Up",
+    key: "signup",
+    icon: <Icon fontSize="small">person_add</Icon>,
+    route: "/signup",
+    component: <SignUp />,
+    noAuth: true,
+  },
   {
     type: "collapse",
     name: "Dashboard",
@@ -138,7 +161,7 @@ const routes = [
     key: "profile",
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
-    component: <Profile />,
+    component: <AuthProfile />,
   },
 ];
 
