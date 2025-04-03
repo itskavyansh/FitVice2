@@ -81,7 +81,6 @@ const BMICalculator = () => {
 
     let heightInMeters = unit === "metric" ? heightNum / 100 : heightNum * 0.0254;
     let weightInKg = unit === "metric" ? weightNum : weightNum * 0.453592;
-    
     const bmiValue = weightInKg / (heightInMeters * heightInMeters);
     if (isNaN(bmiValue) || !isFinite(bmiValue)) return;
 
@@ -175,11 +174,11 @@ const BMICalculator = () => {
         </div>
       )}
       <MDBox sx={{ maxWidth: "1000px", margin: "0 auto", padding: "2rem" }} ref={containerRef}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Tabs
@@ -595,8 +594,8 @@ const BMICalculator = () => {
               </Grid>
             )}
           </Grid>
-      </motion.div>
-    </MDBox>
+        </motion.div>
+      </MDBox>
     </DashboardLayout>
   );
 };
