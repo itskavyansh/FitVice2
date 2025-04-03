@@ -47,11 +47,19 @@ import TodoList from "layouts/todo-list";
 import MusclePedia from "layouts/muscle-pedia";
 import Chatbot from "layouts/chatbot";
 import Profile from "layouts/profile";
+import Landing from "layouts/landing";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 const routes = [
+  {
+    type: "collapse",
+    name: "Landing",
+    key: "landing",
+    route: "/",
+    component: <Landing />,
+  },
   {
     type: "collapse",
     name: "Dashboard",

@@ -175,11 +175,11 @@ const BMICalculator = () => {
         </div>
       )}
       <MDBox sx={{ maxWidth: "1000px", margin: "0 auto", padding: "2rem" }} ref={containerRef}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Tabs
@@ -217,27 +217,27 @@ const BMICalculator = () => {
                       mb={3}
                       fontWeight="bold"
                     >
-          BMI Calculator
-        </MDTypography>
+                      BMI Calculator
+                    </MDTypography>
 
-        <MDBox sx={{ display: "flex", gap: 2, mb: 3 }}>
-          <MDButton
-            variant={unit === "metric" ? "contained" : "outlined"}
-            color="info"
-            onClick={() => setUnit("metric")}
+                    <MDBox sx={{ display: "flex", gap: 2, mb: 3 }}>
+                      <MDButton
+                        variant={unit === "metric" ? "contained" : "outlined"}
+                        color="info"
+                        onClick={() => setUnit("metric")}
                         sx={{ flex: 1, p: 1.5 }}
-          >
+                      >
                         <Icon sx={{ mr: 1 }}>straighten</Icon> Metric
-          </MDButton>
-          <MDButton
-            variant={unit === "imperial" ? "contained" : "outlined"}
-            color="info"
-            onClick={() => setUnit("imperial")}
+                      </MDButton>
+                      <MDButton
+                        variant={unit === "imperial" ? "contained" : "outlined"}
+                        color="info"
+                        onClick={() => setUnit("imperial")}
                         sx={{ flex: 1, p: 1.5 }}
-          >
+                      >
                         <Icon sx={{ mr: 1 }}>square_foot</Icon> Imperial
-          </MDButton>
-        </MDBox>
+                      </MDButton>
+                    </MDBox>
 
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
@@ -245,8 +245,8 @@ const BMICalculator = () => {
                           <MDTypography variant="subtitle2" color="white" gutterBottom>
                             Height ({unit === "metric" ? "cm" : "inches"})
                           </MDTypography>
-          <MDInput
-            value={height}
+                          <MDInput
+                            value={height}
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -254,7 +254,7 @@ const BMICalculator = () => {
                               }
                             }}
                             type="text"
-            fullWidth
+                            fullWidth
                             inputProps={{ inputMode: "decimal" }}
                             sx={{
                               input: { color: "#333" },
@@ -271,8 +271,8 @@ const BMICalculator = () => {
                           <MDTypography variant="subtitle2" color="white" gutterBottom>
                             Weight ({unit === "metric" ? "kg" : "lbs"})
                           </MDTypography>
-          <MDInput
-            value={weight}
+                          <MDInput
+                            value={weight}
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -280,7 +280,7 @@ const BMICalculator = () => {
                               }
                             }}
                             type="text"
-            fullWidth
+                            fullWidth
                             inputProps={{ inputMode: "decimal" }}
                             sx={{
                               input: { color: "#333" },
@@ -289,8 +289,8 @@ const BMICalculator = () => {
                                 borderRadius: "8px",
                               },
                             }}
-          />
-        </MDBox>
+                          />
+                        </MDBox>
                       </Grid>
                     </Grid>
 
@@ -314,7 +314,7 @@ const BMICalculator = () => {
                   </Card>
                 </Grid>
 
-        {bmi && (
+                {bmi && (
                   <>
                     <Grid item xs={12}>
                       <Card
@@ -327,34 +327,35 @@ const BMICalculator = () => {
                       >
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} md={5}>
-            <MDBox
-              sx={{
-                textAlign: "center",
+                            <MDBox
+                              sx={{
+                                textAlign: "center",
                                 p: 2,
                                 borderRadius: "10px",
                                 background: "rgba(255, 255, 255, 0.1)",
                               }}
                             >
                               <MDTypography variant="h2" color="white" align="center">
-                {bmi}
-              </MDTypography>
+                                {bmi}
+                              </MDTypography>
                               <MDTypography variant="h4" color="white" align="center">
-                {category}
-              </MDTypography>
-            </MDBox>
+                                {category}
+                              </MDTypography>
+                            </MDBox>
                             <MDBox sx={{ mt: 2, textAlign: "center" }}>
                               <MDTypography variant="caption" color="white">
                                 Ideal Weight Range:
                               </MDTypography>
                               <MDTypography variant="button" color="white" display="block">
-                                {idealWeight.min} - {idealWeight.max} {unit === "metric" ? "kg" : "lbs"} 
+                                {idealWeight.min} - {idealWeight.max}{" "}
+                                {unit === "metric" ? "kg" : "lbs"}
                               </MDTypography>
                             </MDBox>
                           </Grid>
                           <Grid item xs={12} md={7}>
                             <MDTypography variant="body1" color="white" sx={{ mb: 2 }}>
-              {getRecommendations()}
-            </MDTypography>
+                              {getRecommendations()}
+                            </MDTypography>
                             <Box sx={{ px: 2 }}>
                               <Slider
                                 value={getBMIScaleValue()}
@@ -378,18 +379,10 @@ const BMICalculator = () => {
                                 }}
                               />
                               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                <span style={{ color: "white", fontSize: "0.75rem" }}>
-                                  Underweight
-                                </span>
-                                <span style={{ color: "white", fontSize: "0.75rem" }}>
-                                  Normal
-                                </span>
-                                <span style={{ color: "white", fontSize: "0.75rem" }}>
-                                  Overweight
-                                </span>
-                                <span style={{ color: "white", fontSize: "0.75rem" }}>
-                                  Obese
-                                </span>
+                                <span style={{ color: "white", fontSize: "0.75rem" }}>Underweight</span>
+                                <span style={{ color: "white", fontSize: "0.75rem" }}>Normal</span>
+                                <span style={{ color: "white", fontSize: "0.75rem" }}>Overweight</span>
+                                <span style={{ color: "white", fontSize: "0.75rem" }}>Obese</span>
                               </Box>
                             </Box>
                           </Grid>
@@ -539,9 +532,10 @@ const BMICalculator = () => {
                       What is BMI?
                     </MDTypography>
                     <MDTypography variant="body2" color="white" opacity={0.7}>
-                      Body Mass Index (BMI) is a value derived from the weight and height of a person.
-                      It is defined as the body mass divided by the square of the body height, and is
-                      universally expressed in units of kg/m², resulting from mass in kilograms and height in meters.
+                      Body Mass Index (BMI) is a value derived from the weight and height of a
+                      person. It is defined as the body mass divided by the square of the body
+                      height, and is universally expressed in units of kg/m², resulting from mass in
+                      kilograms and height in meters.
                     </MDTypography>
                   </MDBox>
 
@@ -595,8 +589,8 @@ const BMICalculator = () => {
               </Grid>
             )}
           </Grid>
-      </motion.div>
-    </MDBox>
+        </motion.div>
+      </MDBox>
     </DashboardLayout>
   );
 };
