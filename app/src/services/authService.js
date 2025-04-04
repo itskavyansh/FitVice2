@@ -11,15 +11,29 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor for logging
+// Add request interceptor for setting auth token and logging
 api.interceptors.request.use(
   (config) => {
+    // Always check for token and set header from localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Always set the Authorization header from localStorage token
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Log the request with masked token for security
+    const authHeader = config.headers.Authorization;
+    const maskedHeader = authHeader
+      ? `Bearer ${authHeader.split(' ')[1]?.substring(0, 5)}...`
+      : 'None';
+
     console.log('Request:', {
       method: config.method,
       url: config.url,
-      data: config.data,
-      headers: config.headers,
+      data: config.data ? '(data present)' : '(no data)',
+      auth: maskedHeader,
     });
+
     return config;
   },
   (error) => {
@@ -58,9 +72,12 @@ const authService = {
       });
 
       if (response.data.success && response.data.token) {
+        // Store token in localStorage
         localStorage.setItem('token', response.data.token);
+
         // Set default authorization header for future requests
         api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
         console.log('Login successful for:', email);
         return response.data;
       }
@@ -81,7 +98,12 @@ const authService = {
       const response = await api.post('/auth/signup', userData);
 
       if (response.data.success && response.data.token) {
+        // Store token in localStorage
         localStorage.setItem('token', response.data.token);
+
+        // Set authorization header for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
         console.log('Signup successful for:', userData.email);
         return response.data;
       }
@@ -97,7 +119,12 @@ const authService = {
   },
 
   logout: () => {
+    // Remove token from localStorage
     localStorage.removeItem('token');
+
+    // Clear authorization header
+    delete api.defaults.headers.common['Authorization'];
+
     console.log('User logged out');
   },
 
@@ -105,24 +132,51 @@ const authService = {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.log('No token found');
+        console.log('No token found in localStorage');
         return null;
       }
 
-      console.log('Fetching current user');
-      const response = await api.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log('Fetching current user with token:', token.substring(0, 15) + '...');
 
-      if (response.data.success) {
-        console.log('Current user fetched successfully');
-        return response.data.user;
+      // Always ensure the Authorization header is properly set
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      console.log('Auth header set for getCurrentUser');
+
+      try {
+        // First try to get the me endpoint to validate the token
+        const response = await api.get('/auth/me');
+
+        console.log('Current user API response:', {
+          status: response.status,
+          success: response.data.success,
+          hasUserData: !!response.data.user,
+        });
+
+        if (response.data.success && response.data.user) {
+          console.log('Current user fetched successfully');
+          return response.data.user;
+        }
+
+        console.log('User data not found in response');
+        return null;
+      } catch (apiError) {
+        console.error('API call error in getCurrentUser:', {
+          status: apiError.response?.status,
+          message: apiError.message,
+        });
+
+        // If token is invalid or expired
+        if (apiError.response?.status === 401) {
+          console.log('Token is invalid/expired - removing from localStorage');
+          localStorage.removeItem('token');
+          delete api.defaults.headers.common['Authorization'];
+        }
+
+        return null;
       }
-      console.error('Failed to get user data - invalid response:', response.data);
-      throw new Error('Failed to get user data');
     } catch (error) {
-      console.error('Get current user error:', error);
-      localStorage.removeItem('token');
+      console.error('Unexpected error in getCurrentUser:', error);
       return null;
     }
   },
@@ -135,7 +189,6 @@ const authService = {
       console.log('Uploading profile picture');
       const response = await api.post('/auth/profile/picture', formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -160,9 +213,7 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Fetching profile');
-      const response = await api.get('/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get('/auth/profile');
 
       if (response.data.success) {
         console.log('Profile fetched successfully');
@@ -184,9 +235,7 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Updating profile');
-      const response = await api.put('/auth/profile', profileData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.put('/auth/profile', profileData);
 
       if (response.data.success) {
         console.log('Profile updated successfully');
@@ -212,9 +261,7 @@ const authService = {
       }
 
       console.log('Verifying token');
-      const response = await api.get('/auth/verify', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get('/auth/verify');
 
       const isValid = response.data.success && response.data.valid;
       console.log('Token verification result:', isValid);
@@ -223,6 +270,58 @@ const authService = {
       console.error('Verify token error:', error);
       localStorage.removeItem('token');
       return false;
+    }
+  },
+
+  // Add a setup function to initialize the auth header
+  setupAuthHeaderForServiceCalls: () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('Auth header setup from stored token:', token.substring(0, 15) + '...');
+      console.log('Headers after setup:', api.defaults.headers.common['Authorization']);
+      return true;
+    }
+    console.log('No token found for auth header setup');
+    return false;
+  },
+
+  // Initialize the auth system when app starts
+  initializeAuth: async () => {
+    console.log('Initializing authentication system...');
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.log('No saved token found during initialization');
+      return { authenticated: false };
+    }
+
+    try {
+      // Set the auth header
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('Set auth header for initialization');
+
+      // Try to verify the token by fetching the user
+      const response = await api.get('/auth/verify');
+
+      if (response.data.success && response.data.valid) {
+        console.log('Token verified during initialization:', response.data.user?.email);
+        return {
+          authenticated: true,
+          user: response.data.user,
+        };
+      } else {
+        console.log('Token invalid during verification');
+        localStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+        return { authenticated: false };
+      }
+    } catch (error) {
+      console.error('Auth initialization error:', error.message);
+      // If verification fails, clean up
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
+      return { authenticated: false };
     }
   },
 };
