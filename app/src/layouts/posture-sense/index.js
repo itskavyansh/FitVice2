@@ -148,6 +148,15 @@ function PostureSense() {
   const lastValidAngleRef = useRef(null);
   const stageStabilityThreshold = 1; // Reduce from 3 to 1 for more responsive tracking
 
+  // Add state variables for pushup tracking
+  const [pushupState, setPushupState] = useState('READY');
+  const [pushupLocked, setPushupLocked] = useState(false);
+  const pushupTimeoutRef = useRef(null);
+  const downPositionConfirmedRef = useRef(false);
+  const upPositionConfirmedRef = useRef(false);
+  const inTransitionRef = useRef(false);
+  const previousAngleRef = useRef(null);
+
   // Update refs when state changes
   useEffect(() => {
     showLandmarksRef.current = showLandmarks;
@@ -196,8 +205,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Chest', 'Triceps', 'Shoulders'],
       caloriesPerRep: 0.6,
-      downAngle: 90,
-      upAngle: 150,
+      downAngle: 70, // SIMPLIFIED threshold - anything below this is DOWN
+      upAngle: 110, // SIMPLIFIED threshold - anything above this is UP
       invertStages: true,
       isVertical: false,
       joints: {
@@ -227,8 +236,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Quadriceps', 'Glutes', 'Core'],
       caloriesPerRep: 1.5,
-      downAngle: 90,
-      upAngle: 160,
+      downAngle: 90, // Keep at 90 for down position (knees bent at 90 degrees)
+      upAngle: 160, // Normal standing position
       invertStages: true,
       isVertical: true,
       joints: {
@@ -291,8 +300,8 @@ function PostureSense() {
       difficulty: 'Beginner',
       musclesWorked: ['Shoulders', 'Traps'],
       caloriesPerRep: 0.4,
-      downAngle: 10,
-      upAngle: 80,
+      downAngle: 20, // Lower start position angle (arms closer to body)
+      upAngle: 70, // Upper position angle (arms raised)
       invertStages: false,
       isVertical: true,
       joints: {
@@ -323,8 +332,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Quadriceps', 'Hamstrings', 'Glutes'],
       caloriesPerRep: 0.5,
-      downAngle: 100,
-      upAngle: 165,
+      downAngle: 100, // Angle when in full lunge position (knee bent)
+      upAngle: 165, // Angle when standing straight
       invertStages: true,
       isVertical: true,
       joints: {
@@ -678,62 +687,199 @@ function PostureSense() {
               const { downAngle, upAngle, invertStages } = exerciseData;
               // Add debounce for lunges to prevent unwanted reps
               if (selectedExercise === 'lunges') {
-                // Special case for lunges - use stricter thresholds and debounce
+                // Special case for lunges with simplified tracking
                 if (invertStages) {
-                  if (angle < upAngle - 10) {
-                    // Add buffer zone
-                    // Only change to DOWN if well below threshold
+                  // Use downAngle and upAngle from exercise configuration
+                  const { downAngle, upAngle } = exercises.lunges;
+
+                  // Simple DOWN position detection
+                  if (angle <= downAngle + 10) {
+                    // 110 degrees or less
+                    console.log(`Lunge DOWN position at: ${angle.toFixed(1)}°`);
                     stageRef.current = 'DOWN';
                     setDisplayStage('DOWN');
                   }
-                  if (angle > downAngle + 10 && stageRef.current === 'DOWN') {
-                    // Add buffer zone
-                    // Only count rep when well above threshold
+
+                  // Simple UP position and rep counting
+                  // Only count rep when coming up from DOWN position
+                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
+                    // 155 degrees or more
+                    console.log(`Lunge UP position at: ${angle.toFixed(1)}°, counting rep`);
                     stageRef.current = 'UP';
                     setDisplayStage('UP');
+
+                    // Count the rep
                     counterRef.current += 1;
                     setDisplayCounter(counterRef.current);
-                    // Add 500ms cooldown after counting a rep
+
+                    // Show celebration if target reached
+                    if (counterRef.current >= targetReps) {
+                      setShowCelebration(true);
+                      setTimeout(() => setShowCelebration(false), 3000);
+                    }
+
+                    // Reset after a short delay
                     setTimeout(() => {
                       stageRef.current = 'READY';
                       setDisplayStage('READY');
                     }, 500);
+                  }
+                }
+              } else if (invertStages) {
+                // Special dedicated tracking for pushups
+                if (selectedExercise === 'pushups') {
+                  // Log that we're calling trackPushups
+                  console.log(`Angle: ${angle.toFixed(1)}°`);
+
+                  // MUCH SIMPLER TRACKING ALGORITHM - no state machine
+                  // Use downAngle and upAngle from exercise configuration
+                  const { downAngle, upAngle } = exercises.pushups;
+
+                  // Simple DOWN position detection
+                  if (angle <= downAngle + 10) {
+                    // 80 degrees or less
+                    console.log(`DOWN position at: ${angle.toFixed(1)}°`);
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
+                  }
+
+                  // Simple UP position and rep counting
+                  // Only count rep when coming up from DOWN position
+                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
+                    // 100 degrees or more
+                    console.log(`UP position at: ${angle.toFixed(1)}°, counting rep`);
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
+
+                    // Count the rep
+                    counterRef.current += 1;
+                    setDisplayCounter(counterRef.current);
+
+                    // Show celebration if target reached
+                    if (counterRef.current >= targetReps) {
+                      setShowCelebration(true);
+                      setTimeout(() => setShowCelebration(false), 3000);
+                    }
+
+                    // Reset after a short delay
+                    setTimeout(() => {
+                      stageRef.current = 'READY';
+                      setDisplayStage('READY');
+                    }, 500);
+                  }
+                }
+                // Check if it's squats and use the same simplified approach
+                else if (selectedExercise === 'squats') {
+                  // Use downAngle and upAngle from exercise configuration
+                  const { downAngle, upAngle } = exercises.squats;
+
+                  // Simple DOWN position detection
+                  if (angle <= downAngle + 10) {
+                    // 100 degrees or less
+                    console.log(`Squat DOWN position at: ${angle.toFixed(1)}°`);
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
+                  }
+
+                  // Simple UP position and rep counting
+                  // Only count rep when coming up from DOWN position
+                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
+                    // 150 degrees or more
+                    console.log(`Squat UP position at: ${angle.toFixed(1)}°, counting rep`);
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
+
+                    // Count the rep
+                    counterRef.current += 1;
+                    setDisplayCounter(counterRef.current);
+
+                    // Show celebration if target reached
+                    if (counterRef.current >= targetReps) {
+                      setShowCelebration(true);
+                      setTimeout(() => setShowCelebration(false), 3000);
+                    }
+
+                    // Reset after a short delay
+                    setTimeout(() => {
+                      stageRef.current = 'READY';
+                      setDisplayStage('READY');
+                    }, 500);
+                  }
+                }
+                // Original logic for other exercises (besides pushups and squats)
+                else {
+                  if (angle < upAngle) {
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
+                  }
+                  if (angle > downAngle && stageRef.current === 'DOWN') {
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
+                    counterRef.current += 1;
+                    setDisplayCounter(counterRef.current);
                     if (counterRef.current >= targetReps) {
                       setShowCelebration(true);
                       setTimeout(() => setShowCelebration(false), 3000);
                     }
                   }
                 }
-              } else if (invertStages) {
-                // For other inverted exercises like squats and push-ups
-                if (angle < upAngle) {
-                  stageRef.current = 'DOWN';
-                  setDisplayStage('DOWN');
-                }
-                if (angle > downAngle && stageRef.current === 'DOWN') {
-                  stageRef.current = 'UP';
-                  setDisplayStage('UP');
-                  counterRef.current += 1;
-                  setDisplayCounter(counterRef.current);
-                  if (counterRef.current >= targetReps) {
-                    setShowCelebration(true);
-                    setTimeout(() => setShowCelebration(false), 3000);
+              } else {
+                // Special dedicated tracking for lateral raises
+                if (selectedExercise === 'lateralRaise') {
+                  // Log that we're tracking lateral raises
+                  console.log(`Angle: ${angle.toFixed(1)}°`);
+
+                  // Get angle thresholds from exercise configuration
+                  const { downAngle, upAngle } = exercises.lateralRaise;
+
+                  // Simple UP position detection (in lateral raises, UP means arms are raised)
+                  if (angle >= upAngle - 10) {
+                    // 60 degrees or more
+                    console.log(`UP position at: ${angle.toFixed(1)}°`);
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
+                  }
+
+                  // Simple DOWN position and rep counting
+                  // Only count rep when arms are lowered from UP position
+                  if (angle <= downAngle + 10 && stageRef.current === 'UP') {
+                    // 30 degrees or less
+                    console.log(`DOWN position at: ${angle.toFixed(1)}°, counting rep`);
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
+
+                    // Count the rep
+                    counterRef.current += 1;
+                    setDisplayCounter(counterRef.current);
+
+                    // Show celebration if target reached
+                    if (counterRef.current >= targetReps) {
+                      setShowCelebration(true);
+                      setTimeout(() => setShowCelebration(false), 3000);
+                    }
+
+                    // Reset after a short delay
+                    setTimeout(() => {
+                      stageRef.current = 'READY';
+                      setDisplayStage('READY');
+                    }, 500);
                   }
                 }
-              } else {
-                // For exercises like bicep curls where "up" is the active position
-                if (angle < upAngle) {
-                  stageRef.current = 'UP';
-                  setDisplayStage('UP');
-                }
-                if (angle > downAngle && stageRef.current === 'UP') {
-                  stageRef.current = 'DOWN';
-                  setDisplayStage('DOWN');
-                  counterRef.current += 1;
-                  setDisplayCounter(counterRef.current);
-                  if (counterRef.current >= targetReps) {
-                    setShowCelebration(true);
-                    setTimeout(() => setShowCelebration(false), 3000);
+                // For other non-inverted exercises like bicep curls
+                else {
+                  if (angle < upAngle) {
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
+                  }
+                  if (angle > downAngle && stageRef.current === 'UP') {
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
+                    counterRef.current += 1;
+                    setDisplayCounter(counterRef.current);
+                    if (counterRef.current >= targetReps) {
+                      setShowCelebration(true);
+                      setTimeout(() => setShowCelebration(false), 3000);
+                    }
                   }
                 }
               }
@@ -885,6 +1031,18 @@ function PostureSense() {
     counterRef.current = 0;
     stageRef.current = null;
     setWorkoutStartTime(null);
+
+    // Reset pushup tracking state
+    setPushupState('READY');
+    setPushupLocked(false);
+    downPositionConfirmedRef.current = false;
+    upPositionConfirmedRef.current = false;
+    inTransitionRef.current = false;
+    previousAngleRef.current = null;
+    if (pushupTimeoutRef.current) {
+      clearTimeout(pushupTimeoutRef.current);
+      pushupTimeoutRef.current = null;
+    }
   };
   const toggleCameraFacing = async () => {
     if (isCameraActive) {

@@ -167,6 +167,7 @@ const routes = [
     icon: <Icon fontSize="small">smart_toy</Icon>,
     route: '/chatbot',
     component: <Chatbot />,
+    hideInNav: true,
   },
   {
     type: 'collapse',
