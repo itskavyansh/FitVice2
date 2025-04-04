@@ -36,117 +36,145 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React layouts
-import Dashboard from "layouts/dashboard";
-import WorkoutPlans from "layouts/workout-plans";
-import YogaClasses from "layouts/yoga-classes";
-import HealthTips from "layouts/health-tips";
-import NutritionGuide from "layouts/nutrition";
-import BMICalculator from "layouts/bmi-calculator";
-import PostureSense from "layouts/posture-sense";
-import TodoList from "layouts/todo-list";
-import MusclePedia from "layouts/muscle-pedia";
-import Chatbot from "layouts/chatbot";
-import Profile from "layouts/profile";
-import Landing from "layouts/landing";
+import Dashboard from 'layouts/dashboard';
+import WorkoutPlans from 'layouts/workout-plans';
+import YogaClasses from 'layouts/yoga-classes';
+import HealthTips from 'layouts/health-tips';
+import NutritionGuide from 'layouts/nutrition';
+import BMICalculator from 'layouts/bmi-calculator';
+import PostureSense from 'layouts/posture-sense';
+import TodoList from 'layouts/todo-list';
+import MusclePedia from 'layouts/muscle-pedia';
+import Chatbot from 'layouts/chatbot';
+import Profile from 'layouts/profile';
+import Landing from 'layouts/landing';
+
+// Auth components
+import SignIn from 'components/auth/SignIn';
+import SignUp from 'components/auth/SignUp';
+import AuthProfile from 'components/auth/Profile';
 
 // @mui icons
-import Icon from "@mui/material/Icon";
+import Icon from '@mui/material/Icon';
 
 const routes = [
   {
-    type: "collapse",
-    name: "Landing",
-    key: "landing",
-    route: "/",
-    component: <Landing />,
+    type: 'collapse',
+    name: 'Sign·In',
+    key: 'signin',
+    icon: <Icon fontSize="small">login</Icon>,
+    route: '/signin',
+    component: <SignIn />,
+    noAuth: true,
+    hideInNav: true,
   },
   {
-    type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
+    type: 'collapse',
+    name: 'Sign·Up',
+    key: 'signup',
+    icon: <Icon fontSize="small">person_add</Icon>,
+    route: '/signup',
+    component: <SignUp />,
+    noAuth: true,
+    hideInNav: true,
+  },
+  {
+    type: 'collapse',
+    name: 'Landing',
+    key: 'landing',
+    icon: <Icon fontSize="small">home</Icon>,
+    route: '/landing',
+    component: <Landing />,
+    noAuth: true,
+    hideInNav: true,
+  },
+  {
+    type: 'collapse',
+    name: 'Dashboard',
+    key: 'dashboard',
     icon: <Icon fontSize="small">dashboard</Icon>,
-    route: "/dashboard",
+    route: '/dashboard',
     component: <Dashboard />,
   },
   {
-    type: "collapse",
-    name: "Workout Plans",
-    key: "workout-plans",
+    type: 'collapse',
+    name: 'Workout·Plans',
+    key: 'workout-plans',
     icon: <Icon fontSize="small">fitness_center</Icon>,
-    route: "/workout-plans",
+    route: '/workout-plans',
     component: <WorkoutPlans />,
   },
   {
-    type: "collapse",
-    name: "Yoga Classes",
-    key: "yoga-classes",
+    type: 'collapse',
+    name: 'Yoga·Classes',
+    key: 'yoga-classes',
     icon: <Icon fontSize="small">self_improvement</Icon>,
-    route: "/yoga-classes",
+    route: '/yoga-classes',
     component: <YogaClasses />,
   },
   {
-    type: "collapse",
-    name: "Health Tips",
-    key: "health-tips",
+    type: 'collapse',
+    name: 'Health·Tips',
+    key: 'health-tips',
     icon: <Icon fontSize="small">health_and_safety</Icon>,
-    route: "/health-tips",
+    route: '/health-tips',
     component: <HealthTips />,
   },
   {
-    type: "collapse",
-    name: "Nutrition Guide",
-    key: "nutrition",
+    type: 'collapse',
+    name: 'Nutrition·Guide',
+    key: 'nutrition',
     icon: <Icon fontSize="small">restaurant_menu</Icon>,
-    route: "/nutrition",
+    route: '/nutrition',
     component: <NutritionGuide />,
   },
   {
-    type: "collapse",
-    name: "BMI Calculator",
-    key: "bmi-calculator",
+    type: 'collapse',
+    name: 'BMI·Calculator',
+    key: 'bmi-calculator',
     icon: <Icon fontSize="small">monitor_weight</Icon>,
-    route: "/bmi-calculator",
+    route: '/bmi-calculator',
     component: <BMICalculator />,
   },
   {
-    type: "collapse",
-    name: "PostureSense",
-    key: "posture-sense",
+    type: 'collapse',
+    name: 'PostureSense',
+    key: 'posture-sense',
     icon: <Icon fontSize="small">accessibility_new</Icon>,
-    route: "/posture-sense",
+    route: '/posture-sense',
     component: <PostureSense />,
   },
   {
-    type: "collapse",
-    name: "ToDo List",
-    key: "todo-list",
+    type: 'collapse',
+    name: 'ToDo·List',
+    key: 'todo-list',
     icon: <Icon fontSize="small">checklist</Icon>,
-    route: "/todo-list",
+    route: '/todo-list',
     component: <TodoList />,
   },
   {
-    type: "collapse",
-    name: "MusclePedia",
-    key: "muscle-pedia",
+    type: 'collapse',
+    name: 'MusclePedia',
+    key: 'muscle-pedia',
     icon: <Icon fontSize="small">science</Icon>,
-    route: "/muscle-pedia",
+    route: '/muscle-pedia',
     component: <MusclePedia />,
   },
   {
-    type: "collapse",
-    name: "AI Assistant",
-    key: "chatbot",
+    type: 'collapse',
+    name: 'AI·Assistant',
+    key: 'chatbot',
     icon: <Icon fontSize="small">smart_toy</Icon>,
-    route: "/chatbot",
+    route: '/chatbot',
     component: <Chatbot />,
   },
   {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
+    type: 'collapse',
+    name: 'Profile',
+    key: 'profile',
     icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
+    route: '/profile',
+    component: <AuthProfile />,
   },
 ];
 

@@ -1,44 +1,64 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from 'react';
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 // @mui material components
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Icon from "@mui/material/Icon";
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Icon from '@mui/material/Icon';
+import Box from '@mui/material/Box';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import MDBox from 'components/MDBox';
 
 // Material Dashboard 2 React example components
-import Sidenav from "examples/Sidenav";
-import Configurator from "examples/Configurator";
+import Sidenav from 'examples/Sidenav';
+import Configurator from 'examples/Configurator';
 
 // Material Dashboard 2 React themes
-import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
+import theme from 'assets/theme';
+import themeRTL from 'assets/theme/theme-rtl';
 
 // Material Dashboard 2 React Dark Mode themes
-import themeDark from "assets/theme-dark";
-import themeDarkRTL from "assets/theme-dark/theme-rtl";
+import themeDark from 'assets/theme-dark';
+import themeDarkRTL from 'assets/theme-dark/theme-rtl';
 
 // RTL plugins
-import rtlPlugin from "stylis-plugin-rtl";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
+import rtlPlugin from 'stylis-plugin-rtl';
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 
 // Material Dashboard 2 React routes
-import routes from "routes";
+import routes from 'routes';
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from 'context';
+
+// Auth context and components
+import { AuthProvider, useAuth } from 'context/AuthContext';
+import ProtectedRoute from 'components/auth/ProtectedRoute';
+import PrivateRoute from './components/auth/PrivateRoute';
+import SignIn from './components/auth/SignIn';
+import SignUp from './components/auth/SignUp';
+import Dashboard from './components/dashboard/Dashboard';
+import Profile from './components/profile/Profile';
+import Navbar from './components/layout/Navbar';
+import NutritionGuide from './components/nutrition/NutritionGuide';
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from 'assets/images/logo-ct.png';
+import brandDark from 'assets/images/logo-ct-dark.png';
 
 export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+const AppContent = () => {
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -49,15 +69,18 @@ export default function App() {
     transparentSidenav,
     whiteSidenav,
     darkMode,
+    invertColors,
+    fontSize,
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const { user } = useAuth();
 
   // Cache for the rtl
   useMemo(() => {
     const cacheRtl = createCache({
-      key: "rtl",
+      key: 'rtl',
       stylisPlugins: [rtlPlugin],
     });
 
@@ -85,8 +108,63 @@ export default function App() {
 
   // Setting the dir attribute for the body element
   useEffect(() => {
-    document.body.setAttribute("dir", direction);
+    document.body.setAttribute('dir', direction);
   }, [direction]);
+
+  // Apply font size scaling to the entire document
+  useEffect(() => {
+    try {
+      // Create a custom stylesheet for accessibility features
+      let styleSheet = document.getElementById('accessibility-styles');
+      if (!styleSheet) {
+        styleSheet = document.createElement('style');
+        styleSheet.id = 'accessibility-styles';
+        document.head.appendChild(styleSheet);
+      }
+
+      // Define a scaling approach that maintains proportions better
+      styleSheet.innerHTML = `
+        :root {
+          --font-scale: ${fontSize};
+        }
+        
+        /* Set base font size on html */
+        html {
+          font-size: ${fontSize}rem !important;
+        }
+        
+        /* Adjust spacing and layout elements to maintain proportions */
+        .MuiBox-root, .MuiContainer-root, .MuiPaper-root {
+          max-width: calc(100% - ${(fontSize - 1) * 2}rem) !important;
+        }
+        
+        /* Adjust margins and paddings based on font size */
+        .MuiCardContent-root, .MuiCardHeader-root, .MuiListItem-root {
+          padding: calc(${fontSize} * 0.75rem) !important;
+        }
+        
+        /* Ensure line heights adjust with font size */
+        body, p, h1, h2, h3, h4, h5, h6, .MuiTypography-root {
+          line-height: calc(1.5 * ${0.8 + fontSize * 0.2}) !important;
+        }
+        
+        /* Help maintain overall layout with larger fonts */
+        @media (max-width: 900px) {
+          .MuiGrid-container {
+            flex-direction: column !important;
+          }
+          
+          .MuiGrid-item {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex-basis: 100% !important;
+          }
+        }
+      `;
+    } catch (error) {
+      console.error('Error applying font size scaling:', error);
+    }
+  }, [fontSize]);
 
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
@@ -101,7 +179,17 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        if (route.noAuth) {
+          return <Route exact path={route.route} element={route.component} key={route.key} />;
+        }
+        return (
+          <Route
+            exact
+            path={route.route}
+            element={<PrivateRoute>{route.component}</PrivateRoute>}
+            key={route.key}
+          />
+        );
       }
 
       return null;
@@ -122,7 +210,7 @@ export default function App() {
       bottom="2rem"
       zIndex={99}
       color="dark"
-      sx={{ cursor: "pointer" }}
+      sx={{ cursor: 'pointer' }}
       onClick={handleConfiguratorOpen}
     >
       <Icon fontSize="small" color="inherit">
@@ -131,11 +219,16 @@ export default function App() {
     </MDBox>
   );
 
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && pathname !== "/" && (
+  const renderApp = () => (
+    <Box
+      sx={{
+        filter: invertColors ? 'invert(100%)' : 'none',
+      }}
+    >
+      {layout === 'dashboard' &&
+        pathname !== '/landing' &&
+        pathname !== '/signin' &&
+        pathname !== '/signup' && (
           <>
             <Sidenav
               color={sidenavColor}
@@ -149,35 +242,63 @@ export default function App() {
             {configsButton}
           </>
         )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
-    <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
-      {layout === "dashboard" && pathname !== "/" && (
-        <>
-          <Sidenav
-            color={sidenavColor}
-            brand=""
-            brandName="FitVice"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-          {configsButton}
-        </>
-      )}
-      {layout === "vr" && <Configurator />}
+      {layout === 'vr' && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/signin" element={user ? <Navigate to="/dashboard" replace /> : <SignIn />} />
+        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/nutrition"
+          element={
+            <PrivateRoute>
+              <NutritionGuide />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/" element={<Navigate to="/landing" replace />} />
+        <Route path="*" element={<Navigate to="/landing" />} />
       </Routes>
-    </ThemeProvider>
+    </Box>
   );
-}
+
+  return (
+    <>
+      {direction === 'rtl' ? (
+        <CacheProvider value={rtlCache}>
+          <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
+            <CssBaseline />
+            {user &&
+              pathname !== '/landing' &&
+              pathname !== '/signin' &&
+              pathname !== '/signup' && <Navbar />}
+            {renderApp()}
+          </ThemeProvider>
+        </CacheProvider>
+      ) : (
+        <ThemeProvider theme={darkMode ? themeDark : theme}>
+          <CssBaseline />
+          {user && pathname !== '/landing' && pathname !== '/signin' && pathname !== '/signup' && (
+            <Navbar />
+          )}
+          {renderApp()}
+        </ThemeProvider>
+      )}
+    </>
+  );
+};
