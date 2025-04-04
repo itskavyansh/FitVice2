@@ -1,35 +1,55 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, Container, TextField, Typography, Paper, Link, Grid } from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Container, Typography, Paper, Link } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
+import { useMaterialUIController, setLayout } from 'context';
+import './auth.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const [controller, dispatch] = useMaterialUIController();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Set layout to 'vr' to ensure no sidebar is shown
+  useEffect(() => {
+    setLayout(dispatch, 'vr');
+
+    // Clean up function to reset layout when component unmounts
+    return () => {
+      // Only reset if this component set it
+      if (controller.layout === 'vr') {
+        setLayout(dispatch, 'dashboard');
+      }
+    };
+  }, [dispatch, controller.layout]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user starts typing
+    if (error) {
+      setError('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
@@ -37,124 +57,131 @@ const SignUp = () => {
     try {
       const { confirmPassword, ...signupData } = formData;
       const result = await signup(signupData);
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (error) {
-      setError(error.message || "Signup failed");
+      setError(error.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Sign up
-          </Typography>
-          {error && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
-          )}
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  name="firstName"
-                  autoComplete="given-name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  id="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+    <Box
+      className="auth-container"
+      sx={{
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div className="background-animation">
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+
+      <form className="form" onSubmit={handleSubmit}>
+        <p className="title">Register</p>
+        <p className="message">Signup now and get full access to our app.</p>
+
+        {error && <p style={{ color: 'red', marginBottom: '10px', fontSize: '14px' }}>{error}</p>}
+
+        <div className="flex">
+          <label>
+            <input
+              required
+              type="text"
+              className="input"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
               disabled={loading}
-            >
-              {loading ? "Signing up..." : "Sign Up"}
-            </Button>
-            <Box sx={{ textAlign: "center" }}>
-              <Link href="/signin" variant="body2">
-                {"Already have an account? Sign In"}
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+            />
+            <span>Firstname</span>
+          </label>
+
+          <label>
+            <input
+              required
+              type="text"
+              className="input"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              disabled={loading}
+            />
+            <span>Lastname</span>
+          </label>
+        </div>
+
+        <label>
+          <input
+            required
+            type="email"
+            className="input"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <span>Email</span>
+        </label>
+
+        <label>
+          <input
+            required
+            type="password"
+            className="input"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <span>Password</span>
+        </label>
+
+        <label>
+          <input
+            required
+            type="password"
+            className="input"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <span>Confirm password</span>
+        </label>
+
+        <button className="submit" type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Submit'}
+        </button>
+
+        <p className="signin">
+          Already have an account?{' '}
+          <a
+            href="/signin"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/signin');
+            }}
+          >
+            Signin
+          </a>
+        </p>
+      </form>
+    </Box>
   );
 };
 

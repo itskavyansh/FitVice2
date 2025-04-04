@@ -1,17 +1,33 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, Container, TextField, Typography, Paper, Link } from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
+import { useMaterialUIController, setLayout } from 'context';
+import './auth.css';
 
 const SignIn = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [controller, dispatch] = useMaterialUIController();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Set layout to 'vr' to ensure no sidebar is shown
+  useEffect(() => {
+    setLayout(dispatch, 'vr');
+
+    // Clean up function to reset layout when component unmounts
+    return () => {
+      // Only reset if this component set it
+      if (controller.layout === 'vr') {
+        setLayout(dispatch, 'dashboard');
+      }
+    };
+  }, [dispatch, controller.layout]);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,122 +36,119 @@ const SignIn = () => {
     });
     // Clear error when user starts typing
     if (error) {
-      setError("");
+      setError('');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     // Basic validation
     if (!formData.email || !formData.password) {
-      setError("Please fill in all fields");
+      setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
     try {
-      console.log("Attempting login...");
+      console.log('Attempting login...');
       const result = await login(formData.email, formData.password);
-      console.log("Login result:", result);
+      console.log('Login result:', result);
 
       if (result.success) {
-        console.log("Login successful, navigating to dashboard...");
+        console.log('Login successful, navigating to dashboard...');
         // Navigate to dashboard after successful login
-        navigate("/dashboard", { replace: true });
+        navigate('/dashboard', { replace: true });
       } else {
-        console.error("Login failed:", result.error);
-        setError(result.error || "Login failed. Please try again.");
+        console.error('Login failed:', result.error);
+        setError(result.error || 'Login failed. Please try again.');
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setError(error.message || "An unexpected error occurred. Please try again.");
+      console.error('Login error:', error);
+      setError(error.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          {error && (
-            <Typography color="error" sx={{ mt: 2, textAlign: "center" }}>
-              {error}
-            </Typography>
-          )}
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={formData.email}
-              onChange={handleChange}
-              disabled={loading}
-              error={!!error}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={loading}
-              error={!!error}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </Button>
-            <Box sx={{ textAlign: "center" }}>
-              <Link
-                href="/signup"
-                variant="body2"
-                sx={{ pointerEvents: loading ? "none" : "auto" }}
-              >
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+    <Box
+      className="auth-container"
+      sx={{
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div className="background-animation">
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+
+      <form className="form" onSubmit={handleSubmit}>
+        <p className="title">Sign in</p>
+        <p className="message">Sign in now and get full access to our app.</p>
+
+        {error && <p style={{ color: 'red', marginBottom: '10px', fontSize: '14px' }}>{error}</p>}
+
+        <label>
+          <input
+            required
+            type="email"
+            className="input"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <span>Email</span>
+        </label>
+
+        <label>
+          <input
+            required
+            type="password"
+            className="input"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <span>Password</span>
+        </label>
+
+        <button className="submit" type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Submit'}
+        </button>
+
+        <p className="signin">
+          Don&apos;t have an account?{' '}
+          <a
+            href="/signup"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/signup');
+            }}
+          >
+            Register
+          </a>
+        </p>
+      </form>
+    </Box>
   );
 };
 

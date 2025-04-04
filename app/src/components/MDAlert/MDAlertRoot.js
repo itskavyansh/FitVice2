@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Box from "@mui/material/Box";
-import { styled } from "@mui/material/styles";
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
 export default styled(Box)(({ theme, ownerState }) => {
   const { palette, typography, borders, functions } = theme;
@@ -32,13 +32,13 @@ export default styled(Box)(({ theme, ownerState }) => {
     : linearGradient(gradients.info.main, gradients.info.state);
 
   return {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     minHeight: pxToRem(60),
     backgroundImage: backgroundImageValue,
     color: white.main,
-    position: "relative",
+    position: 'relative',
     padding: pxToRem(16),
     marginBottom: pxToRem(16),
     borderRadius: borderRadius.md,

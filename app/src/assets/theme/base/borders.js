@@ -20,10 +20,10 @@ Coded by www.creative-tim.com
  */
 
 // Material Dashboard 2 React Base Styles
-import colors from "assets/theme/base/colors";
+import colors from 'assets/theme/base/colors';
 
 // Material Dashboard 2 React Helper Functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from 'assets/theme/functions/pxToRem';
 
 const { grey } = colors;
 

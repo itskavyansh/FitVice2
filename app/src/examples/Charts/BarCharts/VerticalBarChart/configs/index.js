@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React base styles
-import typography from "assets/theme/base/typography";
+import typography from 'assets/theme/base/typography';
 
 function configs(labels, datasets) {
   return {
@@ -42,11 +42,11 @@ function configs(labels, datasets) {
           ticks: {
             display: true,
             padding: 10,
-            color: "#9ca2b7",
+            color: '#9ca2b7',
             font: {
               size: 11,
               family: typography.fontFamily,
-              style: "normal",
+              style: 'normal',
               lineHeight: 2,
             },
           },
@@ -60,12 +60,12 @@ function configs(labels, datasets) {
           },
           ticks: {
             display: true,
-            color: "#9ca2b7",
+            color: '#9ca2b7',
             padding: 10,
             font: {
               size: 11,
               family: typography.fontFamily,
-              style: "normal",
+              style: 'normal',
               lineHeight: 2,
             },
           },

@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Avatar from "@mui/material/Avatar";
-import { styled } from "@mui/material/styles";
+import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
 
 export default styled(Avatar)(({ theme, ownerState }) => {
   const { palette, functions, typography, boxShadows } = theme;
@@ -27,7 +27,7 @@ export default styled(Avatar)(({ theme, ownerState }) => {
 
   // backgroundImage value
   const backgroundValue =
-    bgColor === "transparent"
+    bgColor === 'transparent'
       ? transparent.main
       : linearGradient(gradients[bgColor].main, gradients[bgColor].state);
 
@@ -35,35 +35,35 @@ export default styled(Avatar)(({ theme, ownerState }) => {
   let sizeValue;
 
   switch (size) {
-    case "xs":
+    case 'xs':
       sizeValue = {
         width: pxToRem(24),
         height: pxToRem(24),
         fontSize: fontSize.xs,
       };
       break;
-    case "sm":
+    case 'sm':
       sizeValue = {
         width: pxToRem(36),
         height: pxToRem(36),
         fontSize: fontSize.sm,
       };
       break;
-    case "lg":
+    case 'lg':
       sizeValue = {
         width: pxToRem(58),
         height: pxToRem(58),
         fontSize: fontSize.sm,
       };
       break;
-    case "xl":
+    case 'xl':
       sizeValue = {
         width: pxToRem(74),
         height: pxToRem(74),
         fontSize: fontSize.md,
       };
       break;
-    case "xxl":
+    case 'xxl':
       sizeValue = {
         width: pxToRem(110),
         height: pxToRem(110),

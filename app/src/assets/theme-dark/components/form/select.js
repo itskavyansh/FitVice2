@@ -14,34 +14,34 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React base styles
-import colors from "assets/theme-dark/base/colors";
+import colors from 'assets/theme-dark/base/colors';
 
 // Material Dashboard 2 React helper functions
-import pxToRem from "assets/theme-dark/functions/pxToRem";
+import pxToRem from 'assets/theme-dark/functions/pxToRem';
 
 const { transparent } = colors;
 
 const select = {
   styleOverrides: {
     select: {
-      display: "grid",
-      alignItems: "center",
+      display: 'grid',
+      alignItems: 'center',
       padding: `0 ${pxToRem(12)} !important`,
 
-      "& .Mui-selected": {
+      '& .Mui-selected': {
         backgroundColor: transparent.main,
       },
     },
 
     selectMenu: {
-      background: "none",
-      height: "none",
-      minHeight: "none",
-      overflow: "unset",
+      background: 'none',
+      height: 'none',
+      minHeight: 'none',
+      overflow: 'unset',
     },
 
     icon: {
-      display: "none",
+      display: 'none',
     },
   },
 };

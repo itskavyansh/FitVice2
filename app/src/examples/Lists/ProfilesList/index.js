@@ -14,19 +14,19 @@ Coded by www.creative-tim.com
 */
 
 // react-routers components
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 // prop-types is library for typechecking of props
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 // @mui material components
-import Card from "@mui/material/Card";
+import Card from '@mui/material/Card';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-import MDButton from "components/MDButton";
+import MDBox from 'components/MDBox';
+import MDTypography from 'components/MDTypography';
+import MDAvatar from 'components/MDAvatar';
+import MDButton from 'components/MDButton';
 
 function ProfilesList({ title, profiles, shadow }) {
   const renderProfiles = profiles.map(({ image, name, description, action }) => (
@@ -43,7 +43,7 @@ function ProfilesList({ title, profiles, shadow }) {
         </MDTypography>
       </MDBox>
       <MDBox ml="auto">
-        {action.type === "internal" ? (
+        {action.type === 'internal' ? (
           <MDButton component={Link} to={action.route} variant="text" color="info">
             {action.label}
           </MDButton>
@@ -64,7 +64,7 @@ function ProfilesList({ title, profiles, shadow }) {
   ));
 
   return (
-    <Card sx={{ height: "100%", boxShadow: !shadow && "none" }}>
+    <Card sx={{ height: '100%', boxShadow: !shadow && 'none' }}>
       <MDBox pt={2} px={2}>
         <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
           {title}
