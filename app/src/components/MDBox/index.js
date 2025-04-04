@@ -28,7 +28,7 @@ const MDBox = forwardRef(
       ref={ref}
       ownerState={{ variant, bgColor, color, opacity, borderRadius, shadow, coloredShadow }}
     />
-  )
+  ),
 );
 
 // Setting default values for the props of MDBox

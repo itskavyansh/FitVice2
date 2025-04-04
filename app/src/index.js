@@ -29,5 +29,5 @@ root.render(
     <MaterialUIControllerProvider>
       <App />,
     </MaterialUIControllerProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

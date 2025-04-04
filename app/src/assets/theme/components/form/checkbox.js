@@ -56,7 +56,7 @@ const checkbox = {
         '& .MuiSvgIcon-root': {
           backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -1 22 22'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M6 10l3 3l6-6'/%3e%3c/svg%3e"), ${linearGradient(
             info.main,
-            info.main
+            info.main,
           )}`,
           borderColor: info.main,
         },
@@ -71,7 +71,7 @@ const checkbox = {
         '&.Mui-checked': {
           backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -1 22 22'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M6 10l3 3l6-6'/%3e%3c/svg%3e"), ${linearGradient(
             info.main,
-            info.main
+            info.main,
           )}`,
           borderColor: info.main,
         },

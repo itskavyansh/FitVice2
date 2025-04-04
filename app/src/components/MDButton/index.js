@@ -41,7 +41,7 @@ const MDButton = forwardRef(
         {children}
       </MDButtonRoot>
     );
-  }
+  },
 );
 
 // Setting default values for the props of MDButton

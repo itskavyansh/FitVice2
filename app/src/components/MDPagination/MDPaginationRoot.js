@@ -13,22 +13,20 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-/**
-  The boxShadow() function helps you to create a box shadow for an element
- */
+// @mui material components
+import { styled } from '@mui/material/styles';
 
-// Material Dashboard 2 React helper functions
-import rgba from 'assets/theme/functions/rgba';
-import pxToRem from 'assets/theme/functions/pxToRem';
+// Material Dashboard 2 React components
+import MDBox from 'components/MDBox';
 
-function boxShadow(offset = [], radius = [], color, opacity, inset = '') {
-  const [x, y] = offset;
-  const [blur, spread] = radius;
+export default styled(MDBox)(({ theme, ownerState }) => {
+  const { borders } = theme;
+  const { darkMode } = ownerState;
 
-  return `${inset} ${pxToRem(x)} ${pxToRem(y)} ${pxToRem(blur)} ${pxToRem(spread)} ${rgba(
-    color,
-    opacity,
-  )}`;
-}
-
-export default boxShadow;
+  return {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    borderTop: darkMode ? 'none' : `${borders.borderWidth[1]} solid ${borders.borderColor}`,
+  };
+});
