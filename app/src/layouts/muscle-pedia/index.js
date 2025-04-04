@@ -5,46 +5,46 @@
 */
 
 // @mui material components
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { useState, useRef } from "react";
-import PropTypes from "prop-types";
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import MDBox from 'components/MDBox';
 
 // Material Dashboard 2 React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Footer from 'examples/Footer';
 
 // Custom components
-import { CardContainer, CardBody, CardItem } from "components/ui/3d-card";
+import { CardContainer, CardBody, CardItem } from 'components/ui/3d-card';
 
 const muscles = [
   {
-    name: "Biceps Brachii",
-    description: "Located in the upper arm, responsible for forearm supination and elbow flexion.",
-    exercises: ["Bicep Curls", "Hammer Curls", "Chin-ups"],
+    name: 'Biceps·Brachii',
+    description: 'Located·in·the·upper·arm,·responsible·for·forearm·supination·and·elbow·flexion.',
+    exercises: ['Bicep·Curls', 'Hammer·Curls', 'Chin-ups'],
     image:
-      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
   },
 
   {
-    name: "Quadriceps",
-    description: "Group of four muscles in the front of the thigh, responsible for knee extension.",
-    exercises: ["Squats", "Lunges", "Leg Press"],
+    name: 'Quadriceps',
+    description: 'Group·of·four·muscles·in·the·front·of·the·thigh,·responsible·for·knee·extension.',
+    exercises: ['Squats', 'Lunges', 'Leg·Press'],
     image:
-      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
   },
 
   {
-    name: "Deltoids",
-    description: "Shoulder muscles responsible for arm abduction and rotation.",
-    exercises: ["Shoulder Press", "Lateral Raises", "Front Raises"],
+    name: 'Deltoids',
+    description: 'Shoulder·muscles·responsible·for·arm·abduction·and·rotation.',
+    exercises: ['Shoulder·Press', 'Lateral·Raises', 'Front·Raises'],
     image:
-      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop",
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
   },
 ];
 
@@ -76,22 +76,22 @@ function MuscleCard({ muscle }) {
         onMouseLeave={handleMouseLeave}
         sx={{
           transform: `rotateX(${mousePosition.x}deg) rotateY(${mousePosition.y}deg)`,
-          position: "relative",
-          backgroundColor: "#f9fafb",
-          borderRadius: "12px",
-          padding: "24px",
-          border: "1px solid rgba(0,0,0,0.1)",
-          "&:hover": {
-            boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
-            "& .card-content": {
-              transform: "scale(1.05)",
-              transition: "all 0.5s ease",
-              transformOrigin: "center center",
+          position: 'relative',
+          backgroundColor: '#f9fafb',
+          borderRadius: '12px',
+          padding: '24px',
+          border: '1px solid rgba(0,0,0,0.1)',
+          '&:hover': {
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            '& .card-content': {
+              transform: 'scale(1.05)',
+              transition: 'all 0.5s ease',
+              transformOrigin: 'center center',
             },
           },
-          "& .card-content": {
-            transition: "all 0.5s ease",
-            transformOrigin: "center center",
+          '& .card-content': {
+            transition: 'all 0.5s ease',
+            transformOrigin: 'center center',
           },
         }}
       >
@@ -102,8 +102,8 @@ function MuscleCard({ muscle }) {
             fontWeight="bold"
             color="text.primary"
             sx={{
-              fontSize: "1.25rem",
-              lineHeight: "1.75rem",
+              fontSize: '1.25rem',
+              lineHeight: '1.75rem',
             }}
           >
             {muscle.name}
@@ -115,33 +115,33 @@ function MuscleCard({ muscle }) {
             variant="body2"
             color="text.secondary"
             sx={{
-              maxWidth: "sm",
+              maxWidth: 'sm',
               mt: 1,
-              fontSize: "0.875rem",
-              lineHeight: "1.25rem",
+              fontSize: '0.875rem',
+              lineHeight: '1.25rem',
             }}
           >
             {muscle.description}
           </Typography>
         </CardItem>
-        <CardItem translateZ={100} sx={{ width: "100%", mt: 2 }}>
+        <CardItem translateZ={100} sx={{ width: '100%', mt: 2 }}>
           <img
             className="card-content"
             src={muscle.image}
             alt={muscle.name}
             style={{
-              height: "240px",
-              width: "100%",
-              objectFit: "cover",
-              borderRadius: "12px",
+              height: '240px',
+              width: '100%',
+              objectFit: 'cover',
+              borderRadius: '12px',
             }}
           />
         </CardItem>
         <MDBox
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mt: 5,
           }}
         >
@@ -153,8 +153,8 @@ function MuscleCard({ muscle }) {
               sx={{
                 px: 2,
                 py: 1,
-                borderRadius: "12px",
-                fontSize: "0.75rem",
+                borderRadius: '12px',
+                fontSize: '0.75rem',
               }}
             >
               View Exercises →
@@ -168,9 +168,9 @@ function MuscleCard({ muscle }) {
               sx={{
                 px: 2,
                 py: 1,
-                borderRadius: "12px",
-                fontSize: "0.75rem",
-                fontWeight: "bold",
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                fontWeight: 'bold',
               }}
             >
               Learn More

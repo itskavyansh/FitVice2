@@ -14,26 +14,26 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import MDBox from 'components/MDBox';
 
 // Material Dashboard 2 React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Footer from 'examples/Footer';
+import ReportsBarChart from 'examples/Charts/BarCharts/ReportsBarChart';
+import ReportsLineChart from 'examples/Charts/LineCharts/ReportsLineChart';
+import ComplexStatisticsCard from 'examples/Cards/StatisticsCards/ComplexStatisticsCard';
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+import reportsBarChartData from 'layouts/dashboard/data/reportsBarChartData';
+import reportsLineChartData from 'layouts/dashboard/data/reportsLineChartData';
 
 // Dashboard components
-import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Projects from 'layouts/dashboard/components/Projects';
+import OrdersOverview from 'layouts/dashboard/components/OrdersOverview';
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
@@ -51,9 +51,9 @@ function Dashboard() {
                 title="Active Workouts"
                 count={281}
                 percentage={{
-                  color: "success",
-                  amount: "+15%",
-                  label: "than last week",
+                  color: 'success',
+                  amount: '+15%',
+                  label: 'than last week',
                 }}
               />
             </MDBox>
@@ -65,9 +65,9 @@ function Dashboard() {
                 title="Yoga Sessions"
                 count="2,300"
                 percentage={{
-                  color: "success",
-                  amount: "+8%",
-                  label: "than last month",
+                  color: 'success',
+                  amount: '+8%',
+                  label: 'than last month',
                 }}
               />
             </MDBox>
@@ -80,9 +80,9 @@ function Dashboard() {
                 title="Health Tips"
                 count="34"
                 percentage={{
-                  color: "success",
-                  amount: "+5%",
-                  label: "new tips added",
+                  color: 'success',
+                  amount: '+5%',
+                  label: 'new tips added',
                 }}
               />
             </MDBox>
@@ -95,9 +95,9 @@ function Dashboard() {
                 title="Nutrition Plans"
                 count="+12"
                 percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
+                  color: 'success',
+                  amount: '',
+                  label: 'Just updated',
                 }}
               />
             </MDBox>

@@ -13,29 +13,23 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
-
-// react-github-btn
-import GitHubButton from "react-github-btn";
+import { useState, useEffect } from 'react';
 
 // @mui material components
-import Divider from "@mui/material/Divider";
-import Switch from "@mui/material/Switch";
-import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
-import Icon from "@mui/material/Icon";
-
-// @mui icons
-import TwitterIcon from "@mui/icons-material/Twitter";
-import FacebookIcon from "@mui/icons-material/Facebook";
+import Divider from '@mui/material/Divider';
+import Switch from '@mui/material/Switch';
+import IconButton from '@mui/material/IconButton';
+import Icon from '@mui/material/Icon';
+import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+import MDBox from 'components/MDBox';
+import MDTypography from 'components/MDTypography';
+import MDButton from 'components/MDButton';
 
 // Custom styles for the Configurator
-import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
+import ConfiguratorRoot from 'examples/Configurator/ConfiguratorRoot';
 
 // Material Dashboard 2 React context
 import {
@@ -46,7 +40,9 @@ import {
   setFixedNavbar,
   setSidenavColor,
   setDarkMode,
-} from "context";
+  setInvertColors,
+  setFontSize,
+} from 'context';
 
 function Configurator() {
   const [controller, dispatch] = useMaterialUIController();
@@ -57,9 +53,11 @@ function Configurator() {
     transparentSidenav,
     whiteSidenav,
     darkMode,
+    invertColors,
+    fontSize,
   } = controller;
   const [disabled, setDisabled] = useState(false);
-  const sidenavColors = ["primary", "dark", "info", "success", "warning", "error"];
+  const sidenavColors = ['primary', 'dark', 'info', 'success', 'warning', 'error'];
 
   // Use the useEffect hook to change the button state for the sidenav type based on window size.
   useEffect(() => {
@@ -69,13 +67,13 @@ function Configurator() {
     }
 
     // The event listener that's calling the handleDisabled function when resizing the window.
-    window.addEventListener("resize", handleDisabled);
+    window.addEventListener('resize', handleDisabled);
 
     // Call the handleDisabled function to set the state with the initial value.
     handleDisabled();
 
     // Remove event listener on cleanup
-    return () => window.removeEventListener("resize", handleDisabled);
+    return () => window.removeEventListener('resize', handleDisabled);
   }, []);
 
   const handleCloseConfigurator = () => setOpenConfigurator(dispatch, false);
@@ -93,6 +91,10 @@ function Configurator() {
   };
   const handleFixedNavbar = () => setFixedNavbar(dispatch, !fixedNavbar);
   const handleDarkMode = () => setDarkMode(dispatch, !darkMode);
+  const handleInvertColors = () => setInvertColors(dispatch, !invertColors);
+  const handleFontSizeChange = (event, newValue) => {
+    setFontSize(dispatch, newValue);
+  };
 
   // sidenav type buttons styles
   const sidenavTypeButtonsStyles = ({
@@ -105,7 +107,7 @@ function Configurator() {
     color: darkMode ? white.main : dark.main,
     border: `${borderWidth[1]} solid ${darkMode ? white.main : dark.main}`,
 
-    "&:hover, &:focus, &:focus:not(:hover)": {
+    '&:hover, &:focus, &:focus:not(:hover)': {
       background: darkMode ? background.sidenav : white.main,
       color: darkMode ? white.main : dark.main,
       border: `${borderWidth[1]} solid ${darkMode ? white.main : dark.main}`,
@@ -121,7 +123,7 @@ function Configurator() {
     background: darkMode ? white.main : linearGradient(gradients.dark.main, gradients.dark.state),
     color: darkMode ? background.sidenav : white.main,
 
-    "&:hover, &:focus, &:focus:not(:hover)": {
+    '&:hover, &:focus, &:focus:not(:hover)': {
       background: darkMode ? white.main : linearGradient(gradients.dark.main, gradients.dark.state),
       color: darkMode ? background.sidenav : white.main,
     },
@@ -138,20 +140,17 @@ function Configurator() {
         px={3}
       >
         <MDBox>
-          <MDTypography variant="h5">Material UI Configurator</MDTypography>
-          <MDTypography variant="body2" color="text">
-            See our dashboard options.
-          </MDTypography>
+          <MDTypography variant="h5">Settings</MDTypography>
         </MDBox>
 
         <Icon
           sx={({ typography: { size }, palette: { dark, white } }) => ({
             fontSize: `${size.lg} !important`,
             color: darkMode ? white.main : dark.main,
-            stroke: "currentColor",
-            strokeWidth: "2px",
-            cursor: "pointer",
-            transform: "translateY(5px)",
+            stroke: 'currentColor',
+            strokeWidth: '2px',
+            cursor: 'pointer',
+            transform: 'translateY(5px)',
           })}
           onClick={handleCloseConfigurator}
         >
@@ -174,8 +173,8 @@ function Configurator() {
                   palette: { white, dark, background },
                   transitions,
                 }) => ({
-                  width: "24px",
-                  height: "24px",
+                  width: '24px',
+                  height: '24px',
                   padding: 0,
                   border: `${borderWidth[1]} solid ${darkMode ? background.sidenav : white.main}`,
                   borderColor: () => {
@@ -187,18 +186,18 @@ function Configurator() {
 
                     return borderColorValue;
                   },
-                  transition: transitions.create("border-color", {
+                  transition: transitions.create('border-color', {
                     easing: transitions.easing.sharp,
                     duration: transitions.duration.shorter,
                   }),
                   backgroundImage: ({ functions: { linearGradient }, palette: { gradients } }) =>
                     linearGradient(gradients[color].main, gradients[color].state),
 
-                  "&:not(:last-child)": {
+                  '&:not(:last-child)': {
                     mr: 1,
                   },
 
-                  "&:hover, &:focus, &:active": {
+                  '&:hover, &:focus, &:active': {
                     borderColor: darkMode ? white.main : dark.main,
                   },
                 })}
@@ -216,7 +215,7 @@ function Configurator() {
 
           <MDBox
             sx={{
-              display: "flex",
+              display: 'flex',
               mt: 2,
               mr: 1,
             }}
@@ -235,7 +234,7 @@ function Configurator() {
             >
               Dark
             </MDButton>
-            <MDBox sx={{ mx: 1, width: "8rem", minWidth: "8rem" }}>
+            <MDBox sx={{ mx: 1, width: '8rem', minWidth: '8rem' }}>
               <MDButton
                 color="dark"
                 variant="gradient"
@@ -285,58 +284,44 @@ function Configurator() {
           <Switch checked={darkMode} onChange={handleDarkMode} />
         </MDBox>
         <Divider />
-        <MDBox mt={3} mb={2}>
-          <MDButton
-            component={Link}
-            href="https://www.creative-tim.com/learning-lab/react/quick-start/material-dashboard/"
-            target="_blank"
-            rel="noreferrer"
-            color={darkMode ? "light" : "dark"}
-            variant="outlined"
-            fullWidth
-          >
-            view documentation
-          </MDButton>
+        <MDBox
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          lineHeight={1}
+          mt={3}
+        >
+          <MDTypography variant="h6">Invert Colors</MDTypography>
+          <Switch checked={invertColors} onChange={handleInvertColors} />
         </MDBox>
-        <MDBox display="flex" justifyContent="center">
-          <GitHubButton
-            href="https://github.com/creativetimofficial/material-dashboard-react"
-            data-icon="octicon-star"
-            data-size="large"
-            data-show-count="true"
-            aria-label="Star creativetimofficial/material-dashboard-react on GitHub"
-          >
-            Star
-          </GitHubButton>
-        </MDBox>
-        <MDBox mt={2} textAlign="center">
-          <MDBox mb={0.5}>
-            <MDTypography variant="h6">Thank you for sharing!</MDTypography>
-          </MDBox>
-
-          <MDBox display="flex" justifyContent="center">
-            <MDBox mr={1.5}>
-              <MDButton
-                component={Link}
-                href="//twitter.com/intent/tweet?text=Check%20Material%20Dashboard%20React%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23react%20%mui&url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fmaterial-dashboard-react"
-                target="_blank"
-                rel="noreferrer"
-                color="dark"
-              >
-                <TwitterIcon />
-                &nbsp; Tweet
-              </MDButton>
+        <Divider />
+        <MDBox mt={3}>
+          <MDTypography variant="h6" gutterBottom>
+            Accessibility
+          </MDTypography>
+          <MDBox px={1}>
+            <MDTypography variant="button" color="text">
+              Font Size
+            </MDTypography>
+            <Slider
+              value={fontSize}
+              min={0.8}
+              max={1.5}
+              step={0.1}
+              aria-labelledby="font-size-slider"
+              valueLabelDisplay="auto"
+              valueLabelFormat={(value) => `${Math.round((value - 1) * 100)}%`}
+              onChange={handleFontSizeChange}
+              sx={{ mt: 1 }}
+            />
+            <MDBox display="flex" justifyContent="space-between" mt={0.5}>
+              <MDTypography variant="caption" color="text">
+                Smaller
+              </MDTypography>
+              <MDTypography variant="caption" color="text">
+                Larger
+              </MDTypography>
             </MDBox>
-            <MDButton
-              component={Link}
-              href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard-react"
-              target="_blank"
-              rel="noreferrer"
-              color="dark"
-            >
-              <FacebookIcon />
-              &nbsp; Share
-            </MDButton>
           </MDBox>
         </MDBox>
       </MDBox>
