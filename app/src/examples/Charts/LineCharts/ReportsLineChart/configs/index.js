@@ -36,6 +36,14 @@ function configs(labels, datasets) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: {
+          top: 30,
+          right: 16,
+          bottom: 16,
+          left: 16
+        }
+      },
       plugins: {
         legend: {
           display: false,

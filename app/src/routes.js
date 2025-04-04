@@ -38,7 +38,7 @@ Coded by www.creative-tim.com
 // Material Dashboard 2 React layouts
 import Dashboard from 'layouts/dashboard';
 import WorkoutPlans from 'layouts/workout-plans';
-import YogaClasses from 'layouts/yoga-classes';
+import Consultancy from 'layouts/consultancy';
 import HealthTips from 'layouts/health-tips';
 import NutritionGuide from 'layouts/nutrition';
 import BMICalculator from 'layouts/bmi-calculator';
@@ -106,11 +106,11 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'Yoga·Classes',
-    key: 'yoga-classes',
+    name: 'Consultancy',
+    key: 'consultancy',
     icon: <Icon fontSize="small">self_improvement</Icon>,
-    route: '/yoga-classes',
-    component: <YogaClasses />,
+    route: '/consultancy',
+    component: <Consultancy />,
   },
   {
     type: 'collapse',
