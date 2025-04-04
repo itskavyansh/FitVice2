@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import authService from '../services/authService';
 
@@ -13,19 +13,40 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  // Set initial state directly from localStorage
+  const initialToken = localStorage.getItem('token');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  // Create a memoized version of checkAuth that won't change on re-renders
+  const checkAuth = useCallback(async () => {
+    console.log('Starting authentication check...');
     try {
       const token = localStorage.getItem('token');
-      if (token) {
-        const userData = await authService.getCurrentUser();
+
+      if (!token) {
+        console.log('No token found in localStorage, user is not authenticated');
+        setUser(null);
+        setLoading(false);
+        setInitialized(true);
+        return;
+      }
+
+      console.log('Token found in localStorage, validating...');
+      // Always set the auth header with the token
+      authService.setupAuthHeaderForServiceCalls();
+
+      // Try to get the user data to validate the token
+      const userData = await authService.getCurrentUser();
+
+      if (userData) {
+        console.log('User data retrieved successfully:', userData.email);
         setUser(userData);
+      } else {
+        console.log('Failed to get user data, clearing token');
+        localStorage.removeItem('token');
+        setUser(null);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -33,13 +54,43 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     } finally {
       setLoading(false);
+      setInitialized(true);
+      console.log('Auth check completed, loading set to false');
     }
-  };
+  }, []);
+
+  // Use an effect to check authentication on mount
+  useEffect(() => {
+    console.log('AuthProvider mounted, initial token:', initialToken ? 'exists' : 'none');
+
+    // Initial state setup - always set the header if token exists
+    if (initialToken) {
+      authService.setupAuthHeaderForServiceCalls();
+    }
+
+    // Run the full auth check
+    checkAuth();
+
+    // Setup an event listener for storage changes to handle multi-tab logout
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' && !e.newValue) {
+        console.log('Token removed in another tab, logging out');
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [initialToken, checkAuth]);
 
   const login = async (email, password) => {
     try {
+      console.log('Logging in user:', email);
       const response = await authService.login(email, password);
-      localStorage.setItem('token', response.token);
+      console.log('Login successful, setting user state');
       setUser(response.user);
       return { success: true };
     } catch (error) {
@@ -50,8 +101,9 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     try {
+      console.log('Signing up user:', userData.email);
       const response = await authService.signup(userData);
-      localStorage.setItem('token', response.token);
+      console.log('Signup successful, setting user state');
       setUser(response.user);
       return { success: true };
     } catch (error) {
@@ -60,15 +112,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      localStorage.removeItem('token');
-      setUser(null);
-      return { success: true };
-    } catch (error) {
-      console.error('Logout error:', error);
-      return { success: false, error: error.message };
-    }
+  const logout = () => {
+    console.log('Logging out user');
+    authService.logout();
+    setUser(null);
+    return { success: true };
   };
 
   const updateProfile = async (profileData) => {
@@ -95,11 +143,13 @@ export const AuthProvider = ({ children }) => {
     user,
     setUser,
     loading,
+    initialized,
     login,
     signup,
     logout,
     updateProfile,
     uploadProfilePicture,
+    refreshAuth: checkAuth,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
