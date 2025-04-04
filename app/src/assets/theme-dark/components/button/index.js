@@ -14,10 +14,10 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React Button Styles
-import root from "assets/theme-dark/components/button/root";
-import contained from "assets/theme-dark/components/button/contained";
-import outlined from "assets/theme-dark/components/button/outlined";
-import buttonText from "assets/theme-dark/components/button/text";
+import root from 'assets/theme-dark/components/button/root';
+import contained from 'assets/theme-dark/components/button/contained';
+import outlined from 'assets/theme-dark/components/button/outlined';
+import buttonText from 'assets/theme-dark/components/button/text';
 
 const button = {
   defaultProps: {

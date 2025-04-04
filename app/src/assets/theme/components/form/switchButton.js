@@ -14,14 +14,14 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React base styles
-import colors from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
+import colors from 'assets/theme/base/colors';
+import borders from 'assets/theme/base/borders';
+import boxShadows from 'assets/theme/base/boxShadows';
 
 // Material Dashboard 2 React helper functions
 // import rgba from "assets/theme/functions/rgba";
-import pxToRem from "assets/theme/functions/pxToRem";
-import linearGradient from "assets/theme/functions/linearGradient";
+import pxToRem from 'assets/theme/functions/pxToRem';
+import linearGradient from 'assets/theme/functions/linearGradient';
 
 const { white, gradients, grey, transparent } = colors;
 const { borderWidth } = borders;
@@ -36,33 +36,33 @@ const switchButton = {
     switchBase: {
       color: gradients.dark.main,
 
-      "&:hover": {
+      '&:hover': {
         backgroundColor: transparent.main,
       },
 
-      "&.Mui-checked": {
+      '&.Mui-checked': {
         color: gradients.dark.main,
 
-        "&:hover": {
+        '&:hover': {
           backgroundColor: transparent.main,
         },
 
-        "& .MuiSwitch-thumb": {
+        '& .MuiSwitch-thumb': {
           borderColor: `${gradients.dark.main} !important`,
         },
 
-        "& + .MuiSwitch-track": {
+        '& + .MuiSwitch-track': {
           backgroundColor: `${gradients.dark.main} !important`,
           borderColor: `${gradients.dark.main} !important`,
           opacity: 1,
         },
       },
 
-      "&.Mui-disabled + .MuiSwitch-track": {
-        opacity: "0.3 !important",
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: '0.3 !important',
       },
 
-      "&.Mui-focusVisible .MuiSwitch-thumb": {
+      '&.Mui-focusVisible .MuiSwitch-thumb': {
         backgroundImage: linearGradient(gradients.info.main, gradients.info.state),
       },
     },
