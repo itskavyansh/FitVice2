@@ -8,6 +8,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Material Dashboard 2 React components
 import MDBox from 'components/MDBox';
@@ -46,9 +47,16 @@ import Profile from './components/profile/Profile';
 import Navbar from './components/layout/Navbar';
 import NutritionGuide from './components/nutrition/NutritionGuide';
 
+// Auth Service for initialization
+import authService from './services/authService';
+
 // Images
 import brandWhite from 'assets/images/logo-ct.png';
 import brandDark from 'assets/images/logo-ct-dark.png';
+
+// We'll eliminate the asynchronous initialization here as it's unreliable
+// The AuthProvider will handle initialization instead
+console.log('App component loaded, initialization will be handled by AuthProvider');
 
 export default function App() {
   return (
@@ -75,7 +83,7 @@ const AppContent = () => {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   // Cache for the rtl
   useMemo(() => {
@@ -245,8 +253,34 @@ const AppContent = () => {
       {layout === 'vr' && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="/signin" element={user ? <Navigate to="/dashboard" replace /> : <SignIn />} />
-        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
+        <Route 
+          path="/signin" 
+          element={
+            loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+              </Box>
+            ) : user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <SignIn />
+            )
+          } 
+        />
+        <Route 
+          path="/signup" 
+          element={
+            loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+              </Box>
+            ) : user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <SignUp />
+            )
+          }
+        />
         <Route
           path="/dashboard"
           element={
