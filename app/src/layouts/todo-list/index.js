@@ -1,3 +1,9 @@
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
+*/
+
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
@@ -29,8 +35,6 @@ import {
   Tooltip,
   Badge,
   Popover,
-  Menu,
-  MenuItem,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -40,12 +44,11 @@ import {
   PriorityHigh as PriorityHighIcon,
   Star as StarIcon,
   DragIndicator as DragIndicatorIcon,
-  CalendarToday as CalendarTodayIcon,
 } from '@mui/icons-material';
 import { SlArrowRight } from 'react-icons/sl';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 // @mui material components
 import Grid from '@mui/material/Grid';
@@ -119,14 +122,55 @@ const TodoList = () => {
   };
 
   const handleToggleTodo = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          const currentDay = getCurrentDay();
+          const newDailyCompletions = [...todo.dailyCompletions];
+          newDailyCompletions[currentDay] = !newDailyCompletions[currentDay];
+
+          return {
+            ...todo,
+            dailyCompletions: newDailyCompletions,
+            history: [
+              ...todo.history,
+              {
+                date: new Date().toISOString(),
+                action: newDailyCompletions[currentDay] ? 'completed' : 'uncompleted',
+                day: currentDay,
+              },
+            ],
+          };
+        }
+        return todo;
+      }),
     );
   };
 
-  const handleDailyToggle = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => (todo.id === id ? { ...todo, isDaily: !todo.isDaily } : todo)),
+  const handleDailyToggle = (id, dayIndex) => {
+    if (isDayInFuture(dayIndex)) return;
+
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          const newDailyCompletions = [...todo.dailyCompletions];
+          newDailyCompletions[dayIndex] = !newDailyCompletions[dayIndex];
+
+          return {
+            ...todo,
+            dailyCompletions: newDailyCompletions,
+            history: [
+              ...todo.history,
+              {
+                date: new Date().toISOString(),
+                action: newDailyCompletions[dayIndex] ? 'completed' : 'uncompleted',
+                day: dayIndex,
+              },
+            ],
+          };
+        }
+        return todo;
+      }),
     );
   };
 
@@ -175,6 +219,7 @@ const TodoList = () => {
         todo.id === id ? { ...todo, starred: !todo.starred, isAnimating: true } : todo,
       );
 
+      // Sort todos: starred items first, then by original order
       const sortedTodos = updatedTodos.sort((a, b) => {
         if (a.starred === b.starred) {
           return prevTodos.indexOf(a) - prevTodos.indexOf(b);
@@ -182,6 +227,7 @@ const TodoList = () => {
         return b.starred ? 1 : -1;
       });
 
+      // Remove animation flag after sorting
       return sortedTodos.map((todo) => ({
         ...todo,
         isAnimating: false,
@@ -233,13 +279,6 @@ const TodoList = () => {
   const handleCalendarClose = () => {
     setCalendarAnchorEl(null);
     setSelectedTodoForCalendar(null);
-  };
-
-  const handleDateChange = (date) => {
-    if (selectedTodoForCalendar) {
-      handleCalendarDateSelect(date, selectedTodoForCalendar.id);
-      handleCalendarClose();
-    }
   };
 
   const calendarOpen = Boolean(calendarAnchorEl);
@@ -312,14 +351,7 @@ const TodoList = () => {
                     }}
                   >
                     <form onSubmit={handleAddTodo}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          gap: 1,
-                          alignItems: 'center',
-                          position: 'relative',
-                        }}
-                      >
+                      <Box sx={{ display: 'flex', gap: 1 }}>
                         <TextField
                           fullWidth
                           variant="outlined"
@@ -461,8 +493,15 @@ const TodoList = () => {
                                       </Box>
                                       <Stack
                                         direction="row"
-                                        spacing={1}
-                                        sx={{ alignItems: 'center', mr: 1 }}
+                                        spacing={2}
+                                        sx={{
+                                          mt: 2,
+                                          justifyContent: 'space-between',
+                                          maxWidth: '500px',
+                                          width: '300px',
+                                          height: '34px',
+                                          alignItems: 'center',
+                                        }}
                                       >
                                         {Array(7)
                                           .fill(0)
@@ -481,7 +520,7 @@ const TodoList = () => {
                                               >
                                                 <Checkbox
                                                   checked={todo.dailyCompletions[index]}
-                                                  onChange={() => handleDailyToggle(todo.id)}
+                                                  onChange={() => handleDailyToggle(todo.id, index)}
                                                   size="small"
                                                   disabled={isFutureDay}
                                                   sx={{
@@ -531,6 +570,19 @@ const TodoList = () => {
                                               </Box>
                                             );
                                           })}
+                                        <IconButton
+                                          size="small"
+                                          sx={{
+                                            color: '#3089eb',
+                                            '&:hover': {
+                                              backgroundColor: 'rgba(48, 137, 235, 0.1)',
+                                              transform: 'scale(1.1)',
+                                            },
+                                          }}
+                                          onClick={(e) => handleCalendarOpen(e, todo)}
+                                        >
+                                          <SlArrowRight />
+                                        </IconButton>
                                       </Stack>
                                     </Box>
                                     <ListItemSecondaryAction>
@@ -798,7 +850,7 @@ const TodoList = () => {
             borderRadius: '12px',
             overflow: 'hidden',
             width: '300px',
-            height: '225px',
+            height: '225px', // 4:3 ratio (300 * 0.75 = 225)
             display: 'flex',
             flexDirection: 'column',
           },
@@ -886,35 +938,67 @@ const TodoList = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={calendarOpen} onClose={handleCalendarClose}>
-        <DialogTitle>Select Date</DialogTitle>
-        <DialogContent>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateCalendar
-              onChange={handleDateChange}
-              renderDay={(day, _value, DayComponentProps) => {
-                const isCompleted = selectedTodoForCalendar
-                  ? getDateCompletionStatus(day, selectedTodoForCalendar.id)
-                  : false;
+      <Popover
+        open={calendarOpen}
+        anchorEl={calendarAnchorEl}
+        onClose={handleCalendarClose}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        PaperProps={{
+          sx: {
+            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.97)',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            marginLeft: '8px',
+          },
+        }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateCalendar
+            onChange={(newDate) => {
+              if (selectedTodoForCalendar) {
+                handleCalendarDateSelect(newDate, selectedTodoForCalendar.id);
+              }
+            }}
+            renderDay={(day, _value, DayComponentProps) => {
+              const isCompleted =
+                selectedTodoForCalendar && getDateCompletionStatus(day, selectedTodoForCalendar.id);
 
-                return (
-                  <Badge
-                    key={day.toString()}
-                    overlap="circular"
-                    badgeContent={isCompleted ? '✓' : null}
-                    color="success"
+              return (
+                <Badge
+                  key={day.toString()}
+                  overlap="circular"
+                  badgeContent={isCompleted ? '✓' : null}
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      backgroundColor: '#4da3ff',
+                      color: 'white',
+                      fontSize: '0.8rem',
+                    },
+                  }}
+                >
+                  <Box
+                    {...DayComponentProps}
+                    sx={{
+                      ...DayComponentProps.sx,
+                      backgroundColor: isCompleted ? 'rgba(77, 163, 255, 0.1)' : 'transparent',
+                    }}
                   >
-                    <Box {...DayComponentProps} />
-                  </Badge>
-                );
-              }}
-            />
-          </LocalizationProvider>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCalendarClose}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+                    {day.date()}
+                  </Box>
+                </Badge>
+              );
+            }}
+          />
+        </LocalizationProvider>
+      </Popover>
 
       <Footer />
     </DashboardLayout>

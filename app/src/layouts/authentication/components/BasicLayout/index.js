@@ -49,7 +49,7 @@ function BasicLayout({ image, children }) {
             image &&
             `${linearGradient(
               rgba(gradients.dark.main, 0.6),
-              rgba(gradients.dark.state, 0.6)
+              rgba(gradients.dark.state, 0.6),
             )}, url(${image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
