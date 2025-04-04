@@ -21,14 +21,14 @@ Coded by www.creative-tim.com
 
 const colors = {
   background: {
-    default: '#1a2035',
-    sidenav: '#1f283e',
-    card: '#202940',
+    default: '#111827',
+    sidenav: '#1f2937',
+    card: '#1e293b',
   },
 
   text: {
-    main: '#ffffffcc',
-    focus: '#ffffffcc',
+    main: '#cbd5e0',
+    focus: '#e2e8f0',
   },
 
   transparent: {
@@ -47,96 +47,96 @@ const colors = {
   },
 
   primary: {
-    main: '#e91e63',
-    focus: '#e91e63',
+    main: '#3b82f6',
+    focus: '#2563eb',
   },
 
   secondary: {
-    main: '#7b809a',
-    focus: '#8f93a9',
+    main: '#64748b',
+    focus: '#475569',
   },
 
   info: {
-    main: '#1A73E8',
-    focus: '#1662C4',
+    main: '#38bdf8',
+    focus: '#0ea5e9',
   },
 
   success: {
-    main: '#4CAF50',
-    focus: '#67bb6a',
+    main: '#10b981',
+    focus: '#059669',
   },
 
   warning: {
-    main: '#fb8c00',
-    focus: '#fc9d26',
+    main: '#f59e0b',
+    focus: '#d97706',
   },
 
   error: {
-    main: '#F44335',
-    focus: '#f65f53',
+    main: '#ef4444',
+    focus: '#dc2626',
   },
 
   light: {
-    main: '#f0f2f566',
-    focus: '#f0f2f566',
+    main: '#f7fafc66',
+    focus: '#e2e8f066',
   },
 
   dark: {
-    main: '#344767',
-    focus: '#2c3c58',
+    main: '#334155',
+    focus: '#1e293b',
   },
 
   grey: {
-    100: '#f8f9fa',
-    200: '#f0f2f5',
-    300: '#dee2e6',
-    400: '#ced4da',
-    500: '#adb5bd',
-    600: '#6c757d',
-    700: '#495057',
-    800: '#343a40',
-    900: '#212529',
+    100: '#f7fafc',
+    200: '#edf2f7',
+    300: '#e2e8f0',
+    400: '#cbd5e0',
+    500: '#a0aec0',
+    600: '#718096',
+    700: '#4a5568',
+    800: '#2d3748',
+    900: '#1a202c',
   },
 
   gradients: {
     primary: {
-      main: '#EC407A',
-      state: '#D81B60',
+      main: '#4b5563',
+      state: '#374151',
     },
 
     secondary: {
-      main: '#747b8a',
-      state: '#495361',
+      main: '#64748b',
+      state: '#475569',
     },
 
     info: {
-      main: '#49a3f1',
-      state: '#1A73E8',
+      main: '#60a5fa',
+      state: '#3b82f6',
     },
 
     success: {
-      main: '#66BB6A',
-      state: '#43A047',
+      main: '#34d399',
+      state: '#10b981',
     },
 
     warning: {
-      main: '#FFA726',
-      state: '#FB8C00',
+      main: '#fbbf24',
+      state: '#f59e0b',
     },
 
     error: {
-      main: '#EF5350',
-      state: '#E53935',
+      main: '#f87171',
+      state: '#ef4444',
     },
 
     light: {
-      main: '#EBEFF4',
-      state: '#CED4DA',
+      main: '#F9FAFB',
+      state: '#E5E7EB',
     },
 
     dark: {
-      main: '#323a54',
-      state: '#1a2035',
+      main: '#1f2937',
+      state: '#111827',
     },
   },
 
@@ -204,55 +204,55 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: '#f8b3ca',
-      text: '#cc084b',
+      background: '#111827',
+      text: '#60a5fa',
     },
 
     secondary: {
-      background: '#d7d9e1',
-      text: '#6c757d',
+      background: '#1f2937',
+      text: '#a0aec0',
     },
 
     info: {
-      background: '#aecef7',
-      text: '#095bc6',
+      background: '#172554',
+      text: '#38bdf8',
     },
 
     success: {
-      background: '#bce2be',
-      text: '#339537',
+      background: '#064e3b',
+      text: '#34d399',
     },
 
     warning: {
-      background: '#ffd59f',
-      text: '#c87000',
+      background: '#78350f',
+      text: '#fbbf24',
     },
 
     error: {
-      background: '#fcd3d0',
-      text: '#f61200',
+      background: '#7f1d1d',
+      text: '#f87171',
     },
 
     light: {
-      background: '#ffffff',
-      text: '#c7d3de',
+      background: '#374151',
+      text: '#f7fafc',
     },
 
     dark: {
-      background: '#8097bf',
-      text: '#1e2e4a',
+      background: '#0f172a',
+      text: '#cbd5e0',
     },
   },
 
   coloredShadows: {
-    primary: '#e91e62',
-    secondary: '#110e0e',
-    info: '#00bbd4',
-    success: '#4caf4f',
-    warning: '#ff9900',
-    error: '#f44336',
-    light: '#adb5bd',
-    dark: '#404040',
+    primary: '#3b82f6',
+    secondary: '#64748b',
+    info: '#38bdf8',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+    light: '#e2e8f0',
+    dark: '#1e293b',
   },
 
   inputBorderColor: '#d2d6da',
