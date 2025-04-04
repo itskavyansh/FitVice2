@@ -1,7 +1,7 @@
 [build]
   base = "app/"
-  publish = "build/"
-  command = "CI=false npm run build"
+  publish = "app/build/"
+  command = "npm run build"
 
 [build.environment]
   DISABLE_ESLINT_PLUGIN = "true"
