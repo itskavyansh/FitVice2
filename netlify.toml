@@ -1,0 +1,13 @@
+[build]
+  base = "app/"
+  publish = "build/"
+  command = "CI=false npm run build"
+
+[build.environment]
+  DISABLE_ESLINT_PLUGIN = "true"
+  CI = "false"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
