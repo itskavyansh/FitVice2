@@ -20,10 +20,10 @@ Coded by www.creative-tim.com
  */
 
 // Material Dashboard 2 React Base Styles
-import colors from "assets/theme/base/colors";
+import colors from 'assets/theme/base/colors';
 
 // Material Dashboard 2 React Helper Functions
-import boxShadow from "assets/theme/functions/boxShadow";
+import boxShadow from 'assets/theme/functions/boxShadow';
 
 const { black, white, tabs, coloredShadows } = colors;
 
@@ -49,7 +49,7 @@ const boxShadows = {
     0.04
   )}`,
   xxl: boxShadow([0, 20], [27, 0], black.main, 0.05),
-  inset: boxShadow([0, 1], [2, 0], black.main, 0.075, "inset"),
+  inset: boxShadow([0, 1], [2, 0], black.main, 0.075, 'inset'),
   colored: {
     primary: `${boxShadow([0, 4], [20, 0], black.main, 0.14)}, ${boxShadow(
       [0, 7],
@@ -101,7 +101,7 @@ const boxShadows = {
     )}`,
   },
 
-  navbarBoxShadow: `${boxShadow([0, 0], [1, 1], white.main, 0.9, "inset")}, ${boxShadow(
+  navbarBoxShadow: `${boxShadow([0, 0], [1, 1], white.main, 0.9, 'inset')}, ${boxShadow(
     [0, 20],
     [27, 0],
     black.main,

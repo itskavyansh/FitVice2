@@ -14,12 +14,12 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React helper functions
-import pxToRem from "assets/theme-dark/functions/pxToRem";
+import pxToRem from 'assets/theme-dark/functions/pxToRem';
 
 // Material Dashboard 2 React base styles
-import colors from "assets/theme-dark/base/colors";
-import boxShadows from "assets/theme-dark/base/boxShadows";
-import borders from "assets/theme-dark/base/borders";
+import colors from 'assets/theme-dark/base/colors';
+import boxShadows from 'assets/theme-dark/base/boxShadows';
+import borders from 'assets/theme-dark/base/borders';
 
 const { transparent } = colors;
 const { md } = boxShadows;
