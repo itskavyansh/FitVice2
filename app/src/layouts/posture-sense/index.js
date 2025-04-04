@@ -96,7 +96,7 @@ ChartJS.register(
   BarElement,
   Title,
   ChartTooltip,
-  Legend
+  Legend,
 );
 
 function PostureSense() {
@@ -205,8 +205,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Chest', 'Triceps', 'Shoulders'],
       caloriesPerRep: 0.6,
-      downAngle: 70, // SIMPLIFIED threshold - anything below this is DOWN
-      upAngle: 110, // SIMPLIFIED threshold - anything above this is UP
+      downAngle: 70,
+      upAngle: 110,
       invertStages: true,
       isVertical: false,
       joints: {
@@ -381,10 +381,10 @@ function PostureSense() {
         await Promise.all([
           loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js'),
           loadScript(
-            'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js'
+            'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js',
           ),
           loadScript(
-            'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js'
+            'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js',
           ),
         ]);
 
@@ -421,7 +421,7 @@ function PostureSense() {
       // First check if the browser supports getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error(
-          "Your browser doesn't support camera access. Please try using a modern browser."
+          "Your browser doesn't support camera access. Please try using a modern browser.",
         );
       }
 
@@ -531,7 +531,7 @@ function PostureSense() {
                   // Calculate the angle between shoulder, elbow, and wrist
                   const shoulderElbowAngle = Math.atan2(
                     joint2[1] - joint1[1],
-                    joint2[0] - joint1[0]
+                    joint2[0] - joint1[0],
                   );
                   const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
                   angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
@@ -610,24 +610,24 @@ function PostureSense() {
                       ctx.strokeText(
                         leftText,
                         leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20
+                        leftKnee.y * canvas.height - 20,
                       );
                       ctx.fillText(
                         leftText,
                         leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20
+                        leftKnee.y * canvas.height - 20,
                       );
                       // Right knee angle
                       const rightText = `R: ${Math.round(rightAngle)}°`;
                       ctx.strokeText(
                         rightText,
                         rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20
+                        rightKnee.y * canvas.height - 20,
                       );
                       ctx.fillText(
                         rightText,
                         rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20
+                        rightKnee.y * canvas.height - 20,
                       );
                     }
                   } else if (leftAngle !== null) {
@@ -694,7 +694,6 @@ function PostureSense() {
 
                   // Simple DOWN position detection
                   if (angle <= downAngle + 10) {
-                    // 110 degrees or less
                     console.log(`Lunge DOWN position at: ${angle.toFixed(1)}°`);
                     stageRef.current = 'DOWN';
                     setDisplayStage('DOWN');
@@ -703,7 +702,6 @@ function PostureSense() {
                   // Simple UP position and rep counting
                   // Only count rep when coming up from DOWN position
                   if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    // 155 degrees or more
                     console.log(`Lunge UP position at: ${angle.toFixed(1)}°, counting rep`);
                     stageRef.current = 'UP';
                     setDisplayStage('UP');
@@ -775,7 +773,6 @@ function PostureSense() {
 
                   // Simple DOWN position detection
                   if (angle <= downAngle + 10) {
-                    // 100 degrees or less
                     console.log(`Squat DOWN position at: ${angle.toFixed(1)}°`);
                     stageRef.current = 'DOWN';
                     setDisplayStage('DOWN');
@@ -784,22 +781,17 @@ function PostureSense() {
                   // Simple UP position and rep counting
                   // Only count rep when coming up from DOWN position
                   if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    // 150 degrees or more
                     console.log(`Squat UP position at: ${angle.toFixed(1)}°, counting rep`);
                     stageRef.current = 'UP';
                     setDisplayStage('UP');
-
-                    // Count the rep
                     counterRef.current += 1;
                     setDisplayCounter(counterRef.current);
 
-                    // Show celebration if target reached
                     if (counterRef.current >= targetReps) {
                       setShowCelebration(true);
                       setTimeout(() => setShowCelebration(false), 3000);
                     }
 
-                    // Reset after a short delay
                     setTimeout(() => {
                       stageRef.current = 'READY';
                       setDisplayStage('READY');

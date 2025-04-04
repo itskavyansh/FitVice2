@@ -23,44 +23,42 @@ import MDBox from 'components/MDBox';
 
 // Custom styles for MDPagination
 import MDPaginationItemRoot from 'components/MDPagination/MDPaginationItemRoot';
+import MDPaginationRoot from 'components/MDPagination/MDPaginationRoot';
 
 // The Pagination main context
 const Context = createContext();
 
 const MDPagination = forwardRef(
   ({ item, variant, color, size, active, children, ...rest }, ref) => {
-    const context = useContext(Context);
-    const paginationSize = context ? context.size : null;
+    const [controller] = useMaterialUIController();
+    const { darkMode } = controller;
 
     const value = useMemo(() => ({ variant, color, size }), [variant, color, size]);
 
     return (
-      <Context.Provider value={value}>
+      <Context.Provider value={{ variant, color, size, active }}>
         {item ? (
           <MDPaginationItemRoot
             {...rest}
             ref={ref}
-            variant={active ? context.variant : 'outlined'}
-            color={active ? context.color : 'secondary'}
-            iconOnly
-            circular
-            ownerState={{ variant, active, paginationSize }}
+            variant={variant === 'gradient' ? 'contained' : variant}
+            size={size}
+            ownerState={{ variant, active, paginationSize: size, darkMode }}
           >
             {children}
           </MDPaginationItemRoot>
         ) : (
-          <MDBox
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="center"
-            sx={{ listStyle: 'none' }}
+          <MDPaginationRoot
+            {...rest}
+            ref={ref}
+            ownerState={{ variant, paginationSize: size, darkMode }}
           >
             {children}
-          </MDBox>
+          </MDPaginationRoot>
         )}
       </Context.Provider>
     );
-  }
+  },
 );
 
 // Setting default values for the props of MDPagination

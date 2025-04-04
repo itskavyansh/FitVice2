@@ -39,7 +39,7 @@ api.interceptors.request.use(
   (error) => {
     console.error('Request error:', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add response interceptor for logging
@@ -59,7 +59,7 @@ api.interceptors.response.use(
       message: error.message,
     });
     return Promise.reject(error);
-  }
+  },
 );
 
 const authService = {

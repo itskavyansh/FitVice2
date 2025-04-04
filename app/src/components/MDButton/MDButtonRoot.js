@@ -41,7 +41,7 @@ export default styled(Button)(({ theme, ownerState }) => {
           [0, 3],
           [1, -2],
           palette[color].main,
-          0.2
+          0.2,
         )}, ${boxShadow([0, 1], [5, 0], palette[color].main, 0.15)}`
       : 'none';
 
@@ -51,7 +51,7 @@ export default styled(Button)(({ theme, ownerState }) => {
           [0, 4],
           [23, 0],
           palette[color].main,
-          0.15
+          0.15,
         )}, ${boxShadow([0, 8], [10, -5], palette[color].main, 0.2)}`
       : 'none';
 
@@ -159,7 +159,7 @@ export default styled(Button)(({ theme, ownerState }) => {
           [0, 3],
           [1, -2],
           palette[color].main,
-          0.2
+          0.2,
         )}, ${boxShadow([0, 1], [5, 0], palette[color].main, 0.15)}`
       : 'none';
 
@@ -169,7 +169,7 @@ export default styled(Button)(({ theme, ownerState }) => {
           [0, 4],
           [23, 0],
           palette[color].main,
-          0.15
+          0.15,
         )}, ${boxShadow([0, 8], [10, -5], palette[color].main, 0.2)}`
       : 'none';
 
