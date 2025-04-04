@@ -40,18 +40,24 @@ import {
   Build as BuildIcon,
   Save as SaveIcon,
 } from '@mui/icons-material';
+import PropTypes from 'prop-types';
 import { useAuth } from '../../context/AuthContext';
 
 // Styled components
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  border: `4px solid ${theme.palette.background.paper}`,
-  boxShadow: `0 8px 24px 0 rgba(0, 0, 0, 0.15)`,
+  width: 100,
+  height: 100,
+  border: `3px solid ${theme.palette.background.paper}`,
+  boxShadow: `0 10px 30px 0 rgba(0, 0, 0, 0.1)`,
   margin: '0 auto',
   position: 'relative',
-  '&:hover .avatar-overlay': {
-    opacity: 1,
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: `0 15px 35px 0 rgba(0, 0, 0, 0.15)`,
+    '& .avatar-overlay': {
+      opacity: 1,
+    },
   },
 }));
 
@@ -61,24 +67,52 @@ const AvatarOverlay = styled(Box)(({ theme }) => ({
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  backgroundColor: 'rgba(0, 0, 0, 0.4)',
   borderRadius: '50%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   opacity: 0,
-  transition: 'opacity 0.3s',
+  transition: 'opacity 0.3s ease',
   cursor: 'pointer',
+  backdropFilter: 'blur(2px)',
 }));
 
 const StatsCard = styled(Card)(({ theme }) => ({
   height: '100%',
   borderRadius: '12px',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-  transition: 'transform 0.3s, box-shadow 0.3s',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
+  border: '1px solid rgba(0, 0, 0, 0.05)',
+  overflow: 'hidden',
+  position: 'relative',
+  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 6px 25px rgba(0, 0, 0, 0.1)',
+    transform: 'translateY(-8px) scale(1.02)',
+    boxShadow: '0 15px 35px rgba(0, 0, 0, 0.1)',
+    '&::before': {
+      opacity: 1,
+      transform: 'translateY(0)',
+    },
+    '& .stat-icon': {
+      transform: 'scale(1.15)',
+      color: theme.palette.primary.main,
+    },
+    '& .stat-value': {
+      transform: 'scale(1.05)',
+      color: theme.palette.primary.main,
+    },
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.info.main})`,
+    opacity: 0,
+    transform: 'translateY(4px)',
+    transition: 'opacity 0.3s ease, transform 0.3s ease',
   },
 }));
 
@@ -97,6 +131,13 @@ const TabPanel = (props) => {
       {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
     </div>
   );
+};
+
+// PropTypes for TabPanel
+TabPanel.propTypes = {
+  children: PropTypes.node.isRequired,
+  value: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 // Main component
@@ -264,19 +305,7 @@ const Profile = () => {
   }
 
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        width: '100%',
-        ml: { xs: 0, sm: '280px' },
-        p: { xs: 2, sm: 4 },
-        maxWidth: { xs: '100%', sm: 'calc(100% - 320px)' },
-        boxSizing: 'border-box',
-        marginRight: { xs: 0, sm: '40px' },
-        marginTop: { xs: 2, sm: 3 },
-        marginBottom: { xs: 2, sm: 3 },
-      }}
-    >
+    <Container maxWidth="md" sx={{ mx: 'auto', p: 2, width: 'calc(100% - 20px)' }}>
       {/* Header with cover image and avatar */}
       <Paper
         elevation={0}
@@ -291,7 +320,7 @@ const Profile = () => {
       >
         <Box
           sx={{
-            height: { xs: '150px', sm: '200px' },
+            height: { xs: '120px', sm: '180px' },
             backgroundImage:
               'url(https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3ltfGVufDB8fDB8fHww&auto=format&fit=crop&w=1300&q=60)',
             backgroundSize: 'cover',
@@ -433,9 +462,21 @@ const Profile = () => {
 
       {/* Tab content */}
       <TabPanel value={tabValue} index={0}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <Card sx={{ borderRadius: '16px', height: '100%' }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={7}>
+            <Card
+              elevation={0}
+              sx={{
+                borderRadius: '16px',
+                height: '100%',
+                border: '1px solid rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+                  borderColor: 'transparent',
+                },
+              }}
+            >
               <CardContent>
                 <Typography variant="h6" component="h2" gutterBottom>
                   Personal Information
@@ -451,6 +492,20 @@ const Profile = () => {
                       value={formData.firstName}
                       onChange={handleChange}
                       variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          transition: 'all 0.3s ease',
+                          '&.Mui-focused': {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: (theme) => theme.palette.primary.main,
+                              borderWidth: '1px',
+                            },
+                          },
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: (theme) => theme.palette.primary.light,
+                          },
+                        },
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -461,6 +516,20 @@ const Profile = () => {
                       value={formData.lastName}
                       onChange={handleChange}
                       variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          transition: 'all 0.3s ease',
+                          '&.Mui-focused': {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: (theme) => theme.palette.primary.main,
+                              borderWidth: '1px',
+                            },
+                          },
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: (theme) => theme.palette.primary.light,
+                          },
+                        },
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -500,8 +569,20 @@ const Profile = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Card sx={{ borderRadius: '16px', height: '100%' }}>
+          <Grid item xs={12} md={5}>
+            <Card
+              elevation={0}
+              sx={{
+                borderRadius: '16px',
+                height: '100%',
+                border: '1px solid rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+                  borderColor: 'transparent',
+                },
+              }}
+            >
               <CardContent>
                 <Typography variant="h6" component="h2" gutterBottom>
                   Physical Details
@@ -580,12 +661,44 @@ const Profile = () => {
               startIcon={<SaveIcon />}
               sx={{
                 px: 4,
-                py: 1,
+                py: 1.25,
                 borderRadius: '8px',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                '&:hover': {
+                  boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
+                  transform: 'translateY(-2px)',
+                },
+                '&:active': {
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.15)',
+                  transform: 'translateY(1px)',
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.6s ease',
+                },
+                '&:hover::after': {
+                  transform: 'translateX(100%)',
+                },
               }}
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CircularProgress size={16} sx={{ mr: 1, color: 'white' }} />
+                  Saving...
+                </Box>
+              ) : (
+                'Save Changes'
+              )}
             </Button>
           </Box>
         )}
@@ -605,7 +718,7 @@ const Profile = () => {
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           {/* Progress overview */}
           <Grid item xs={12}>
             <Card sx={{ borderRadius: '16px' }}>
@@ -629,8 +742,18 @@ const Profile = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard sx={{ height: '100%' }}>
               <CardContent sx={{ textAlign: 'center' }}>
-                <FitnessCenterIcon color="primary" sx={{ fontSize: 40, mb: 1 }} />
-                <Typography variant="h4" component="div" fontWeight="bold">
+                <FitnessCenterIcon
+                  className="stat-icon"
+                  color="primary"
+                  sx={{ fontSize: 40, mb: 1, transition: 'all 0.3s ease' }}
+                />
+                <Typography
+                  className="stat-value"
+                  variant="h4"
+                  component="div"
+                  fontWeight="bold"
+                  sx={{ transition: 'all 0.3s ease' }}
+                >
                   {fitnessStats.workoutsCompleted}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -643,8 +766,18 @@ const Profile = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard sx={{ height: '100%' }}>
               <CardContent sx={{ textAlign: 'center' }}>
-                <DirectionsRunIcon color="secondary" sx={{ fontSize: 40, mb: 1 }} />
-                <Typography variant="h4" component="div" fontWeight="bold">
+                <DirectionsRunIcon
+                  className="stat-icon"
+                  color="secondary"
+                  sx={{ fontSize: 40, mb: 1, transition: 'all 0.3s ease' }}
+                />
+                <Typography
+                  className="stat-value"
+                  variant="h4"
+                  component="div"
+                  fontWeight="bold"
+                  sx={{ transition: 'all 0.3s ease' }}
+                >
                   {fitnessStats.caloriesBurned.toLocaleString()}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -657,8 +790,17 @@ const Profile = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard sx={{ height: '100%' }}>
               <CardContent sx={{ textAlign: 'center' }}>
-                <RestaurantMenuIcon sx={{ fontSize: 40, mb: 1, color: '#4caf50' }} />
-                <Typography variant="h4" component="div" fontWeight="bold">
+                <RestaurantMenuIcon
+                  className="stat-icon"
+                  sx={{ fontSize: 40, mb: 1, color: '#4caf50', transition: 'all 0.3s ease' }}
+                />
+                <Typography
+                  className="stat-value"
+                  variant="h4"
+                  component="div"
+                  fontWeight="bold"
+                  sx={{ transition: 'all 0.3s ease' }}
+                >
                   {fitnessStats.hoursActive}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -671,8 +813,17 @@ const Profile = () => {
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard sx={{ height: '100%' }}>
               <CardContent sx={{ textAlign: 'center' }}>
-                <MonitorWeightIcon sx={{ fontSize: 40, mb: 1, color: '#ff9800' }} />
-                <Typography variant="h4" component="div" fontWeight="bold">
+                <MonitorWeightIcon
+                  className="stat-icon"
+                  sx={{ fontSize: 40, mb: 1, color: '#f59e0b', transition: 'all 0.3s ease' }}
+                />
+                <Typography
+                  className="stat-value"
+                  variant="h4"
+                  component="div"
+                  fontWeight="bold"
+                  sx={{ transition: 'all 0.3s ease' }}
+                >
                   {fitnessStats.achievements}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -877,17 +1028,51 @@ const Profile = () => {
             </Typography>
             <Divider sx={{ mb: 3 }} />
 
-            <Button variant="outlined" color="primary" sx={{ mr: 2, mb: { xs: 2, sm: 0 } }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{
+                mr: 2,
+                mb: { xs: 2, sm: 0 },
+                borderRadius: '8px',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                '&:hover': {
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                  transform: 'translateY(-2px)',
+                },
+                '&:active': {
+                  transform: 'translateY(1px)',
+                },
+              }}
+            >
               Change Password
             </Button>
 
-            <Button variant="outlined" color="error">
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{
+                borderRadius: '8px',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                  transform: 'translateY(-2px)',
+                  backgroundColor: 'error.main',
+                  color: 'white',
+                },
+                '&:active': {
+                  transform: 'translateY(1px)',
+                },
+              }}
+            >
               Delete Account
             </Button>
           </CardContent>
         </Card>
       </TabPanel>
-    </Box>
+    </Container>
   );
 };
 
