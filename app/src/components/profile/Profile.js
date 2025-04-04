@@ -107,7 +107,11 @@ const Profile = () => {
 
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
             <Avatar
-              src={user?.profilePicture ? `${process.env.REACT_APP_API_URL}${user.profilePicture}` : null}
+              src={
+                user?.profilePicture
+                  ? `${process.env.REACT_APP_API_URL}${user.profilePicture}`
+                  : null
+              }
               sx={{ width: 120, height: 120, mb: 2 }}
             >
               {user?.firstName?.[0]?.toUpperCase()}
@@ -120,11 +124,7 @@ const Profile = () => {
               onChange={handleProfilePictureUpload}
             />
             <label htmlFor="profile-picture-upload">
-              <IconButton
-                color="primary"
-                component="span"
-                disabled={uploading}
-              >
+              <IconButton color="primary" component="span" disabled={uploading}>
                 <PhotoCamera />
               </IconButton>
               {uploading && <CircularProgress size={24} sx={{ ml: 1 }} />}
@@ -192,4 +192,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

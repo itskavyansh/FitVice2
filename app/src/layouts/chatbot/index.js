@@ -5,15 +5,15 @@
 */
 
 // @mui material components
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import MDBox from 'components/MDBox';
 
 // Material Dashboard 2 React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Footer from 'examples/Footer';
 
 function Chatbot() {
   return (
@@ -24,20 +24,20 @@ function Chatbot() {
           <Grid item xs={12}>
             <MDBox
               sx={{
-                height: "80vh",
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                height: '80vh',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <iframe
                 src="YOUR_VOICEFLOW_CHATBOT_URL"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                  borderRadius: "10px",
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  borderRadius: '10px',
                 }}
                 title="Voiceflow Chatbot"
               />

@@ -1,6 +1,6 @@
-import React from "react";
-import { Box, Container, Typography, Grid, Paper } from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
+import React from 'react';
+import { Box, Container, Typography, Grid, Paper } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -23,4 +23,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
