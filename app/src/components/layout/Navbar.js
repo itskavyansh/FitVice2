@@ -1,16 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Avatar,
-  Menu,
-  MenuItem,
-  Divider,
-} from "@mui/material";
-import { useAuth } from "../../context/AuthContext";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Divider } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -27,16 +18,16 @@ const Navbar = () => {
 
   const handleProfile = () => {
     handleClose();
-    navigate("/profile");
+    navigate('/profile');
   };
 
   const handleSignOut = async () => {
     try {
       await logout();
       handleClose();
-      navigate("/signin");
+      navigate('/signin');
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error signing out:', error);
     }
   };
 
@@ -47,7 +38,7 @@ const Navbar = () => {
           FitVice
         </Typography>
         {user && (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar
               src={
                 user.profilePicture
@@ -56,7 +47,7 @@ const Navbar = () => {
               }
               alt={user.firstName}
               onClick={handleMenu}
-              sx={{ cursor: "pointer" }}
+              sx={{ cursor: 'pointer' }}
             >
               {user.firstName?.[0]?.toUpperCase()}
             </Avatar>
@@ -72,4 +63,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

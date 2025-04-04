@@ -56,7 +56,7 @@ const authService = {
         email,
         password,
       });
-      
+
       if (response.data.success && response.data.token) {
         localStorage.setItem('token', response.data.token);
         // Set default authorization header for future requests
@@ -79,7 +79,7 @@ const authService = {
     try {
       console.log('Attempting signup for:', userData.email);
       const response = await api.post('/auth/signup', userData);
-      
+
       if (response.data.success && response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log('Signup successful for:', userData.email);
@@ -113,7 +113,7 @@ const authService = {
       const response = await api.get('/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (response.data.success) {
         console.log('Current user fetched successfully');
         return response.data.user;
@@ -133,16 +133,12 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Uploading profile picture');
-      const response = await api.post(
-        '/auth/profile/picture',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const response = await api.post('/auth/profile/picture', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       if (response.data.success) {
         console.log('Profile picture uploaded successfully');
@@ -188,14 +184,10 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Updating profile');
-      const response = await api.put(
-        '/auth/profile',
-        profileData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      
+      const response = await api.put('/auth/profile', profileData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (response.data.success) {
         console.log('Profile updated successfully');
         return response.data;
@@ -223,7 +215,7 @@ const authService = {
       const response = await api.get('/auth/verify', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const isValid = response.data.success && response.data.valid;
       console.log('Token verification result:', isValid);
       return isValid;
@@ -235,4 +227,4 @@ const authService = {
   },
 };
 
-export default authService; 
+export default authService;

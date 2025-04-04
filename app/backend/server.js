@@ -31,18 +31,33 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`, {
     headers: req.headers,
-    body: req.body,
+    body: req.method === 'POST' || req.method === 'PUT' ? req.body : '[omitted]',
   });
   next();
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitvice', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch((err) => console.error('MongoDB connection error:', err));
+// Connect to MongoDB if not using in-memory database
+if (process.env.USE_IN_MEMORY_DB !== 'true') {
+  console.log('Connecting to MongoDB...');
+  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitvice', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000, // Timeout after 10 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  })
+  .then(() => console.log('Connected to MongoDB successfully'))
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+    console.error('Please ensure MongoDB is running or check your MongoDB Atlas connection string');
+    // Don't exit process in production, but allow restart mechanisms to handle it
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Exiting due to MongoDB connection failure');
+      process.exit(1);
+    }
+  });
+} else {
+  console.log('Using in-memory database mode - MongoDB connection skipped');
+}
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -70,4 +85,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Database: ${process.env.USE_IN_MEMORY_DB === 'true' ? 'In-memory' : 'MongoDB'}`);
 }); 

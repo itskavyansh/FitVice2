@@ -14,14 +14,14 @@ Coded by www.creative-tim.com
 */
 
 // prop-types is a library for typechecking of props
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 // @mui material components
-import Icon from "@mui/material/Icon";
+import Icon from '@mui/material/Icon';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDBox from 'components/MDBox';
+import MDTypography from 'components/MDTypography';
 
 function Invoice({ date, id, price, noGutter }) {
   return (
@@ -46,7 +46,7 @@ function Invoice({ date, id, price, noGutter }) {
         <MDTypography variant="button" fontWeight="regular" color="text">
           {price}
         </MDTypography>
-        <MDBox display="flex" alignItems="center" lineHeight={1} ml={3} sx={{ cursor: "pointer" }}>
+        <MDBox display="flex" alignItems="center" lineHeight={1} ml={3} sx={{ cursor: 'pointer' }}>
           <Icon fontSize="small">picture_as_pdf</Icon>
           <MDTypography variant="button" fontWeight="bold">
             &nbsp;PDF

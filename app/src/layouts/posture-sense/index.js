@@ -5,73 +5,73 @@
 */
 
 // @mui material components
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import { useEffect, useRef, useState, useMemo } from "react";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActionArea from "@mui/material/CardActionArea";
-import Icon from "@mui/material/Icon";
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import CircularProgress from "@mui/material/CircularProgress";
-import LinearProgress from "@mui/material/LinearProgress";
-import Divider from "@mui/material/Divider";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import Chip from "@mui/material/Chip";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import { MenuItem as MenuItemComponent } from "@mui/material";
-import FormHelperText from "@mui/material/FormHelperText";
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActionArea from '@mui/material/CardActionArea';
+import Icon from '@mui/material/Icon';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Chip from '@mui/material/Chip';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { MenuItem as MenuItemComponent } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
-import MDInput from "components/MDInput";
-import MDAlert from "components/MDAlert";
-import MDSnackbar from "components/MDSnackbar";
-import MDProgress from "components/MDProgress";
-import MDAvatar from "components/MDAvatar";
+import MDBox from 'components/MDBox';
+import MDTypography from 'components/MDTypography';
+import MDButton from 'components/MDButton';
+import MDInput from 'components/MDInput';
+import MDAlert from 'components/MDAlert';
+import MDSnackbar from 'components/MDSnackbar';
+import MDProgress from 'components/MDProgress';
+import MDAvatar from 'components/MDAvatar';
 
 // Material Dashboard 2 React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Footer from 'examples/Footer';
 
 // Framer motion
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 // Date-fns
-import { format as formatDate } from "date-fns";
+import { format as formatDate } from 'date-fns';
 
 // Icons
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
-import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
-import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
-import SettingsIcon from "@mui/icons-material/Settings";
-import HistoryIcon from "@mui/icons-material/History";
-import CameraIcon from "@mui/icons-material/Camera";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import InfoIcon from "@mui/icons-material/Info";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import SaveIcon from "@mui/icons-material/Save";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
-import VideocamIcon from "@mui/icons-material/Videocam";
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import SettingsIcon from '@mui/icons-material/Settings';
+import HistoryIcon from '@mui/icons-material/History';
+import CameraIcon from '@mui/icons-material/Camera';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import InfoIcon from '@mui/icons-material/Info';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SaveIcon from '@mui/icons-material/Save';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import VideocamIcon from '@mui/icons-material/Videocam';
 
 // Import Chart.js components directly
 import {
@@ -84,8 +84,8 @@ import {
   Title,
   Tooltip as ChartTooltip,
   Legend,
-} from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
 
 // Register Chart.js components
 ChartJS.register(
@@ -115,12 +115,12 @@ function PostureSense() {
   const [isMediaPipeLoaded, setIsMediaPipeLoaded] = useState(false);
   // New state variables
   const [activeTab, setActiveTab] = useState(0);
-  const [selectedExercise, setSelectedExercise] = useState("bicepCurls");
+  const [selectedExercise, setSelectedExercise] = useState('bicepCurls');
   const [workoutHistory, setWorkoutHistory] = useState([]);
-  const [notification, setNotification] = useState({ open: false, message: "", color: "info" });
+  const [notification, setNotification] = useState({ open: false, message: '', color: 'info' });
   const [showInstructions, setShowInstructions] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
-  const [cameraFacing, setCameraFacing] = useState("user");
+  const [cameraFacing, setCameraFacing] = useState('user');
   const [showStats, setShowStats] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAngles, setShowAngles] = useState(false);
@@ -160,10 +160,10 @@ function PostureSense() {
 
   const exercises = {
     bicepCurls: {
-      name: "Bicep Curls",
-      icon: "fitness_center",
-      difficulty: "Beginner",
-      musclesWorked: ["Biceps", "Forearms"],
+      name: 'Bicep Curls',
+      icon: 'fitness_center',
+      difficulty: 'Beginner',
+      musclesWorked: ['Biceps', 'Forearms'],
       caloriesPerRep: 0.5,
       downAngle: 160,
       upAngle: 60,
@@ -175,26 +175,26 @@ function PostureSense() {
         wrist: 15,
       },
       formFeedback: {
-        good: "Perfect form! Keep your elbows close to your body.",
-        medium: "Try to keep your elbows more stable.",
-        bad: "Your elbows are moving too much. Keep them fixed at your sides.",
+        good: 'Perfect form! Keep your elbows close to your body.',
+        medium: 'Try to keep your elbows more stable.',
+        bad: 'Your elbows are moving too much. Keep them fixed at your sides.',
       },
       tips: [
-        "Keep your elbows close to your body",
-        "Maintain a straight back",
-        "Control the weight on the way down",
+        'Keep your elbows close to your body',
+        'Maintain a straight back',
+        'Control the weight on the way down',
         "Don't swing the weights",
       ],
-      instructions: "Stand with arms at sides, curl weights up to shoulders, then lower back down.",
+      instructions: 'Stand with arms at sides, curl weights up to shoulders, then lower back down.',
       image:
-        "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#4CAF50",
+        'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#4CAF50',
     },
     pushups: {
-      name: "Push-ups",
-      icon: "fitness_center",
-      difficulty: "Intermediate",
-      musclesWorked: ["Chest", "Triceps", "Shoulders"],
+      name: 'Push-ups',
+      icon: 'fitness_center',
+      difficulty: 'Intermediate',
+      musclesWorked: ['Chest', 'Triceps', 'Shoulders'],
       caloriesPerRep: 0.6,
       downAngle: 90,
       upAngle: 150,
@@ -206,26 +206,26 @@ function PostureSense() {
         wrist: 15,
       },
       formFeedback: {
-        good: "Excellent form! Keep your body straight.",
-        medium: "Try to keep your body more aligned.",
-        bad: "Your hips are sagging. Keep your body straight.",
+        good: 'Excellent form! Keep your body straight.',
+        medium: 'Try to keep your body more aligned.',
+        bad: 'Your hips are sagging. Keep your body straight.',
       },
       tips: [
-        "Keep your body straight from head to heels",
-        "Elbows close to your body",
-        "Hands shoulder-width apart",
-        "Lower chest to ground",
+        'Keep your body straight from head to heels',
+        'Elbows close to your body',
+        'Hands shoulder-width apart',
+        'Lower chest to ground',
       ],
-      instructions: "Keep body straight, lower chest to ground, then push back up.",
+      instructions: 'Keep body straight, lower chest to ground, then push back up.',
       image:
-        "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#2196F3",
+        'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#2196F3',
     },
     squats: {
-      name: "Squats",
-      icon: "fitness_center",
-      difficulty: "Intermediate",
-      musclesWorked: ["Quadriceps", "Glutes", "Core"],
+      name: 'Squats',
+      icon: 'fitness_center',
+      difficulty: 'Intermediate',
+      musclesWorked: ['Quadriceps', 'Glutes', 'Core'],
       caloriesPerRep: 1.5,
       downAngle: 90,
       upAngle: 160,
@@ -237,27 +237,27 @@ function PostureSense() {
         ankle: 27,
       },
       formFeedback: {
-        good: "Perfect squat form! Keep your back straight.",
-        medium: "Try to keep your knees aligned with toes.",
-        bad: "Your knees are caving in. Push them out.",
+        good: 'Perfect squat form! Keep your back straight.',
+        medium: 'Try to keep your knees aligned with toes.',
+        bad: 'Your knees are caving in. Push them out.',
       },
       tips: [
-        "Keep your back straight",
-        "Knees aligned with toes",
-        "Hips back and down",
-        "Weight in your heels",
+        'Keep your back straight',
+        'Knees aligned with toes',
+        'Hips back and down',
+        'Weight in your heels',
       ],
       instructions:
-        "Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.",
+        'Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.',
       image:
-        "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#FF9800",
+        'https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#FF9800',
     },
     shoulderPress: {
-      name: "Shoulder Press",
-      icon: "fitness_center",
-      difficulty: "Intermediate",
-      musclesWorked: ["Shoulders", "Triceps", "Core"],
+      name: 'Shoulder Press',
+      icon: 'fitness_center',
+      difficulty: 'Intermediate',
+      musclesWorked: ['Shoulders', 'Triceps', 'Core'],
       caloriesPerRep: 1.0,
       downAngle: 160,
       upAngle: 60,
@@ -269,27 +269,27 @@ function PostureSense() {
         wrist: 15,
       },
       formFeedback: {
-        good: "Great form! Keep your core engaged.",
-        medium: "Try to keep your back more stable.",
+        good: 'Great form! Keep your core engaged.',
+        medium: 'Try to keep your back more stable.',
         bad: "You're leaning back too much. Keep your core tight.",
       },
       tips: [
-        "Keep your core engaged",
+        'Keep your core engaged',
         "Don't lean back",
-        "Press directly overhead",
-        "Control the weight",
+        'Press directly overhead',
+        'Control the weight',
       ],
       instructions:
-        "Start with weights at shoulder level, press overhead until arms are fully extended.",
+        'Start with weights at shoulder level, press overhead until arms are fully extended.',
       image:
-        "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#9C27B0",
+        'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#9C27B0',
     },
     lateralRaise: {
-      name: "Lateral Raise",
-      icon: "fitness_center",
-      difficulty: "Beginner",
-      musclesWorked: ["Shoulders", "Traps"],
+      name: 'Lateral Raise',
+      icon: 'fitness_center',
+      difficulty: 'Beginner',
+      musclesWorked: ['Shoulders', 'Traps'],
       caloriesPerRep: 0.4,
       downAngle: 10,
       upAngle: 80,
@@ -301,27 +301,27 @@ function PostureSense() {
         elbow: 13,
       },
       formFeedback: {
-        good: "Perfect form! Keep your arms straight.",
-        medium: "Try to keep your elbows slightly bent.",
+        good: 'Perfect form! Keep your arms straight.',
+        medium: 'Try to keep your elbows slightly bent.',
         bad: "You're using too much momentum. Slow down.",
       },
       tips: [
-        "Keep slight bend in elbows",
-        "Raise arms to shoulder height",
-        "Control the movement",
+        'Keep slight bend in elbows',
+        'Raise arms to shoulder height',
+        'Control the movement',
         "Don't swing the weights",
       ],
       instructions:
-        "Stand with weights by your sides, raise them out to shoulder height with slightly bent elbows.",
+        'Stand with weights by your sides, raise them out to shoulder height with slightly bent elbows.',
       image:
-        "https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#E91E63",
+        'https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#E91E63',
     },
     lunges: {
-      name: "Lunges",
-      icon: "fitness_center",
-      difficulty: "Intermediate",
-      musclesWorked: ["Quadriceps", "Hamstrings", "Glutes"],
+      name: 'Lunges',
+      icon: 'fitness_center',
+      difficulty: 'Intermediate',
+      musclesWorked: ['Quadriceps', 'Hamstrings', 'Glutes'],
       caloriesPerRep: 0.5,
       downAngle: 100,
       upAngle: 165,
@@ -336,21 +336,21 @@ function PostureSense() {
         rightAnkle: 28,
       },
       formFeedback: {
-        good: "Excellent form! Keep your back straight.",
-        medium: "Try to keep your front knee aligned.",
-        bad: "Your front knee is going past your toes.",
+        good: 'Excellent form! Keep your back straight.',
+        medium: 'Try to keep your front knee aligned.',
+        bad: 'Your front knee is going past your toes.',
       },
       tips: [
-        "Keep your back straight",
-        "Front knee aligned with ankle",
-        "Back knee nearly touching ground",
-        "Step forward with control",
+        'Keep your back straight',
+        'Front knee aligned with ankle',
+        'Back knee nearly touching ground',
+        'Step forward with control',
       ],
       instructions:
-        "Step forward with one leg, lower your hips until both knees are bent at 90 degrees.",
+        'Step forward with one leg, lower your hips until both knees are bent at 90 degrees.',
       image:
-        "https://images.unsplash.com/photo-1434682881908-b43d0467b798?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      color: "#00BCD4",
+        'https://images.unsplash.com/photo-1434682881908-b43d0467b798?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      color: '#00BCD4',
     },
   };
 
@@ -361,7 +361,7 @@ function PostureSense() {
         // Load MediaPipe scripts
         const loadScript = (src) => {
           return new Promise((resolve, reject) => {
-            const script = document.createElement("script");
+            const script = document.createElement('script');
             script.src = src;
             script.onload = resolve;
             script.onerror = reject;
@@ -370,12 +370,12 @@ function PostureSense() {
         };
 
         await Promise.all([
-          loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"),
+          loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js'),
           loadScript(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js"
+            'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js'
           ),
           loadScript(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js"
+            'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js'
           ),
         ]);
 
@@ -385,12 +385,12 @@ function PostureSense() {
         setIsLoading(false);
         setNotification({
           open: true,
-          message: "AI pose detection ready! Start your workout.",
-          color: "success",
+          message: 'AI pose detection ready! Start your workout.',
+          color: 'success',
         });
       } catch (error) {
-        console.error("Error loading MediaPipe:", error);
-        setError("Failed to load pose detection libraries. Please refresh the page.");
+        console.error('Error loading MediaPipe:', error);
+        setError('Failed to load pose detection libraries. Please refresh the page.');
         setIsLoading(false);
       }
     };
@@ -402,11 +402,11 @@ function PostureSense() {
     try {
       setIsLoading(true);
       if (!isMediaPipeLoaded) {
-        throw new Error("MediaPipe libraries are still loading. Please wait a moment.");
+        throw new Error('MediaPipe libraries are still loading. Please wait a moment.');
       }
 
       if (!window.Pose) {
-        throw new Error("MediaPipe Pose is not loaded properly. Please refresh the page.");
+        throw new Error('MediaPipe Pose is not loaded properly. Please refresh the page.');
       }
 
       // First check if the browser supports getUserMedia
@@ -428,7 +428,7 @@ function PostureSense() {
       });
 
       if (!stream) {
-        throw new Error("Failed to get camera stream. Please check your camera permissions.");
+        throw new Error('Failed to get camera stream. Please check your camera permissions.');
       }
 
       if (videoRef.current) {
@@ -440,7 +440,7 @@ function PostureSense() {
               resolve();
             };
             videoRef.current.onerror = (error) => {
-              reject(new Error("Error loading video: " + error.message));
+              reject(new Error('Error loading video: ' + error.message));
             };
           }
         });
@@ -459,14 +459,14 @@ function PostureSense() {
           smoothLandmarks: true,
           minDetectionConfidence: 0.5,
           minTrackingConfidence: 0.5,
-          selfieMode: cameraFacingRef.current === "user",
+          selfieMode: cameraFacingRef.current === 'user',
         });
 
         pose.onResults((results) => {
           if (results.poseLandmarks) {
             const landmarks = results.poseLandmarks;
             const canvas = canvasRef.current;
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext('2d');
             const video = videoRef.current;
 
             // Set canvas size to match video
@@ -476,7 +476,7 @@ function PostureSense() {
             // Clear canvas and prepare for drawing
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // Apply mirroring if using front camera (selfie mode)
-            if (cameraFacingRef.current === "user") {
+            if (cameraFacingRef.current === 'user') {
               ctx.save();
               ctx.scale(-1, 1);
               ctx.translate(-canvas.width, 0);
@@ -495,7 +495,7 @@ function PostureSense() {
             let angle = null; // Initialize angle variable here
             if (exerciseData.isVertical) {
               // For vertical exercises (pushups, squats, lunges, shoulder press)
-              if (selectedExercise === "pushups") {
+              if (selectedExercise === 'pushups') {
                 // For pushups, track shoulder, elbow, and wrist
                 joint1 = joints.shoulder
                   ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
@@ -506,7 +506,7 @@ function PostureSense() {
                 joint3 = joints.wrist
                   ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y]
                   : null;
-              } else if (selectedExercise === "shoulderPress") {
+              } else if (selectedExercise === 'shoulderPress') {
                 // For shoulder press, track shoulder, elbow, and wrist
                 joint1 = joints.shoulder
                   ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
@@ -530,7 +530,7 @@ function PostureSense() {
                     angle = 360 - angle;
                   }
                 }
-              } else if (selectedExercise === "lateralRaise") {
+              } else if (selectedExercise === 'lateralRaise') {
                 // For lateral raises, track hip, shoulder, and elbow to measure shoulder angle
                 joint1 = joints.hip ? [landmarks[joints.hip].x, landmarks[joints.hip].y] : null;
                 joint2 = joints.shoulder
@@ -546,9 +546,9 @@ function PostureSense() {
                 if (angle > 180.0) {
                   angle = 360 - angle;
                 }
-              } else if (selectedExercise === "squats" || selectedExercise === "lunges") {
+              } else if (selectedExercise === 'squats' || selectedExercise === 'lunges') {
                 // For squats and lunges, track hip, knee, and ankle
-                if (selectedExercise === "squats") {
+                if (selectedExercise === 'squats') {
                   joint1 = joints.hip ? [landmarks[joints.hip].x, landmarks[joints.hip].y] : null;
                   joint2 = joints.knee
                     ? [landmarks[joints.knee].x, landmarks[joints.knee].y]
@@ -556,7 +556,7 @@ function PostureSense() {
                   joint3 = joints.ankle
                     ? [landmarks[joints.ankle].x, landmarks[joints.ankle].y]
                     : null;
-                } else if (selectedExercise === "lunges") {
+                } else if (selectedExercise === 'lunges') {
                   // Directly track both legs for lunges
                   const leftHip = landmarks[joints.leftHip];
                   const leftKnee = landmarks[joints.leftKnee];
@@ -592,10 +592,10 @@ function PostureSense() {
                     angle = Math.min(leftAngle, rightAngle);
                     // Draw angles on screen if enabled
                     if (showAnglesRef.current) {
-                      ctx.fillStyle = "white";
-                      ctx.strokeStyle = "black";
+                      ctx.fillStyle = 'white';
+                      ctx.strokeStyle = 'black';
                       ctx.lineWidth = 2;
-                      ctx.font = "bold 16px Arial";
+                      ctx.font = 'bold 16px Arial';
                       // Left knee angle
                       const leftText = `L: ${Math.round(leftAngle)}°`;
                       ctx.strokeText(
@@ -639,7 +639,7 @@ function PostureSense() {
                       joint3 = [rightAnkle.x, rightAnkle.y];
                     }
                   }
-                } else if (selectedExercise === "squats") {
+                } else if (selectedExercise === 'squats') {
                   // ... existing code ...
                 }
               }
@@ -651,7 +651,7 @@ function PostureSense() {
               joint2 = joints.elbow ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y] : null;
               joint3 = joints.wrist ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y] : null;
               // Adjust angle calculation for shoulder press
-              if (selectedExercise === "shoulderPress" && joint1 && joint2 && joint3) {
+              if (selectedExercise === 'shoulderPress' && joint1 && joint2 && joint3) {
                 // Calculate the angle between shoulder, elbow, and wrist
                 const shoulderElbowAngle = Math.atan2(joint2[1] - joint1[1], joint2[0] - joint1[0]);
                 const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
@@ -677,26 +677,26 @@ function PostureSense() {
               // Rep counting logic based on the selected exercise
               const { downAngle, upAngle, invertStages } = exerciseData;
               // Add debounce for lunges to prevent unwanted reps
-              if (selectedExercise === "lunges") {
+              if (selectedExercise === 'lunges') {
                 // Special case for lunges - use stricter thresholds and debounce
                 if (invertStages) {
                   if (angle < upAngle - 10) {
                     // Add buffer zone
                     // Only change to DOWN if well below threshold
-                    stageRef.current = "DOWN";
-                    setDisplayStage("DOWN");
+                    stageRef.current = 'DOWN';
+                    setDisplayStage('DOWN');
                   }
-                  if (angle > downAngle + 10 && stageRef.current === "DOWN") {
+                  if (angle > downAngle + 10 && stageRef.current === 'DOWN') {
                     // Add buffer zone
                     // Only count rep when well above threshold
-                    stageRef.current = "UP";
-                    setDisplayStage("UP");
+                    stageRef.current = 'UP';
+                    setDisplayStage('UP');
                     counterRef.current += 1;
                     setDisplayCounter(counterRef.current);
                     // Add 500ms cooldown after counting a rep
                     setTimeout(() => {
-                      stageRef.current = "READY";
-                      setDisplayStage("READY");
+                      stageRef.current = 'READY';
+                      setDisplayStage('READY');
                     }, 500);
                     if (counterRef.current >= targetReps) {
                       setShowCelebration(true);
@@ -707,12 +707,12 @@ function PostureSense() {
               } else if (invertStages) {
                 // For other inverted exercises like squats and push-ups
                 if (angle < upAngle) {
-                  stageRef.current = "DOWN";
-                  setDisplayStage("DOWN");
+                  stageRef.current = 'DOWN';
+                  setDisplayStage('DOWN');
                 }
-                if (angle > downAngle && stageRef.current === "DOWN") {
-                  stageRef.current = "UP";
-                  setDisplayStage("UP");
+                if (angle > downAngle && stageRef.current === 'DOWN') {
+                  stageRef.current = 'UP';
+                  setDisplayStage('UP');
                   counterRef.current += 1;
                   setDisplayCounter(counterRef.current);
                   if (counterRef.current >= targetReps) {
@@ -723,12 +723,12 @@ function PostureSense() {
               } else {
                 // For exercises like bicep curls where "up" is the active position
                 if (angle < upAngle) {
-                  stageRef.current = "UP";
-                  setDisplayStage("UP");
+                  stageRef.current = 'UP';
+                  setDisplayStage('UP');
                 }
-                if (angle > downAngle && stageRef.current === "UP") {
-                  stageRef.current = "DOWN";
-                  setDisplayStage("DOWN");
+                if (angle > downAngle && stageRef.current === 'UP') {
+                  stageRef.current = 'DOWN';
+                  setDisplayStage('DOWN');
                   counterRef.current += 1;
                   setDisplayCounter(counterRef.current);
                   if (counterRef.current >= targetReps) {
@@ -740,17 +740,17 @@ function PostureSense() {
             }
             // Draw landmarks and connectors if enabled
             if (showLandmarksRef.current) {
-              console.log("Drawing landmarks");
+              console.log('Drawing landmarks');
               window.drawLandmarks(ctx, results.poseLandmarks, {
-                color: "#F542E6",
+                color: '#F542E6',
                 lineWidth: 2,
                 radius: 4,
               });
             }
             if (showConnectorsRef.current) {
-              console.log("Drawing connectors");
+              console.log('Drawing connectors');
               window.drawConnectors(ctx, results.poseLandmarks, window.POSE_CONNECTIONS, {
-                color: "#F57542",
+                color: '#F57542',
                 lineWidth: 2,
               });
             }
@@ -758,35 +758,35 @@ function PostureSense() {
             if (showStatsRef.current) {
               // Draw the stats container
               const statsX = canvas.width / 2 - 150;
-              ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
               ctx.fillRect(statsX, 10, 300, 120);
-              ctx.fillStyle = "white";
+              ctx.fillStyle = 'white';
               // Draw exercise name
-              ctx.font = "bold 24px Arial";
+              ctx.font = 'bold 24px Arial';
               ctx.fillText(exerciseData.name, statsX + 10, 40);
               // Draw rep counter with target
-              ctx.font = "bold 22px Arial";
+              ctx.font = 'bold 22px Arial';
               ctx.fillText(`REPS: ${counterRef.current}/${targetReps}`, statsX + 10, 80);
               // Draw progress bar for rep target
               const progressWidth = 280;
               const progress = Math.min(counterRef.current / targetReps, 1) * progressWidth;
               // Progress bar background
-              ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
               ctx.fillRect(statsX + 10, 90, progressWidth, 15);
               // Progress bar fill
-              ctx.fillStyle = exerciseData.color || "#4CAF50";
+              ctx.fillStyle = exerciseData.color || '#4CAF50';
               ctx.fillRect(statsX + 10, 90, progress, 15);
               // Draw current stage
-              ctx.fillStyle = "white";
-              ctx.font = "bold 22px Arial";
-              ctx.fillText(`STAGE: ${stageRef.current || "Ready"}`, statsX + 170, 80);
+              ctx.fillStyle = 'white';
+              ctx.font = 'bold 22px Arial';
+              ctx.fillText(`STAGE: ${stageRef.current || 'Ready'}`, statsX + 170, 80);
             }
             // Draw angle on the joint if enabled
             if (showAnglesRef.current && angle && joint2) {
-              ctx.fillStyle = "white";
-              ctx.strokeStyle = "black";
+              ctx.fillStyle = 'white';
+              ctx.strokeStyle = 'black';
               ctx.lineWidth = 2;
-              ctx.font = "bold 16px Arial";
+              ctx.font = 'bold 16px Arial';
               const text = `${Math.round(angle)}°`;
               // Calculate text position based on joint position
               const jointX = joint2[0] * canvas.width;
@@ -797,18 +797,18 @@ function PostureSense() {
             }
             // Draw instruction
             if (stageRef.current && showInstructionsRef.current) {
-              const instruction = stageRef.current === "DOWN" ? "GO UP!" : "GO DOWN!";
-              const instructionColor = stageRef.current === "DOWN" ? "#4CAF50" : "#FFC107";
+              const instruction = stageRef.current === 'DOWN' ? 'GO UP!' : 'GO DOWN!';
+              const instructionColor = stageRef.current === 'DOWN' ? '#4CAF50' : '#FFC107';
               // Position at bottom center
-              ctx.textAlign = "center";
-              ctx.font = "bold 32px Arial";
-              ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+              ctx.textAlign = 'center';
+              ctx.font = 'bold 32px Arial';
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
               ctx.fillRect(canvas.width / 2 - 100, canvas.height - 60, 200, 50);
               // Draw instruction text
               ctx.fillStyle = instructionColor;
               ctx.fillText(instruction, canvas.width / 2, canvas.height - 25);
               // Reset text alignment
-              ctx.textAlign = "left";
+              ctx.textAlign = 'left';
             }
             ctx.restore();
           }
@@ -835,23 +835,23 @@ function PostureSense() {
       setWorkoutStartTime(new Date());
       setNotification({
         open: true,
-        message: "Camera started. Begin your workout!",
-        color: "success",
+        message: 'Camera started. Begin your workout!',
+        color: 'success',
       });
       setIsLoading(false);
     } catch (error) {
-      console.error("Error accessing camera:", error);
-      let errorMessage = "Error accessing camera. ";
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        errorMessage += "Please grant camera permissions in your browser settings. ";
+      console.error('Error accessing camera:', error);
+      let errorMessage = 'Error accessing camera. ';
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage += 'Please grant camera permissions in your browser settings. ';
         errorMessage += "Click the camera icon in your browser's address bar and allow access.";
-      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
-        errorMessage += "No camera found. Please connect a camera and try again.";
-      } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage += 'No camera found. Please connect a camera and try again.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
         errorMessage +=
-          "Camera is in use by another application. Please close other apps using the camera.";
+          'Camera is in use by another application. Please close other apps using the camera.';
       } else {
-        errorMessage += error.message || "Please try refreshing the page.";
+        errorMessage += error.message || 'Please try refreshing the page.';
       }
       setError(errorMessage);
       setIsCameraActive(false);
@@ -867,11 +867,11 @@ function PostureSense() {
     }
     // Properly clean up the pose object
     if (poseRef.current) {
-      console.log("Closing MediaPipe Pose instance");
+      console.log('Closing MediaPipe Pose instance');
       try {
         poseRef.current.close();
       } catch (e) {
-        console.error("Error closing pose:", e);
+        console.error('Error closing pose:', e);
       }
       poseRef.current = null;
     }
@@ -892,13 +892,13 @@ function PostureSense() {
       // Wait for camera to fully stop
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
-    const newFacing = cameraFacingRef.current === "user" ? "environment" : "user";
-    console.log("Toggling camera facing to:", newFacing);
+    const newFacing = cameraFacingRef.current === 'user' ? 'environment' : 'user';
+    console.log('Toggling camera facing to:', newFacing);
     setCameraFacing(newFacing);
     if (isCameraActive) {
       // Give more time for state to update
       setTimeout(() => {
-        console.log("Starting camera with facing:", cameraFacingRef.current);
+        console.log('Starting camera with facing:', cameraFacingRef.current);
         startCamera();
       }, 1000);
     }
@@ -929,21 +929,21 @@ function PostureSense() {
       targetReps: targetReps,
       duration: duration,
       calories: calories,
-      weight: currentWeight || "Not specified",
+      weight: currentWeight || 'Not specified',
       accuracy: accuracyScore,
     };
     const updatedHistory = [workout, ...workoutHistory];
     setWorkoutHistory(updatedHistory);
     // Save to localStorage
     try {
-      localStorage.setItem("postureSenseHistory", JSON.stringify(updatedHistory));
+      localStorage.setItem('postureSenseHistory', JSON.stringify(updatedHistory));
     } catch (error) {
-      console.error("Error saving workout history:", error);
+      console.error('Error saving workout history:', error);
     }
     setNotification({
       open: true,
-      message: "Workout saved successfully!",
-      color: "success",
+      message: 'Workout saved successfully!',
+      color: 'success',
     });
   };
   const resetWorkout = () => {
@@ -957,12 +957,12 @@ function PostureSense() {
     setCaloriesBurned(0);
     setNotification({
       open: true,
-      message: "Workout reset. Ready to start!",
-      color: "info",
+      message: 'Workout reset. Ready to start!',
+      color: 'info',
     });
   };
   const toggleFullscreen = () => {
-    const container = document.getElementById("posture-sense-container");
+    const container = document.getElementById('posture-sense-container');
     if (!document.fullscreenElement) {
       if (container.requestFullscreen) {
         container.requestFullscreen();
@@ -989,7 +989,7 @@ function PostureSense() {
     const downAngle = targetExercise.downAngle;
     const upAngle = targetExercise.upAngle;
     // Calculate how close the angle is to the ideal angle for the current stage
-    const targetAngle = stageRef.current === "DOWN" ? downAngle : upAngle;
+    const targetAngle = stageRef.current === 'DOWN' ? downAngle : upAngle;
     const difference = Math.abs(angle - targetAngle);
     // Determine feedback based on difference
     if (difference < 15) {
@@ -1004,7 +1004,7 @@ function PostureSense() {
     if (!exercise) return;
     const targetExercise = exercises[exercise];
     const targetAngle =
-      stageRef.current === "DOWN" ? targetExercise.downAngle : targetExercise.upAngle;
+      stageRef.current === 'DOWN' ? targetExercise.downAngle : targetExercise.upAngle;
     const difference = Math.abs(angle - targetAngle);
     // Calculate accuracy as a percentage (100% when difference is 0, 0% when difference is 90 or more)
     const accuracy = Math.max(0, 100 - (difference / 90) * 100);
@@ -1032,12 +1032,12 @@ function PostureSense() {
   // Load workout history from localStorage on component mount
   useEffect(() => {
     try {
-      const savedHistory = localStorage.getItem("postureSenseHistory");
+      const savedHistory = localStorage.getItem('postureSenseHistory');
       if (savedHistory) {
         setWorkoutHistory(JSON.parse(savedHistory));
       }
     } catch (error) {
-      console.error("Error loading workout history:", error);
+      console.error('Error loading workout history:', error);
     }
   }, []);
 
@@ -1056,9 +1056,9 @@ function PostureSense() {
       <MDBox
         id="posture-sense-container"
         sx={{
-          position: "relative",
-          minHeight: "100vh",
-          backgroundColor: "background.default",
+          position: 'relative',
+          minHeight: '100vh',
+          backgroundColor: 'background.default',
           p: 3,
         }}
       >
@@ -1066,7 +1066,7 @@ function PostureSense() {
         <Grid container spacing={3}>
           {/* Left Panel - Exercise Selection & Camera */}
           <Grid item xs={12} lg={8}>
-            <Card sx={{ height: "100%", overflow: "hidden" }}>
+            <Card sx={{ height: '100%', overflow: 'hidden' }}>
               <MDBox p={3}>
                 <MDTypography variant="h4" color="dark" gutterBottom fontWeight="bold">
                   AI Posture Sense
@@ -1083,17 +1083,17 @@ function PostureSense() {
                         <Card
                           onClick={() => setSelectedExercise(key)}
                           sx={{
-                            cursor: "pointer",
-                            transition: "all 0.3s ease",
-                            transform: selectedExercise === key ? "scale(1.02)" : "scale(1)",
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            transform: selectedExercise === key ? 'scale(1.02)' : 'scale(1)',
                             border:
-                              selectedExercise === key ? `2px solid ${exercise.color}` : "none",
-                            position: "relative",
-                            overflow: "hidden",
+                              selectedExercise === key ? `2px solid ${exercise.color}` : 'none',
+                            position: 'relative',
+                            overflow: 'hidden',
                             boxShadow:
                               selectedExercise === key
-                                ? "0 8px 16px rgba(0,0,0,0.1)"
-                                : "0 4px 6px rgba(0,0,0,0.05)",
+                                ? '0 8px 16px rgba(0,0,0,0.1)'
+                                : '0 4px 6px rgba(0,0,0,0.05)',
                           }}
                         >
                           <CardActionArea>
@@ -1103,8 +1103,8 @@ function PostureSense() {
                               image={exercise.image}
                               alt={exercise.name}
                               sx={{
-                                filter: selectedExercise !== key ? "grayscale(50%)" : "none",
-                                transition: "filter 0.3s ease",
+                                filter: selectedExercise !== key ? 'grayscale(50%)' : 'none',
+                                transition: 'filter 0.3s ease',
                               }}
                             />
                             <CardContent>
@@ -1121,8 +1121,8 @@ function PostureSense() {
                                     label={muscle}
                                     size="small"
                                     sx={{
-                                      fontSize: "0.65rem",
-                                      height: "20px",
+                                      fontSize: '0.65rem',
+                                      height: '20px',
                                       backgroundColor: `${exercise.color}20`,
                                       color: exercise.color,
                                     }}
@@ -1139,20 +1139,20 @@ function PostureSense() {
                                   label={exercise.difficulty}
                                   size="small"
                                   sx={{
-                                    fontSize: "0.65rem",
-                                    height: "20px",
+                                    fontSize: '0.65rem',
+                                    height: '20px',
                                     backgroundColor:
-                                      exercise.difficulty === "Beginner"
-                                        ? "#4caf5020"
-                                        : exercise.difficulty === "Intermediate"
-                                        ? "#ff980020"
-                                        : "#f4433620",
+                                      exercise.difficulty === 'Beginner'
+                                        ? '#4caf5020'
+                                        : exercise.difficulty === 'Intermediate'
+                                        ? '#ff980020'
+                                        : '#f4433620',
                                     color:
-                                      exercise.difficulty === "Beginner"
-                                        ? "#4caf50"
-                                        : exercise.difficulty === "Intermediate"
-                                        ? "#ff9800"
-                                        : "#f44336",
+                                      exercise.difficulty === 'Beginner'
+                                        ? '#4caf50'
+                                        : exercise.difficulty === 'Intermediate'
+                                        ? '#ff9800'
+                                        : '#f44336',
                                   }}
                                 />
                                 <Icon sx={{ color: exercise.color }}>{exercise.icon}</Icon>
@@ -1168,41 +1168,41 @@ function PostureSense() {
                 {/* Camera View */}
                 <MDBox
                   sx={{
-                    position: "relative",
-                    width: "100%",
-                    aspectRatio: "16/9",
-                    borderRadius: "1rem",
-                    overflow: "hidden",
-                    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)",
-                    backgroundColor: "grey.100",
+                    position: 'relative',
+                    width: '100%',
+                    aspectRatio: '16/9',
+                    borderRadius: '1rem',
+                    overflow: 'hidden',
+                    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
+                    backgroundColor: 'grey.100',
                   }}
                 >
-                  <video ref={videoRef} style={{ display: "none" }} />
+                  <video ref={videoRef} style={{ display: 'none' }} />
                   <canvas
                     ref={canvasRef}
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
                     }}
                   />
                   {/* Loading Overlay */}
                   {isLoading && (
                     <Box
                       sx={{
-                        position: "absolute",
+                        position: 'absolute',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
                       }}
                     >
-                      <CircularProgress sx={{ color: "white", mb: 2 }} />
+                      <CircularProgress sx={{ color: 'white', mb: 2 }} />
                       <MDTypography color="white" variant="h6">
                         Loading AI Pose Detection...
                       </MDTypography>
@@ -1213,10 +1213,10 @@ function PostureSense() {
                   {isCameraActive && (
                     <Box
                       sx={{
-                        position: "absolute",
+                        position: 'absolute',
                         top: 16,
                         right: 16,
-                        display: "flex",
+                        display: 'flex',
                         gap: 1,
                         zIndex: 10,
                       }}
@@ -1224,22 +1224,22 @@ function PostureSense() {
                       <IconButton
                         onClick={toggleFullscreen}
                         sx={{
-                          backgroundColor: "rgba(0, 0, 0, 0.6)",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
                           },
                         }}
                       >
-                        <Icon>{isFullscreen ? "fullscreen_exit" : "fullscreen"}</Icon>
+                        <Icon>{isFullscreen ? 'fullscreen_exit' : 'fullscreen'}</Icon>
                       </IconButton>
                       <IconButton
                         onClick={toggleCameraFacing}
                         sx={{
-                          backgroundColor: "rgba(0, 0, 0, 0.6)",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
                           },
                         }}
                       >
@@ -1248,22 +1248,22 @@ function PostureSense() {
                       <IconButton
                         onClick={pauseResumeCamera}
                         sx={{
-                          backgroundColor: "rgba(0, 0, 0, 0.6)",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
                           },
                         }}
                       >
-                        <Icon>{isPaused ? "play_arrow" : "pause"}</Icon>
+                        <Icon>{isPaused ? 'play_arrow' : 'pause'}</Icon>
                       </IconButton>
                       <IconButton
                         onClick={resetWorkout}
                         sx={{
-                          backgroundColor: "rgba(0, 0, 0, 0.6)",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
                           },
                         }}
                       >
@@ -1276,16 +1276,16 @@ function PostureSense() {
                   {!isCameraActive && !isLoading && (
                     <Box
                       sx={{
-                        position: "absolute",
+                        position: 'absolute',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
                       }}
                     >
                       <MDTypography color="white" variant="h5" mb={2}>
@@ -1313,7 +1313,7 @@ function PostureSense() {
 
           {/* Right Panel - Workout Stats & Controls */}
           <Grid item xs={12} lg={4}>
-            <Card sx={{ height: "100%", overflow: "auto" }}>
+            <Card sx={{ height: '100%', overflow: 'auto' }}>
               <MDBox p={3}>
                 <MDTypography variant="h6" color="dark" mb={3} display="flex" alignItems="center">
                   <Icon sx={{ mr: 1 }}>{exercises[selectedExercise].icon}</Icon>
@@ -1331,10 +1331,10 @@ function PostureSense() {
                           bgcolor="grey.100"
                           borderRadius="md"
                           sx={{
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                             },
                           }}
                         >
@@ -1360,10 +1360,10 @@ function PostureSense() {
                           bgcolor="grey.100"
                           borderRadius="md"
                           sx={{
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                             },
                           }}
                         >
@@ -1374,10 +1374,10 @@ function PostureSense() {
                             variant="h4"
                             color={
                               accuracyScore >= 80
-                                ? "success"
+                                ? 'success'
                                 : accuracyScore >= 60
-                                ? "warning"
-                                : "error"
+                                ? 'warning'
+                                : 'error'
                             }
                           >
                             {accuracyScore}%
@@ -1387,10 +1387,10 @@ function PostureSense() {
                               variant="gradient"
                               color={
                                 accuracyScore >= 80
-                                  ? "success"
+                                  ? 'success'
                                   : accuracyScore >= 60
-                                  ? "warning"
-                                  : "error"
+                                  ? 'warning'
+                                  : 'error'
                               }
                               value={accuracyScore}
                             />
@@ -1404,10 +1404,10 @@ function PostureSense() {
                           bgcolor="grey.100"
                           borderRadius="md"
                           sx={{
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                             },
                           }}
                         >
@@ -1418,8 +1418,8 @@ function PostureSense() {
                             {workoutDuration
                               ? `${Math.floor(workoutDuration / 60)}:${(workoutDuration % 60)
                                   .toString()
-                                  .padStart(2, "0")}`
-                              : "0:00"}
+                                  .padStart(2, '0')}`
+                              : '0:00'}
                           </MDTypography>
                         </MDBox>
                       </Grid>
@@ -1430,10 +1430,10 @@ function PostureSense() {
                           bgcolor="grey.100"
                           borderRadius="md"
                           sx={{
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                             },
                           }}
                         >
@@ -1470,7 +1470,7 @@ function PostureSense() {
                         variant="body2"
                         color="text"
                         mb={1}
-                        sx={{ display: "flex", alignItems: "flex-start" }}
+                        sx={{ display: 'flex', alignItems: 'flex-start' }}
                       >
                         <CheckCircleIcon
                           sx={{
@@ -1500,7 +1500,7 @@ function PostureSense() {
                             key={`landmarks-${showLandmarks}`}
                             checked={showLandmarks}
                             onChange={(e) => {
-                              console.log("Landmarks switch changed:", e.target.checked);
+                              console.log('Landmarks switch changed:', e.target.checked);
                               setShowLandmarks(e.target.checked);
                             }}
                           />
@@ -1515,7 +1515,7 @@ function PostureSense() {
                             key={`connectors-${showConnectors}`}
                             checked={showConnectors}
                             onChange={(e) => {
-                              console.log("Connectors switch changed:", e.target.checked);
+                              console.log('Connectors switch changed:', e.target.checked);
                               setShowConnectors(e.target.checked);
                             }}
                           />
@@ -1530,7 +1530,7 @@ function PostureSense() {
                             key={`angles-${showAngles}`}
                             checked={showAngles}
                             onChange={(e) => {
-                              console.log("Angles switch changed:", e.target.checked);
+                              console.log('Angles switch changed:', e.target.checked);
                               setShowAngles(e.target.checked);
                             }}
                           />
@@ -1545,7 +1545,7 @@ function PostureSense() {
                             key={`stats-${showStats}`}
                             checked={showStats}
                             onChange={(e) => {
-                              console.log("Stats switch changed:", e.target.checked);
+                              console.log('Stats switch changed:', e.target.checked);
                               setShowStats(e.target.checked);
                             }}
                           />
@@ -1583,15 +1583,15 @@ function PostureSense() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               style={{
-                position: "fixed",
+                position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 zIndex: 1000,
               }}
             >
@@ -1600,12 +1600,12 @@ function PostureSense() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 style={{
-                  backgroundColor: "white",
-                  padding: "2rem",
-                  borderRadius: "1rem",
-                  textAlign: "center",
-                  maxWidth: "90%",
-                  width: "400px",
+                  backgroundColor: 'white',
+                  padding: '2rem',
+                  borderRadius: '1rem',
+                  textAlign: 'center',
+                  maxWidth: '90%',
+                  width: '400px',
                 }}
               >
                 <MDTypography variant="h4" color="success" mb={2}>
