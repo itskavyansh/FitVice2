@@ -60,18 +60,32 @@ app.use((req, res, next) => {
 
 // Connect to MongoDB
 const connectWithRetry = () => {
-  console.log('Attempting to connect to MongoDB...');
+  if (process.env.NODE_ENV === 'development' || process.env.USE_IN_MEMORY_DB === 'true') {
+    console.log('Using in-memory database for development');
+    return;
+  }
+
+  console.log('Attempting to connect to MongoDB with URI:', process.env.MONGODB_URI);
   mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 10000,
     socketTimeoutMS: 45000,
+    family: 4,
+    retryWrites: true,
+    w: 'majority'
   })
   .then(() => {
     console.log('Connected to MongoDB successfully');
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
+    console.error('Error details:', {
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      stack: err.stack
+    });
     console.error('Retrying in 5 seconds...');
     setTimeout(connectWithRetry, 5000);
   });

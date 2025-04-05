@@ -8,7 +8,7 @@ import {
   Button,
   Box,
   Card,
-  CardContent as MuiCardContent,
+  CardContent,
   CardMedia,
   Chip,
   CircularProgress,
@@ -92,10 +92,10 @@ const CarouselContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   width: '100%',
   overflow: 'hidden',
-  padding: theme.spacing(2, 0),
-  marginBottom: theme.spacing(3),
+  padding: theme.spacing(1, 0),
+  marginBottom: theme.spacing(2),
   zIndex: 1,
-  height: '300px',
+  height: '150px',
 }));
 
 const CarouselTrack = styled(Box)({
@@ -122,8 +122,8 @@ const getCardGradient = (index) => {
 
 const TipCard = styled(Card)(({ theme, index }) => ({
   width: '100%',
-  minHeight: '250px',
-  borderRadius: '20px',
+  minHeight: '140px',
+  borderRadius: '15px',
   background: getCardGradient(index),
   color: theme.palette.common.white,
   transition: 'all 0.3s ease-in-out',
@@ -147,25 +147,28 @@ const TipCard = styled(Card)(({ theme, index }) => ({
   },
 }));
 
-const StyledCardContent = styled(MuiCardContent)(({ theme }) => ({
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
   position: 'relative',
   zIndex: 2,
-  padding: theme.spacing(3),
+  padding: theme.spacing(1.5),
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  '& .MuiTypography-root': {
+    color: theme.palette.common.white,
+  },
 }));
 
 const IconWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '60px',
-  height: '60px',
+  width: '40px',
+  height: '40px',
   borderRadius: '50%',
   backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  marginRight: theme.spacing(2),
+  marginRight: theme.spacing(1.5),
   transition: 'all 0.3s ease-in-out',
   '&:hover': {
     transform: 'scale(1.1)',
@@ -183,6 +186,8 @@ const DescriptionWrapper = styled(Box)(({ theme }) => ({
   flex: 1,
   display: 'flex',
   alignItems: 'center',
+  paddingLeft: theme.spacing(6),
+  marginTop: theme.spacing(-1),
 }));
 
 const NutritionGuide = () => {
@@ -196,28 +201,58 @@ const NutritionGuide = () => {
   const [aiResponse, setAiResponse] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
-  const [nutritionTips, setNutritionTips] = useState([]);
+  const [nutritionTips, setNutritionTips] = useState([
+    {
+      title: "Stay Hydrated",
+      description: "Drink at least 8 glasses of water daily to maintain optimal body function.",
+      icon: "WaterDrop"
+    },
+    {
+      title: "Balanced Diet",
+      description: "Include a variety of fruits, vegetables, proteins, and whole grains in your meals.",
+      icon: "Restaurant"
+    },
+    {
+      title: "Portion Control",
+      description: "Be mindful of portion sizes to maintain a healthy weight and energy levels.",
+      icon: "LocalDining"
+    },
+    {
+      title: "Regular Exercise",
+      description: "Combine good nutrition with regular physical activity for best results.",
+      icon: "FitnessCenter"
+    }
+  ]);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-  const [tipsLoading, setTipsLoading] = useState(true);
+  const [tipsLoading, setTipsLoading] = useState(false);
   const [slideDirection, setSlideDirection] = useState('left');
   const [carouselOffset, setCarouselOffset] = useState(0);
-
-  useEffect(() => {
-    console.log('Current tab:', activeTab); // Debug log
-    loadNutritionTips();
-  }, [activeTab]);
+  const [carouselItems, setCarouselItems] = useState([]);
 
   useEffect(() => {
     if (nutritionTips.length > 0) {
+      const duplicatedTips = [...nutritionTips, ...nutritionTips, ...nutritionTips];
+      setCarouselItems(duplicatedTips);
+    }
+  }, [nutritionTips]);
+
+  useEffect(() => {
+    if (carouselItems.length > 0) {
       const interval = setInterval(() => {
         setSlideDirection('left');
-        setCurrentTipIndex((prevIndex) => (prevIndex + 1) % nutritionTips.length);
-        setCarouselOffset((prev) => (prev + 320) % (nutritionTips.length * 320));
+        setCurrentTipIndex((prevIndex) => {
+          const nextIndex = prevIndex + 1;
+          // When reaching the end of the duplicated array, smoothly transition back to the middle
+          if (nextIndex >= nutritionTips.length * 2) {
+            return nutritionTips.length;
+          }
+          return nextIndex;
+        });
       }, 5000);
 
       return () => clearInterval(interval);
     }
-  }, [nutritionTips.length]);
+  }, [carouselItems.length, nutritionTips.length]);
 
   const loadNutritionTips = async () => {
     try {
@@ -289,14 +324,24 @@ const NutritionGuide = () => {
 
   const handleNextTip = () => {
     setSlideDirection('left');
-    setCurrentTipIndex((prevIndex) => (prevIndex + 1) % nutritionTips.length);
-    setCarouselOffset((prev) => (prev + 320) % (nutritionTips.length * 320));
+    setCurrentTipIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= nutritionTips.length * 2) {
+        return nutritionTips.length;
+      }
+      return nextIndex;
+    });
   };
 
   const handlePrevTip = () => {
     setSlideDirection('right');
-    setCurrentTipIndex((prevIndex) => (prevIndex - 1 + nutritionTips.length) % nutritionTips.length);
-    setCarouselOffset((prev) => (prev - 320 + nutritionTips.length * 320) % (nutritionTips.length * 320));
+    setCurrentTipIndex((prevIndex) => {
+      const nextIndex = prevIndex - 1;
+      if (nextIndex < nutritionTips.length) {
+        return nutritionTips.length * 2 - 1;
+      }
+      return nextIndex;
+    });
   };
 
   const renderRecipeGenerator = () => (
@@ -450,7 +495,7 @@ const NutritionGuide = () => {
               position: 'relative', 
               width: '100%', 
               overflow: 'hidden',
-              height: '300px',
+              height: '150px',
             }}>
               <CarouselTrack sx={{ 
                 transform: `translateX(-${currentTipIndex * 100}%)`,
@@ -458,7 +503,7 @@ const NutritionGuide = () => {
                 width: '100%',
                 height: '100%',
               }}>
-                {nutritionTips.map((tip, index) => {
+                {carouselItems.map((tip, index) => {
                   const IconComponent = iconMap[tip.icon] || RestaurantIcon;
                   return (
                     <Box 
@@ -468,36 +513,37 @@ const NutritionGuide = () => {
                         flexShrink: 0,
                         position: 'relative',
                         zIndex: 2,
-                        padding: '0 10px',
+                        padding: '0 5px',
                         height: '100%',
                       }}
                     >
                       <Grow in={true} timeout={500}>
-                        <TipCard index={index} sx={{ height: '100%' }}>
+                        <TipCard index={index % nutritionTips.length} sx={{ height: '100%' }}>
                           <StyledCardContent>
                             <Box sx={{ 
                               display: 'flex', 
                               alignItems: 'center',
-                              marginBottom: 2,
+                              marginBottom: 1,
                             }}>
                               <IconWrapper>
                                 <Zoom in={true} timeout={500}>
                                   <IconComponent 
                                     sx={{ 
                                       color: 'white',
-                                      fontSize: '2.5rem',
+                                      fontSize: '1.5rem',
                                     }}
                                   />
                                 </Zoom>
                               </IconWrapper>
                               <TitleWrapper>
                                 <Typography 
-                                  variant="h4"
+                                  variant="h6"
                                   sx={{ 
                                     color: 'white',
                                     fontWeight: 'bold',
                                     textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                    fontSize: '1.8rem',
+                                    fontSize: '1.2rem',
+                                    letterSpacing: '0.02em',
                                   }}
                                 >
                                   {tip.title}
@@ -506,12 +552,14 @@ const NutritionGuide = () => {
                             </Box>
                             <DescriptionWrapper>
                               <Typography 
-                                variant="body1" 
+                                variant="body1"
                                 sx={{ 
                                   color: 'white',
-                                  fontSize: '1.3rem',
+                                  fontSize: '1rem',
                                   lineHeight: 1.6,
                                   textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                                  letterSpacing: '0.01em',
+                                  paddingLeft: '8px',
                                 }}
                               >
                                 {tip.description}
@@ -550,7 +598,7 @@ const NutritionGuide = () => {
                   <NavigateBeforeIcon />
                 </IconButton>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {currentTipIndex + 1} / {nutritionTips.length}
+                  {currentTipIndex % nutritionTips.length + 1} / {nutritionTips.length}
                 </Typography>
                 <IconButton 
                   onClick={handleNextTip} 
