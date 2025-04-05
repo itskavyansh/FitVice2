@@ -12,24 +12,31 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: function(origin, callback) {
+    // In development, allow all origins
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
     const allowedOrigins = [
       process.env.FRONTEND_URL,
       'http://localhost:3000',
       'https://fitvice.netlify.app'
-    ];
+    ].filter(Boolean); // Remove any undefined/null values
     
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error('CORS blocked request from:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposedHeaders: ['Authorization'],
 }));
 app.use(express.json());
 
