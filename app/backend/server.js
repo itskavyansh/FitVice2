@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const recipeRoutes = require('./routes/recipes');
+const jarvisRoutes = require('./routes/jarvis');
 const path = require('path');
 const fs = require('fs');
 
@@ -82,6 +83,7 @@ connectWithRetry();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/jarvis', jarvisRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
