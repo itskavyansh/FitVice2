@@ -5,6 +5,10 @@
   "author": "Creative Tim",
   "license": "See license in https://www.creative-tim.com/license",
   "description": "React version of Material Dashboard 2 by Creative Tim",
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.6.7"
+  },
   "bugs": {
     "url": "https://github.com/creativetimofficial/material-dashboard-react/issues"
   },
