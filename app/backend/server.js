@@ -58,28 +58,27 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to MongoDB if not using in-memory database
-if (process.env.USE_IN_MEMORY_DB !== 'true') {
-  console.log('Connecting to MongoDB...');
-  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitvice', {
+// Connect to MongoDB
+const connectWithRetry = () => {
+  console.log('Attempting to connect to MongoDB...');
+  mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000, // Timeout after 10 seconds
-    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
   })
-  .then(() => console.log('Connected to MongoDB successfully'))
+  .then(() => {
+    console.log('Connected to MongoDB successfully');
+  })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
-    console.error('Please ensure MongoDB is running or check your MongoDB Atlas connection string');
-    // Don't exit process in production, but allow restart mechanisms to handle it
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('Exiting due to MongoDB connection failure');
-      process.exit(1);
-    }
+    console.error('Retrying in 5 seconds...');
+    setTimeout(connectWithRetry, 5000);
   });
-} else {
-  console.log('Using in-memory database mode - MongoDB connection skipped');
-}
+};
+
+// Start MongoDB connection
+connectWithRetry();
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -107,5 +106,23 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Database: ${process.env.USE_IN_MEMORY_DB === 'true' ? 'In-memory' : 'MongoDB'}`);
+  console.log(`Database: MongoDB`);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Don't exit the process in production
+  if (process.env.NODE_ENV !== 'production') {
+    process.exit(1);
+  }
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  // Don't exit the process in production
+  if (process.env.NODE_ENV !== 'production') {
+    process.exit(1);
+  }
 }); 
