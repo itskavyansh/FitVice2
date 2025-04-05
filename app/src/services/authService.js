@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://fitvice-backend.onrender.com/api'
+  ? 'https://fitvice.netlify.app/.netlify/functions/api'
   : 'http://localhost:3001/api';
 
 // Create axios instance with default config
