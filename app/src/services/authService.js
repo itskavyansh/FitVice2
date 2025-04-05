@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? process.env.REACT_APP_API_URL || 'https://your-deployed-backend-url.com/api'
+  : process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -14,6 +16,9 @@ const api = axios.create({
 // Add request interceptor for setting auth token and logging
 api.interceptors.request.use(
   (config) => {
+    // Log the full URL for debugging
+    console.log('Making request to:', config.baseURL + config.url);
+    
     // Always check for token and set header from localStorage
     const token = localStorage.getItem('token');
     if (token) {
