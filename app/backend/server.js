@@ -18,10 +18,9 @@ app.use(cors({
     }
 
     const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      'http://localhost:3000',
-      'https://fitvice.netlify.app'
-    ].filter(Boolean); // Remove any undefined/null values
+      'https://fitvice.netlify.app',
+      'http://localhost:3000'
+    ];
     
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
