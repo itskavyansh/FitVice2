@@ -114,6 +114,9 @@ const Transition = forwardRef(function Transition(props, ref) {
 console.log('App component loaded, initialization will be handled by AuthProvider');
 
 import { JarvisProvider } from './context/JarvisContext';
+import ExerciseDetails from 'layouts/muscle-pedia/exercise-details';
+import MusclePedia from 'layouts/muscle-pedia';
+import Chatbot from 'layouts/chatbot';
 
 export default function App() {
   return (
@@ -402,6 +405,22 @@ const AppContent = () => {
           }
         />
         <Route
+          path="/muscle-pedia"
+          element={
+            <PrivateRoute>
+              <MusclePedia />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/muscle-pedia/:muscleName"
+          element={
+            <PrivateRoute>
+              <ExerciseDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/dashboard"
           element={
             <PrivateRoute>
@@ -422,6 +441,14 @@ const AppContent = () => {
           element={
             <PrivateRoute>
               <NutritionGuide />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/chatbot"
+          element={
+            <PrivateRoute>
+              <Chatbot />
             </PrivateRoute>
           }
         />

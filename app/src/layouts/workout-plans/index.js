@@ -33,6 +33,14 @@ import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import Footer from 'examples/Footer';
 
+// Images
+import upperImage from 'assets/images/upper.png';
+import lowerImage from 'assets/images/lower.jpeg';
+import fullImage from 'assets/images/full.png';
+import cardioImage from 'assets/images/cardio.jpeg';
+import strengthImage from 'assets/images/strength.jpeg';
+import flexibilityImage from 'assets/images/flexibility.jpeg';
+
 // React imports
 import { useState } from 'react';
 
@@ -63,8 +71,7 @@ const sampleWorkoutPlans = [
     level: 'Intermediate',
     description:
       'A comprehensive strength training program focusing on progressive overload and muscle development.',
-    image:
-      'https://images.pexels.com/photos/1229356/pexels-photo-1229356.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: strengthImage,
     workoutsPerWeek: 4,
     timePerWorkout: '45-60 min',
     features: [
@@ -76,28 +83,80 @@ const sampleWorkoutPlans = [
   },
   {
     id: 2,
+    title: 'Full Body Workout',
+    category: 'strength',
+    duration: '12 weeks',
+    level: 'All Levels',
+    description:
+      'A balanced full-body workout program that targets all major muscle groups in each session for maximum efficiency.',
+    image: fullImage,
+    workoutsPerWeek: 3,
+    timePerWorkout: '50-60 min',
+    features: [
+      'Compound exercises',
+      'Balanced muscle development',
+      'Time-efficient workouts',
+      'Progressive difficulty',
+    ],
+  },
+  {
+    id: 3,
+    title: 'Upper Body Workout',
+    category: 'strength',
+    duration: '8 weeks',
+    level: 'Intermediate',
+    description:
+      'Focus on building upper body strength with targeted exercises for chest, back, shoulders, and arms.',
+    image: upperImage,
+    workoutsPerWeek: 3,
+    timePerWorkout: '45-55 min',
+    features: [
+      'Chest and back focus',
+      'Shoulder development',
+      'Arm strengthening',
+      'Core integration',
+    ],
+  },
+  {
+    id: 4,
+    title: 'Lower Body Workout',
+    category: 'strength',
+    duration: '8 weeks',
+    level: 'Intermediate',
+    description:
+      'Build powerful legs with this comprehensive lower body program targeting quads, hamstrings, glutes, and calves.',
+    image: lowerImage,
+    workoutsPerWeek: 3,
+    timePerWorkout: '45-55 min',
+    features: [
+      'Leg strength development',
+      'Glute activation',
+      'Balance improvement',
+      'Functional movement patterns',
+    ],
+  },
+  {
+    id: 5,
     title: 'Cardio Endurance Program',
     category: 'cardio',
     duration: '8 weeks',
     level: 'All Levels',
     description:
-      'Build your endurance with this progressive cardio program suitable for all fitness levels.',
-    image:
-      'https://images.pexels.com/photos/2780762/pexels-photo-2780762.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      'Build your endurance and stamina with this progressive cardio program suitable for all fitness levels.',
+    image: cardioImage,
     workoutsPerWeek: 3,
     timePerWorkout: '30-45 min',
     features: ['Interval training', 'Heart rate zones', 'Progress tracking', 'Recovery techniques'],
   },
   {
-    id: 3,
+    id: 6,
     title: 'Flexibility & Mobility',
     category: 'flexibility',
     duration: '4 weeks',
     level: 'Beginner',
     description:
-      'Improve your flexibility and mobility with guided stretching and mobility exercises.',
-    image:
-      'https://images.pexels.com/photos/6698513/pexels-photo-6698513.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      'Improve your flexibility and overall mobility with guided stretching and targeted mobility exercises.',
+    image: flexibilityImage,
     workoutsPerWeek: 5,
     timePerWorkout: '20-30 min',
     features: [

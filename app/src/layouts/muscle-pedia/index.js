@@ -1,15 +1,21 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-*/
-
 // @mui material components
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 // Material Dashboard 2 React components
 import MDBox from 'components/MDBox';
@@ -19,38 +25,114 @@ import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import Footer from 'examples/Footer';
 
+// Images
+import backImage from 'assets/images/back.jpeg';
+import chestImage from 'assets/images/chest.jpeg';
+import deltImage from 'assets/images/delt.png';
+import tricepImage from 'assets/images/tricep.jpeg';
+import bicepImage from 'assets/images/bicep.jpeg';
+import legsImage from 'assets/images/legs.jpeg';
+
 // Custom components
 import { CardContainer, CardBody, CardItem } from 'components/ui/3d-card';
 
 const muscles = [
   {
-    name: 'Biceps·Brachii',
-    description: 'Located·in·the·upper·arm,·responsible·for·forearm·supination·and·elbow·flexion.',
-    exercises: ['Bicep·Curls', 'Hammer·Curls', 'Chin-ups'],
-    image:
-      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
+    name: 'Chest',
+    description: 'The chest muscles, or pectorals, are responsible for pushing movements and upper body strength.',
+    exercises: [
+      'Bench Press',
+      'Push-ups',
+      'Chest Fly',
+      'Incline Bench Press',
+      'Decline Bench Press',
+      'Dumbbell Press',
+      'Cable Crossover',
+      'Pec Deck Machine'
+    ],
+    image: chestImage
   },
-
   {
-    name: 'Quadriceps',
-    description: 'Group·of·four·muscles·in·the·front·of·the·thigh,·responsible·for·knee·extension.',
-    exercises: ['Squats', 'Lunges', 'Leg·Press'],
-    image:
-      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
+    name: 'Back',
+    description: 'The back muscles are crucial for posture and pulling movements.',
+    exercises: [
+      'Pull-ups',
+      'Deadlifts',
+      'Bent-over Rows',
+      'Lat Pulldown',
+      'Seated Row',
+      'T-Bar Row',
+      'Single-Arm Dumbbell Row',
+      'Face Pulls'
+    ],
+    image: backImage
   },
-
   {
-    name: 'Deltoids',
-    description: 'Shoulder·muscles·responsible·for·arm·abduction·and·rotation.',
-    exercises: ['Shoulder·Press', 'Lateral·Raises', 'Front·Raises'],
-    image:
-      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2560&auto=format&fit=crop',
+    name: 'Legs',
+    description: 'Leg muscles are the foundation of strength and power.',
+    exercises: [
+      'Squats',
+      'Lunges',
+      'Leg Press',
+      'Romanian Deadlifts',
+      'Bulgarian Split Squats',
+      'Leg Extensions',
+      'Leg Curls',
+      'Calf Raises'
+    ],
+    image: legsImage
   },
+  {
+    name: 'Biceps',
+    description: 'Biceps are responsible for elbow flexion and forearm supination.',
+    exercises: [
+      'Bicep Curls',
+      'Hammer Curls',
+      'Chin-ups',
+      'Preacher Curls',
+      'Concentration Curls',
+      'Cable Curls',
+      'Zottman Curls',
+      'Spider Curls'
+    ],
+    image: bicepImage
+  },
+  {
+    name: 'Triceps',
+    description: 'Triceps are responsible for elbow extension and arm straightening.',
+    exercises: [
+      'Tricep Dips',
+      'Skull Crushers',
+      'Tricep Pushdowns',
+      'Overhead Tricep Extension',
+      'Close-Grip Bench Press',
+      'Diamond Push-ups',
+      'Tricep Kickbacks',
+      'Rope Pushdowns'
+    ],
+    image: tricepImage
+  },
+  {
+    name: 'Shoulders',
+    description: 'Shoulder muscles are responsible for arm movement and stability.',
+    exercises: [
+      'Shoulder Press',
+      'Lateral Raises',
+      'Front Raises',
+      'Arnold Press',
+      'Upright Rows',
+      'Face Pulls',
+      'Reverse Flyes',
+      'Shrugs'
+    ],
+    image: deltImage
+  }
 ];
 
 function MuscleCard({ muscle }) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const cardRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -68,12 +150,17 @@ function MuscleCard({ muscle }) {
     setMousePosition({ x: 0, y: 0 });
   };
 
+  const handleCardClick = (e) => {
+    navigate(`/muscle-pedia/${muscle.name.toLowerCase()}`, { state: { muscle } });
+  };
+
   return (
     <CardContainer>
       <CardBody
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onClick={handleCardClick}
         sx={{
           transform: `rotateX(${mousePosition.x}deg) rotateY(${mousePosition.y}deg)`,
           position: 'relative',
@@ -81,6 +168,7 @@ function MuscleCard({ muscle }) {
           borderRadius: '12px',
           padding: '24px',
           border: '1px solid rgba(0,0,0,0.1)',
+          cursor: 'pointer',
           '&:hover': {
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
             '& .card-content': {
@@ -137,46 +225,6 @@ function MuscleCard({ muscle }) {
             }}
           />
         </CardItem>
-        <MDBox
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mt: 5,
-          }}
-        >
-          <CardItem translateZ={20}>
-            <Button
-              className="card-content"
-              variant="text"
-              color="primary"
-              sx={{
-                px: 2,
-                py: 1,
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-              }}
-            >
-              View Exercises →
-            </Button>
-          </CardItem>
-          <CardItem translateZ={20}>
-            <Button
-              className="card-content"
-              variant="contained"
-              color="primary"
-              sx={{
-                px: 2,
-                py: 1,
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: 'bold',
-              }}
-            >
-              Learn More
-            </Button>
-          </CardItem>
-        </MDBox>
       </CardBody>
     </CardContainer>
   );
@@ -199,7 +247,14 @@ function MusclePedia() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <MDBox mb={3}>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography 
+                variant="h2" 
+                fontWeight="bold"
+                sx={{
+                  fontSize: '2.5rem',
+                  marginBottom: '0.5rem'
+                }}
+              >
                 MusclePedia
               </Typography>
               <Typography variant="body1" color="text.secondary">
