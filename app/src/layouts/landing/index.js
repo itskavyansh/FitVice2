@@ -351,7 +351,7 @@ function Landing() {
           alignItems: 'flex-start',
           pl: 0,
           pr: 0,
-          pt: { xs: 8, md: 8 },
+          pt: { xs: 12, md: 8 },
         }}
       >
         {/* Content */}
@@ -366,20 +366,39 @@ function Landing() {
             mt: 0,
           }}
         >
-          <Grid container spacing={0} alignItems="flex-start">
-            <Grid item xs={12} md={6}>
+          <Grid 
+            container 
+            spacing={0} 
+            alignItems="flex-start"
+            sx={{
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: { xs: 4, md: 0 }
+            }}
+          >
+            <Grid 
+              item 
+              xs={12} 
+              md={6}
+              sx={{
+                order: { xs: 2, md: 1 },
+                mt: { xs: 0, md: '64px' }
+              }}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                style={{ marginLeft: 0, paddingLeft: '24px', marginTop: '64px' }}
+                style={{ 
+                  marginLeft: 0, 
+                  padding: '0 24px',
+                }}
               >
                 <Typography
                   variant="h1"
                   sx={{
                     fontWeight: 800,
                     mb: 2,
-                    fontSize: { xs: '2.5rem', md: '4rem' },
+                    fontSize: { xs: '2rem', sm: '2.5rem', md: '4rem' },
                     lineHeight: 1.1,
                     fontFamily: "'Playfair Display', serif",
                     letterSpacing: '-1px',
@@ -399,7 +418,7 @@ function Landing() {
                     mb: 4,
                     fontFamily: "'Montserrat', sans-serif",
                     lineHeight: 1.8,
-                    fontSize: '1.1rem',
+                    fontSize: { xs: '1rem', md: '1.1rem' },
                     pl: 0,
                     ml: 0,
                     color: 'rgba(255,255,255,0.7)',
@@ -436,50 +455,42 @@ function Landing() {
                       border: 'none',
                       bgcolor: '#1976d2',
                     },
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      transition: 'all 0.5s ease-in-out',
-                      bgcolor: '#1976d2',
-                      borderRadius: '30px',
-                      visibility: 'hidden',
-                      height: '10px',
-                      width: '10px',
-                      zIndex: -1,
-                    },
-                    '&:hover::after': {
-                      visibility: 'visible',
-                      transform: 'scale(100) translateX(2px)',
-                    },
                   }}
                 >
                   Get Started
                 </Button>
               </motion.div>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid 
+              item 
+              xs={12} 
+              md={6}
+              sx={{
+                order: { xs: 1, md: 2 },
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mt: { xs: 4, md: '64px' }
+              }}
+            >
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 style={{
-                  position: 'absolute',
-                  top: '64px',
-                  right: 0,
+                  position: 'relative',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   textAlign: 'center',
-                  paddingRight: '24px',
+                  padding: '0 24px',
                 }}
               >
                 <Typography
                   variant="h2"
                   sx={{
                     fontWeight: 950,
-                    fontSize: '2.4rem',
+                    fontSize: { xs: '2rem', md: '2.4rem' },
                     letterSpacing: '2px',
                     textShadow: '0 0 10px rgba(255,255,255,0.1)',
                     mb: 1,
@@ -495,8 +506,8 @@ function Landing() {
                     border: '3px solid rgba(255,255,255,0.1)',
                     p: 3,
                     borderRadius: '30px',
-                    width: 220,
-                    height: 380,
+                    width: { xs: 200, md: 220 },
+                    height: { xs: 340, md: 380 },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-start',
@@ -505,6 +516,7 @@ function Landing() {
                     pt: 8,
                     bgcolor: 'rgba(255,255,255,0.05)',
                     backdropFilter: 'blur(10px)',
+                    mx: 'auto',
                     '&::before': {
                       content: '""',
                       position: 'absolute',
