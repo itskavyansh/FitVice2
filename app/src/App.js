@@ -50,6 +50,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import Profile from './components/profile/Profile';
 import Navbar from './components/layout/Navbar';
 import NutritionGuide from './components/nutrition/NutritionGuide';
+import JarvisChat from './components/JarvisChat';
 
 // Chatbot layout
 import ChatbotContent from 'layouts/chatbot';
@@ -64,8 +65,8 @@ import brandDark from 'assets/images/logo-ct-dark.png';
 // Custom chatbot button styles
 const chatButtonStyles = `
   .chat-button {
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background-color: #4caf50;
     border: none;
@@ -73,9 +74,9 @@ const chatButtonStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 0px 0px 4px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 20px 0 rgba(76, 175, 80, 0.3);
     cursor: pointer;
-    transition-duration: 0.3s;
+    transition: all 0.3s cubic-bezier(0.34, 1.61, 0.7, 1);
     overflow: hidden;
     position: fixed;
     bottom: 2rem;
@@ -83,43 +84,23 @@ const chatButtonStyles = `
     z-index: 99;
   }
 
+  .chat-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px 0 rgba(76, 175, 80, 0.4);
+  }
+
   .chat-button-icon {
-    width: 24px;
-    transition-duration: 0.3s;
+    width: 28px;
+    height: 28px;
+    transition: transform 0.3s ease;
   }
 
   .chat-button-icon path {
     fill: white;
   }
 
-  .chat-button:hover {
-    width: 140px;
-    border-radius: 50px;
-    transition-duration: 0.3s;
-    background-color: #4caf50;
-    align-items: center;
-  }
-
   .chat-button:hover .chat-button-icon {
-    transition-duration: 0.3s;
-    transform: translateY(-200%);
-  }
-
-  .chat-button::before {
-    position: absolute;
-    bottom: -20px;
-    content: "Ask Jarvis";
-    color: white;
-    font-size: 0px;
-    font-weight: bold;
-    text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
-  }
-
-  .chat-button:hover::before {
-    font-size: 13px;
-    opacity: 1;
-    bottom: unset;
-    transition-duration: 0.3s;
+    transform: scale(1.1);
   }
 `;
 
@@ -132,10 +113,14 @@ const Transition = forwardRef(function Transition(props, ref) {
 // The AuthProvider will handle initialization instead
 console.log('App component loaded, initialization will be handled by AuthProvider');
 
+import { JarvisProvider } from './context/JarvisContext';
+
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <JarvisProvider>
+        <AppContent />
+      </JarvisProvider>
     </AuthProvider>
   );
 }
@@ -337,21 +322,12 @@ const AppContent = () => {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
           overflow: 'hidden',
           transition: 'all 0.3s cubic-bezier(0.34, 1.61, 0.7, 1)',
+          bgcolor: 'background.paper',
         },
       }}
     >
-      <DialogContent sx={{ p: 0, overflow: 'hidden' }}>
-        <MDBox position="absolute" top="12px" right="12px" zIndex={2}>
-          <IconButton onClick={handleChatbotToggle} size="medium" sx={{ color: '#fff' }}>
-            <Icon>close</Icon>
-          </IconButton>
-        </MDBox>
-        <MDBox position="absolute" top="12px" left="12px" zIndex={2}>
-          <IconButton size="medium" sx={{ color: '#4caf50' }}>
-            <Icon>smart_toy</Icon>
-          </IconButton>
-        </MDBox>
-        <ChatbotContent isDialog botName="Jarvis" />
+      <DialogContent sx={{ p: 0, overflow: 'hidden', height: '100%' }}>
+        <JarvisChat />
       </DialogContent>
     </Dialog>
   );
