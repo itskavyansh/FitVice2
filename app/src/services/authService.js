@@ -10,6 +10,7 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
 
@@ -18,13 +19,16 @@ api.interceptors.request.use(
   (config) => {
     // Log the full URL for debugging
     console.log('Making request to:', config.baseURL + config.url);
+    console.log('Request headers:', config.headers);
     
     // Always check for token and set header from localStorage
     const token = localStorage.getItem('token');
     if (token) {
-      // Always set the Authorization header from localStorage token
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Ensure CORS credentials are included
+    config.withCredentials = true;
 
     // Log the request with masked token for security
     const authHeader = config.headers.Authorization;
@@ -35,7 +39,7 @@ api.interceptors.request.use(
     console.log('Request:', {
       method: config.method,
       url: config.url,
-      data: config.data ? '(data present)' : '(no data)',
+      data: config.data ? JSON.stringify(config.data) : '(no data)',
       auth: maskedHeader,
     });
 
