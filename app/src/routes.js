@@ -39,20 +39,20 @@ Coded by www.creative-tim.com
 import Dashboard from 'layouts/dashboard';
 import WorkoutPlans from 'layouts/workout-plans';
 import Consultancy from 'layouts/consultancy';
-import HealthTips from 'layouts/health-tips';
 import NutritionGuide from 'layouts/nutrition';
 import BMICalculator from 'layouts/bmi-calculator';
 import PostureSense from 'layouts/posture-sense';
 import TodoList from 'layouts/todo-list';
 import MusclePedia from 'layouts/muscle-pedia';
+import ExerciseDetails from 'layouts/muscle-pedia/exercise-details';
 import Chatbot from 'layouts/chatbot';
 import Profile from 'layouts/profile';
 import Landing from 'layouts/landing';
+import AuthProfile from 'components/auth/Profile';
 
 // Auth components
 import SignIn from 'components/auth/SignIn';
 import SignUp from 'components/auth/SignUp';
-import AuthProfile from 'components/auth/Profile';
 
 // @mui icons
 import Icon from '@mui/material/Icon';
@@ -114,14 +114,6 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'Health·Tips',
-    key: 'health-tips',
-    icon: <Icon fontSize="small">health_and_safety</Icon>,
-    route: '/health-tips',
-    component: <HealthTips />,
-  },
-  {
-    type: 'collapse',
     name: 'Nutrition·Guide',
     key: 'nutrition',
     icon: <Icon fontSize="small">restaurant_menu</Icon>,
@@ -159,6 +151,15 @@ const routes = [
     icon: <Icon fontSize="small">science</Icon>,
     route: '/muscle-pedia',
     component: <MusclePedia />,
+  },
+  {
+    type: 'collapse',
+    name: 'MusclePedia Details',
+    key: 'muscle-pedia-details',
+    icon: <Icon fontSize="small">science</Icon>,
+    route: '/muscle-pedia/:muscleName',
+    component: <ExerciseDetails />,
+    hideInNav: true,
   },
   {
     type: 'collapse',
