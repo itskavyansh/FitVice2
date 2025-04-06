@@ -9,5 +9,11 @@
   CI = "false"
 
 [functions]
-  included_files = ["netlify/functions/node_modules/**/*"]
-  node_bundler = "esbuild" 
+  included_files = [
+    "netlify/functions/node_modules/**/*",
+    "netlify/functions/*.js",
+    "netlify/functions/package.json"
+  ]
+  node_bundler = "esbuild"
+  external_node_modules = ["aws-sdk"]
+  node_bundler_flags = "--minify --tree-shaking=true" 
