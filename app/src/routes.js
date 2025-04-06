@@ -98,6 +98,14 @@ const routes = [
   },
   {
     type: 'collapse',
+    name: 'Workout·Plans',
+    key: 'workout-plans',
+    icon: <Icon fontSize="small">fitness_center</Icon>,
+    route: '/workout-plans',
+    component: <WorkoutPlans />,
+  },
+  {
+    type: 'collapse',
     name: 'PostureSense',
     key: 'posture-sense',
     icon: <Icon fontSize="small">accessibility_new</Icon>,

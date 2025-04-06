@@ -42,7 +42,15 @@ import MDTypography from 'components/MDTypography';
 // ReportsBarChart configurations
 import configs from 'examples/Charts/BarCharts/ReportsBarChart/configs';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function ReportsBarChart({ color, title, description, date, chart }) {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
