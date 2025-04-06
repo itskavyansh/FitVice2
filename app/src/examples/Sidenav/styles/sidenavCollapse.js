@@ -16,7 +16,7 @@ function collapseItem(theme, ownerState) {
   const { palette, transitions, breakpoints, boxShadows, borders, functions } = theme;
   const { active, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = ownerState;
 
-  const { white, dark, grey, gradients } = palette;
+  const { white, transparent, dark, grey, gradients } = palette;
   const { md } = boxShadows;
   const { borderRadius } = borders;
   const { pxToRem, rgba, linearGradient } = functions;
@@ -24,7 +24,7 @@ function collapseItem(theme, ownerState) {
   return {
     background: active
       ? linearGradient(gradients[sidenavColor].main, gradients[sidenavColor].state)
-      : 'rgba(255, 255, 255, 0)',
+      : transparent.main,
     color:
       (transparentSidenav && !darkMode && !active) || (whiteSidenav && !active)
         ? dark.main

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useJarvis } from '../../context/JarvisContext';
-import ExampleCommands from './ExampleCommands';
 import VoiceInterface from './VoiceInterface';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -17,13 +16,19 @@ import {
   Drawer,
   useTheme,
   useMediaQuery,
+  Button,
+  Tooltip,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
-import HelpIcon from '@mui/icons-material/Help';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import TimerIcon from '@mui/icons-material/Timer';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const MessageBubble = ({ message, isUser }) => {
   const renderContent = () => {
@@ -176,14 +181,8 @@ const JarvisChat = () => {
   } = useJarvis();
 
   const [input, setInput] = useState('');
-  const [showExamples, setShowExamples] = useState(!isMobile);
+  const [showAutomation, setShowAutomation] = useState(false);
   const messagesEndRef = useRef(null);
-  const voiceInterfaceRef = useRef(null);
-
-  const handleSuggestionClick = (suggestion) => {
-    setInput(suggestion);
-    handleSubmit();
-  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -199,14 +198,9 @@ const JarvisChat = () => {
     }
     if (!input.trim() || isProcessing) return;
 
-    const userInput = input.trim();
+    const userMessage = input.trim();
     setInput('');
-
-    try {
-      await getJarvisResponse(userInput);
-    } catch (error) {
-      console.error('Error getting response:', error);
-    }
+    await getJarvisResponse(userMessage);
   };
 
   const handleVoiceInput = (transcript) => {
@@ -214,87 +208,144 @@ const JarvisChat = () => {
     handleSubmit();
   };
 
-  const handleExampleClick = (example) => {
-    setInput(example);
-    if (isMobile) {
-      setShowExamples(false);
+  const automationCommands = [
+    {
+      title: 'Schedule Workout',
+      description: 'Set up a recurring workout schedule',
+      icon: <ScheduleIcon />,
+      command: 'Schedule a workout routine for me every Monday, Wednesday, and Friday at 7 AM'
+    },
+    {
+      title: 'Meal Prep Reminder',
+      description: 'Get reminders for meal preparation',
+      icon: <RestaurantIcon />,
+      command: 'Remind me to prepare my meals every Sunday at 3 PM'
+    },
+    {
+      title: 'Progress Check',
+      description: 'Set up automatic progress tracking',
+      icon: <PlaylistAddCheckIcon />,
+      command: 'Track my workout progress and send me a weekly report every Sunday'
+    },
+    {
+      title: 'Water Intake',
+      description: 'Set up water intake reminders',
+      icon: <TimerIcon />,
+      command: 'Remind me to drink water every 2 hours from 8 AM to 8 PM'
     }
+  ];
+
+  const handleAutomationCommand = (command) => {
+    setInput(command);
+    setShowAutomation(false);
+    handleSubmit();
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex' }}>
+    <Box sx={{ 
+      height: '100%', 
+      display: 'flex', 
+      position: 'relative',
+      backgroundColor: 'background.default',
+      overflow: 'hidden'
+    }}>
       {/* Main Chat Area */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        height: '100%',
+        position: 'relative',
+        transition: 'all 0.3s ease',
+        transform: showAutomation ? 'translateX(-100%)' : 'translateX(0)',
+        opacity: showAutomation ? 0 : 1,
+        width: '100%'
+      }}>
         {/* Chat Header */}
-        <Box
-          sx={{
-            p: 2,
-            backgroundColor: 'background.paper',
-            borderBottom: 1,
-            borderColor: 'divider',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Typography variant="h6">Jarvis AI Assistant</Typography>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <VoiceInterface
-              ref={voiceInterfaceRef}
-              onVoiceInput={handleVoiceInput}
-              isProcessing={isProcessing}
-              disabled={!input.trim()}
-            />
-            <IconButton 
-              onClick={() => setShowExamples(!showExamples)}
-              color="primary"
-              size="small"
-            >
-              <HelpIcon />
-            </IconButton>
-            <IconButton onClick={clearConversation} color="error" size="small">
-              <DeleteIcon />
-            </IconButton>
+        <Box sx={{
+          p: 2,
+          backgroundColor: 'background.paper',
+          borderBottom: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+        }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Jarvis AI Assistant</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Tooltip title="Automation Commands">
+              <IconButton 
+                onClick={() => setShowAutomation(!showAutomation)}
+                color={showAutomation ? "primary" : "default"}
+                size="small"
+              >
+                <AutoFixHighIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Clear Conversation">
+              <IconButton 
+                onClick={clearConversation} 
+                color="error" 
+                size="small"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
 
         {/* Messages Area */}
-        <Box
-          sx={{
-            flex: 1,
-            overflow: 'auto',
-            p: 2,
-            backgroundColor: 'grey.50',
-          }}
-        >
+        <Box sx={{ 
+          flex: 1, 
+          overflow: 'auto', 
+          p: 3,
+          backgroundColor: 'grey.50',
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: theme.palette.grey[300],
+            borderRadius: '4px',
+            '&:hover': {
+              background: theme.palette.grey[400],
+            },
+          },
+        }}>
           {conversationHistory.length === 0 ? (
-            <Box
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'text.secondary',
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
+            <Box sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: 'text.secondary',
+              textAlign: 'center',
+              gap: 2
+            }}>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
                 Welcome to Jarvis!
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body1" sx={{ maxWidth: '80%' }}>
                 I can help you with workout planning, meal planning, and task management.
               </Typography>
-              <Typography variant="body2">
-                Try asking me something or check out the example commands.
+              <Typography variant="body1" sx={{ maxWidth: '80%' }}>
+                Try asking me something or check out the automation commands.
               </Typography>
-              <Typography variant="body2" sx={{ mt: 2 }}>
+              <Typography variant="body1" sx={{ mt: 2 }}>
                 You can also use voice commands by clicking the microphone icon.
               </Typography>
             </Box>
           ) : (
-            conversationHistory.map((message) => (
+            conversationHistory.map((message, index) => (
               <MessageBubble
-                key={message.id}
+                key={index}
                 message={message}
                 isUser={message.isUser}
               />
@@ -314,26 +365,54 @@ const JarvisChat = () => {
             borderColor: 'divider',
             display: 'flex',
             gap: 1,
+            alignItems: 'center',
+            position: 'sticky',
+            bottom: 0,
+            zIndex: 10,
+            boxShadow: '0 -2px 4px rgba(0,0,0,0.05)'
           }}
         >
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Ask Jarvis anything..."
+            placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isProcessing}
             size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '20px',
+                backgroundColor: 'background.default',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'background.paper',
+                },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <VoiceInterface
+                  onVoiceInput={handleVoiceInput}
+                  isProcessing={isProcessing}
+                  disabled={isProcessing}
+                />
+              ),
+            }}
           />
           <IconButton
             type="submit"
             color="primary"
             disabled={!input.trim() || isProcessing}
+            sx={{
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
           >
             {isProcessing ? (
-              <Fade in={true}>
-                <CircularProgress size={24} />
-              </Fade>
+              <CircularProgress size={24} />
             ) : (
               <SendIcon />
             )}
@@ -341,35 +420,97 @@ const JarvisChat = () => {
         </Box>
       </Box>
 
-      {/* Examples Drawer/Sidebar */}
-      {isMobile ? (
-        <Drawer
-          anchor="right"
-          open={showExamples}
-          onClose={() => setShowExamples(false)}
-          PaperProps={{
-            sx: { width: '80%', maxWidth: 360 },
-          }}
-        >
-          <Box sx={{ p: 2 }}>
-            <ExampleCommands onExampleClick={handleExampleClick} />
-          </Box>
-        </Drawer>
-      ) : (
-        <Box
-          sx={{
-            width: 300,
-            borderLeft: 1,
-            borderColor: 'divider',
-            display: showExamples ? 'block' : 'none',
-            overflow: 'auto',
-          }}
-        >
-          <Box sx={{ p: 2 }}>
-            <ExampleCommands onExampleClick={handleExampleClick} />
+      {/* Automation View */}
+      <Box sx={{ 
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        transition: 'all 0.3s ease',
+        transform: showAutomation ? 'translateX(0)' : 'translateX(100%)',
+        opacity: showAutomation ? 1 : 0,
+        backgroundColor: 'background.paper',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Box sx={{
+          p: 2,
+          backgroundColor: 'background.paper',
+          borderBottom: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Automation Commands</Typography>
+          <IconButton 
+            onClick={() => setShowAutomation(false)}
+            size="small"
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ 
+          flex: 1, 
+          overflow: 'auto', 
+          p: 3,
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: theme.palette.grey[300],
+            borderRadius: '4px',
+            '&:hover': {
+              background: theme.palette.grey[400],
+            },
+          },
+        }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {automationCommands.map((cmd, index) => (
+              <Card 
+                key={index} 
+                variant="outlined"
+                sx={{
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: theme.shadows[2],
+                  },
+                }}
+              >
+                <CardContent>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    {cmd.icon}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                      {cmd.title}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {cmd.description}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleAutomationCommand(cmd.command)}
+                    sx={{
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'scale(1.02)',
+                      },
+                    }}
+                  >
+                    Use Command
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </Box>
         </Box>
-      )}
+      </Box>
     </Box>
   );
 };
