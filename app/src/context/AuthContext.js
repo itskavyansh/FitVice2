@@ -139,6 +139,64 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      console.log('Initiating Google login...');
+      await authService.loginWithGoogle();
+      return { success: true };
+    } catch (error) {
+      console.error('Google login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const loginWithGithub = async () => {
+    try {
+      console.log('Initiating GitHub login...');
+      await authService.loginWithGithub();
+      return { success: true };
+    } catch (error) {
+      console.error('GitHub login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const loginWithLinkedIn = async () => {
+    try {
+      console.log('Initiating LinkedIn login...');
+      await authService.loginWithLinkedIn();
+      return { success: true };
+    } catch (error) {
+      console.error('LinkedIn login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const loginWithToken = async (token) => {
+    try {
+      // Store the token
+      localStorage.setItem('token', token);
+      
+      // Set the auth header
+      authService.setupAuthHeaderForServiceCalls();
+      
+      // Get user data
+      const userData = await authService.getCurrentUser();
+      
+      if (userData) {
+        setUser(userData);
+        return { success: true };
+      } else {
+        throw new Error('Failed to get user data');
+      }
+    } catch (error) {
+      console.error('Token login error:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+      return { success: false, error: error.message };
+    }
+  };
+
   const value = {
     user,
     setUser,
@@ -149,6 +207,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     uploadProfilePicture,
+    loginWithGoogle,
+    loginWithGithub,
+    loginWithLinkedIn,
+    loginWithToken,
     refreshAuth: checkAuth,
   };
 

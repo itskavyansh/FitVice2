@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import { useMaterialUIController, setLayout } from 'context';
 import './auth.css';
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle, loginWithGithub, loginWithLinkedIn } = useAuth();
   const [controller, dispatch] = useMaterialUIController();
   const [formData, setFormData] = useState({
     email: '',
@@ -59,7 +59,6 @@ const SignIn = () => {
 
       if (result.success) {
         console.log('Login successful, navigating to dashboard...');
-        // Navigate to dashboard after successful login
         navigate('/dashboard', { replace: true });
       } else {
         console.error('Login failed:', result.error);
@@ -67,6 +66,37 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
+      setError(error.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider) => {
+    setError('');
+    setLoading(true);
+    try {
+      let result;
+      switch (provider) {
+        case 'google':
+          result = await loginWithGoogle();
+          break;
+        case 'github':
+          result = await loginWithGithub();
+          break;
+        case 'linkedin':
+          result = await loginWithLinkedIn();
+          break;
+        default:
+          throw new Error('Invalid provider');
+      }
+
+      if (result.success) {
+        navigate('/dashboard', { replace: true });
+      } else {
+        setError(result.error || 'Login failed. Please try again.');
+      }
+    } catch (error) {
       setError(error.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -134,6 +164,40 @@ const SignIn = () => {
         <button className="submit" type="submit" disabled={loading}>
           {loading ? 'Processing...' : 'Submit'}
         </button>
+
+        <Divider sx={{ my: 2, color: 'text.secondary' }}>
+          <Typography variant="body2" color="text.secondary">OR</Typography>
+        </Divider>
+
+        <div className="social-login">
+          <button
+            type="button"
+            className="social-btn google"
+            onClick={() => handleSocialLogin('google')}
+            disabled={loading}
+          >
+            <img src="/google-icon.svg" alt="Google" />
+            <span>Continue with Google</span>
+          </button>
+          <button
+            type="button"
+            className="social-btn github"
+            onClick={() => handleSocialLogin('github')}
+            disabled={loading}
+          >
+            <img src="/github-icon.svg" alt="GitHub" />
+            <span>Continue with GitHub</span>
+          </button>
+          <button
+            type="button"
+            className="social-btn linkedin"
+            onClick={() => handleSocialLogin('linkedin')}
+            disabled={loading}
+          >
+            <img src="/linkedin-icon.svg" alt="LinkedIn" />
+            <span>Continue with LinkedIn</span>
+          </button>
+        </div>
 
         <p className="signin">
           Don&apos;t have an account?{' '}

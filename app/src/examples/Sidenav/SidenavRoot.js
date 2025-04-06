@@ -22,16 +22,16 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   const { transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
 
   const sidebarWidth = 250;
-  const { gradients, white, background } = palette;
+  const { transparent, gradients, white, background } = palette;
   const { xxl } = boxShadows;
-  const { pxToRem, linearGradient, rgba } = functions;
+  const { pxToRem, linearGradient } = functions;
 
   let backgroundValue = darkMode
     ? background.sidenav
     : linearGradient(gradients.dark.main, gradients.dark.state);
 
   if (transparentSidenav) {
-    backgroundValue = 'rgba(255, 255, 255, 0)';
+    backgroundValue = transparent.main;
   } else if (whiteSidenav) {
     backgroundValue = white.main;
   }
