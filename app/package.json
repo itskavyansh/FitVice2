@@ -17,11 +17,13 @@
     "url": "git+https://github.com/creativetimofficial/material-dashboard-react.git"
   },
   "dependencies": {
-    "@emotion/cache": "11.10.8",
-    "@emotion/react": "11.10.8",
-    "@emotion/styled": "11.10.8",
-    "@mui/icons-material": "5.11.16",
-    "@mui/material": "5.12.3",
+    "@babel/runtime": "^7.21.0",
+    "@emotion/cache": "^11.10.8",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@mui/base": "^5.0.0-beta.4",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.3",
     "@mui/x-date-pickers": "^7.28.3",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
@@ -50,6 +52,7 @@
     "react-scripts": "5.0.1",
     "react-table": "7.8.0",
     "recharts": "^2.15.2",
+    "routes": "^2.1.0",
     "serverless-http": "^3.1.1",
     "sharp": "^0.34.0",
     "stylis": "4.1.4",
@@ -84,6 +87,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",
