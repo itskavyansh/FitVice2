@@ -314,6 +314,125 @@ function ExerciseDetails() {
     ],
   };
 
+  const exerciseKeyPoints = {
+    // Chest Exercises
+    'Bench Press': [
+      'Keep your back flat on the bench',
+      'Grip slightly wider than shoulder width',
+      'Lower bar to mid-chest',
+      'Keep elbows at 45-degree angle',
+      'Drive through your feet',
+    ],
+    'Push-ups': [
+      'Keep your body in a straight line',
+      'Hands slightly wider than shoulders',
+      'Lower chest to ground',
+      'Keep elbows at 45-degree angle',
+      'Engage core throughout',
+    ],
+    'Chest Fly': [
+      'Keep slight bend in elbows',
+      'Control the movement',
+      'Bring arms together in front',
+      'Squeeze chest at peak',
+      'Keep shoulders back',
+    ],
+
+    // Back Exercises
+    'Pull-ups': [
+      'Grip slightly wider than shoulders',
+      'Pull chest to bar',
+      'Keep core engaged',
+      'Control the descent',
+      'Squeeze shoulder blades',
+    ],
+    'Deadlifts': [
+      'Keep back straight',
+      'Hinge at hips',
+      'Keep bar close to legs',
+      'Drive through heels',
+      'Squeeze glutes at top',
+    ],
+    'Bent-over Rows': [
+      'Keep back straight',
+      'Pull elbows up',
+      'Squeeze shoulder blades',
+      'Keep chest up',
+      'Control the descent',
+    ],
+
+    // Leg Exercises
+    'Squats': [
+      'Keep back straight',
+      'Knees aligned with toes',
+      'Hips back as if sitting',
+      'Chest up',
+      'Drive through heels',
+    ],
+    'Lunges': [
+      'Keep torso upright',
+      'Front knee aligned with ankle',
+      'Back knee nearly touching ground',
+      'Step forward with control',
+      'Drive through front heel',
+    ],
+    'Leg Press': [
+      'Keep back flat on pad',
+      'Feet shoulder-width apart',
+      'Lower until knees at 90 degrees',
+      'Drive through heels',
+      'Don\'t lock knees',
+    ],
+
+    // Bicep Exercises
+    'Bicep Curls': [
+      'Keep elbows at sides',
+      'Curl weight up',
+      'Squeeze at top',
+      'Control the descent',
+      'Keep wrists straight',
+    ],
+    'Hammer Curls': [
+      'Keep elbows at sides',
+      'Palms facing each other',
+      'Curl weight up',
+      'Squeeze at top',
+      'Control the descent',
+    ],
+
+    // Tricep Exercises
+    'Tricep Dips': [
+      'Keep elbows close to body',
+      'Lower until elbows at 90 degrees',
+      'Drive through palms',
+      'Keep shoulders down',
+      'Control the movement',
+    ],
+    'Skull Crushers': [
+      'Keep upper arms vertical',
+      'Lower weight to forehead',
+      'Extend arms fully',
+      'Keep elbows in',
+      'Control the descent',
+    ],
+
+    // Shoulder Exercises
+    'Shoulder Press': [
+      'Keep core engaged',
+      'Press directly overhead',
+      'Don\'t lean back',
+      'Control the descent',
+      'Keep wrists straight',
+    ],
+    'Lateral Raises': [
+      'Keep slight bend in elbows',
+      'Raise arms to shoulder height',
+      'Control the movement',
+      'Don\'t swing the weights',
+      'Keep shoulders down',
+    ],
+  };
+
   if (!muscle) {
     return (
       <DashboardLayout>
@@ -404,12 +523,12 @@ function ExerciseDetails() {
                             Key Points to Focus On:
                           </Typography>
                           <List dense>
-                            {exerciseTips[exercise]?.map((tip, tipIndex) => (
-                              <ListItem key={tipIndex} sx={{ py: 0.5 }}>
+                            {exerciseKeyPoints[exercise]?.map((point, pointIndex) => (
+                              <ListItem key={pointIndex} sx={{ py: 0.5 }}>
                                 <ListItemText
                                   primary={
                                     <Typography variant="body2" color="text.secondary">
-                                      • {tip}
+                                      • {point}
                                     </Typography>
                                   }
                                 />

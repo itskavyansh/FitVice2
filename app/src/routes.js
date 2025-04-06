@@ -46,9 +46,9 @@ import TodoList from 'layouts/todo-list';
 import MusclePedia from 'layouts/muscle-pedia';
 import ExerciseDetails from 'layouts/muscle-pedia/exercise-details';
 import Chatbot from 'layouts/chatbot';
-import Profile from 'layouts/profile';
 import Landing from 'layouts/landing';
 import AuthProfile from 'components/auth/Profile';
+import Leaderboard from 'layouts/leaderboard';
 
 // Auth components
 import SignIn from 'components/auth/SignIn';
@@ -98,11 +98,19 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'Workout·Plans',
-    key: 'workout-plans',
-    icon: <Icon fontSize="small">fitness_center</Icon>,
-    route: '/workout-plans',
-    component: <WorkoutPlans />,
+    name: 'PostureSense',
+    key: 'posture-sense',
+    icon: <Icon fontSize="small">accessibility_new</Icon>,
+    route: '/posture-sense',
+    component: <PostureSense />,
+  },
+  {
+    type: 'collapse',
+    name: 'MusclePedia',
+    key: 'muscle-pedia',
+    icon: <Icon fontSize="small">science</Icon>,
+    route: '/muscle-pedia',
+    component: <MusclePedia />,
   },
   {
     type: 'collapse',
@@ -114,7 +122,7 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'Nutrition·Guide',
+    name: 'Nutrition·&·Health',
     key: 'nutrition',
     icon: <Icon fontSize="small">restaurant_menu</Icon>,
     route: '/nutrition',
@@ -130,14 +138,6 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'PostureSense',
-    key: 'posture-sense',
-    icon: <Icon fontSize="small">accessibility_new</Icon>,
-    route: '/posture-sense',
-    component: <PostureSense />,
-  },
-  {
-    type: 'collapse',
     name: 'ToDo·List',
     key: 'todo-list',
     icon: <Icon fontSize="small">checklist</Icon>,
@@ -146,11 +146,11 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'MusclePedia',
-    key: 'muscle-pedia',
-    icon: <Icon fontSize="small">science</Icon>,
-    route: '/muscle-pedia',
-    component: <MusclePedia />,
+    name: 'Leaderboard',
+    key: 'leaderboard',
+    icon: <Icon fontSize="small">leaderboard</Icon>,
+    route: '/leaderboard',
+    component: <Leaderboard />,
   },
   {
     type: 'collapse',
@@ -169,14 +169,6 @@ const routes = [
     route: '/chatbot',
     component: <Chatbot />,
     hideInNav: true,
-  },
-  {
-    type: 'collapse',
-    name: 'Profile',
-    key: 'profile',
-    icon: <Icon fontSize="small">person</Icon>,
-    route: '/profile',
-    component: <AuthProfile />,
   },
 ];
 
