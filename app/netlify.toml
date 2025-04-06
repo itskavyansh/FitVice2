@@ -7,9 +7,7 @@
   NODE_VERSION = "18.17.0"
   NPM_VERSION = "9.6.7"
   CI = "false"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 [functions]
   included_files = ["node_modules/**/*"] 
