@@ -7,7 +7,7 @@
   NODE_VERSION = "18.17.0"
   NPM_VERSION = "9.6.7"
   CI = "false"
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 [functions]
-  included_files = ["node_modules/**/*"] 
+  included_files = ["netlify/functions/node_modules/**/*"]
+  node_bundler = "esbuild" 
