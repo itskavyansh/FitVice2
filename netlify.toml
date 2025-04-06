@@ -1,18 +1,25 @@
 [build]
-  base = "app/"
-  publish = "build/"
-  command = "npm run build"
+  command = "cd app && npm install && npm run build"
+  publish = "app/build"
+  base = "."
+
+[build.environment]
+  NODE_VERSION = "18.17.0"
+  NPM_VERSION = "9.6.7"
+  CI = "false"
 
 [functions]
-  directory = "netlify/functions"
+  directory = "app/netlify/functions"
+  included_files = [
+    "app/netlify/functions/node_modules/**/*",
+    "app/netlify/functions/*.js",
+    "app/netlify/functions/package.json"
+  ]
+  node_bundler = "esbuild"
+  external_node_modules = ["aws-sdk"]
+  node_bundler_flags = "--minify --tree-shaking=true"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
-  status = 200
-
-[build.environment]
-  DISABLE_ESLINT_PLUGIN = "true"
-  CI = "false"
-  NODE_VERSION = "18.17.0"
-  NPM_VERSION = "9.6.7" 
+  status = 200 
