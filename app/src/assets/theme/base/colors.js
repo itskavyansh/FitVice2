@@ -21,16 +21,16 @@ Coded by www.creative-tim.com
 
 const colors = {
   background: {
-    default: '#f7f8fa',
+    default: '#f0f2f5',
   },
 
   text: {
-    main: '#4a5568',
-    focus: '#2d3748',
+    main: '#7b809a',
+    focus: '#344767',
   },
 
   transparent: {
-    main: 'transparent',
+    main: 'rgba(255, 255, 255, 0)',
   },
 
   white: {
@@ -45,96 +45,96 @@ const colors = {
   },
 
   primary: {
-    main: '#334155',
-    focus: '#1e293b',
+    main: '#e91e63',
+    focus: '#e91e63',
   },
 
   secondary: {
-    main: '#64748b',
-    focus: '#475569',
+    main: '#7b809a',
+    focus: '#8f93a9',
   },
 
   info: {
-    main: '#3b82f6',
-    focus: '#2563eb',
+    main: '#1A73E8',
+    focus: '#1662C4',
   },
 
   success: {
-    main: '#10b981',
-    focus: '#059669',
+    main: '#4CAF50',
+    focus: '#67bb6a',
   },
 
   warning: {
-    main: '#f59e0b',
-    focus: '#d97706',
+    main: '#fb8c00',
+    focus: '#fc9d26',
   },
 
   error: {
-    main: '#ef4444',
-    focus: '#dc2626',
+    main: '#F44335',
+    focus: '#f65f53',
   },
 
   light: {
-    main: '#f7f8fa',
-    focus: '#e2e8f0',
+    main: '#f0f2f5',
+    focus: '#f0f2f5',
   },
 
   dark: {
-    main: '#334155',
-    focus: '#1e293b',
+    main: '#344767',
+    focus: '#2c3c58',
   },
 
   grey: {
-    100: '#f7fafc',
-    200: '#edf2f7',
-    300: '#e2e8f0',
-    400: '#cbd5e0',
-    500: '#a0aec0',
-    600: '#718096',
-    700: '#4a5568',
-    800: '#2d3748',
-    900: '#1a202c',
+    100: '#f8f9fa',
+    200: '#f0f2f5',
+    300: '#dee2e6',
+    400: '#ced4da',
+    500: '#adb5bd',
+    600: '#6c757d',
+    700: '#495057',
+    800: '#343a40',
+    900: '#212529',
   },
 
   gradients: {
     primary: {
-      main: '#475569',
-      state: '#334155',
+      main: '#EC407A',
+      state: '#D81B60',
     },
 
     secondary: {
-      main: '#64748b',
-      state: '#475569',
+      main: '#747b8a',
+      state: '#495361',
     },
 
     info: {
-      main: '#60a5fa',
-      state: '#3b82f6',
+      main: '#49a3f1',
+      state: '#1A73E8',
     },
 
     success: {
-      main: '#34d399',
-      state: '#10b981',
+      main: '#66BB6A',
+      state: '#43A047',
     },
 
     warning: {
-      main: '#fbbf24',
-      state: '#f59e0b',
+      main: '#FFA726',
+      state: '#FB8C00',
     },
 
     error: {
-      main: '#f87171',
-      state: '#ef4444',
+      main: '#EF5350',
+      state: '#E53935',
     },
 
     light: {
-      main: '#F9FAFB',
-      state: '#E5E7EB',
+      main: '#EBEFF4',
+      state: '#CED4DA',
     },
 
     dark: {
-      main: '#334155',
-      state: '#1e293b',
+      main: '#42424a',
+      state: '#191919',
     },
   },
 
@@ -202,53 +202,53 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: '#e2e8f0',
-      text: '#334155',
+      background: '#f8b9ca',
+      text: '#cc084b',
     },
 
     secondary: {
-      background: '#e2e8f0',
-      text: '#64748b',
+      background: '#dfe2e6',
+      text: '#6c757d',
     },
 
     info: {
-      background: '#dbeafe',
-      text: '#2563eb',
+      background: '#aecef7',
+      text: '#095bc6',
     },
 
     success: {
-      background: '#d1fae5',
-      text: '#059669',
+      background: '#bce2be',
+      text: '#339537',
     },
 
     warning: {
-      background: '#fef3c7',
-      text: '#d97706',
+      background: '#ffd59f',
+      text: '#c87000',
     },
 
     error: {
-      background: '#fee2e2',
-      text: '#dc2626',
+      background: '#fcd3d6',
+      text: '#f61200',
     },
 
     light: {
       background: '#ffffff',
-      text: '#718096',
+      text: '#c7d3de',
     },
 
     dark: {
-      background: '#cbd5e0',
-      text: '#1e293b',
+      background: '#8097bf',
+      text: '#1e2e4a',
     },
   },
 
   coloredShadows: {
-    primary: '#334155',
-    secondary: '#64748b',
-    info: '#3b82f6',
-    success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444',
+    primary: '#e91e62',
+    secondary: '#110e0e',
+    info: '#00bbd4',
+    success: '#4caf4f',
+    warning: '#ff9900',
+    error: '#f44336',
     light: '#adb5bd',
     dark: '#404040',
   },

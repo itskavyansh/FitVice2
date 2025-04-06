@@ -407,22 +407,42 @@ function PostureSense() {
     loadMediaPipeScripts();
   }, []);
 
+  const checkDeviceCompatibility = () => {
+    // Check if running in a secure context (HTTPS or localhost)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      throw new Error('Camera access requires a secure connection (HTTPS).');
+    }
+
+    // Check if getUserMedia is supported
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('Your browser does not support camera access. Please use a modern browser.');
+    }
+
+    // Check if the device has the required capabilities
+    return navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        if (videoDevices.length === 0) {
+          throw new Error('No camera found on your device.');
+        }
+        return true;
+      });
+  };
+
   const startCamera = async () => {
     try {
       setIsLoading(true);
+      setError('');
+
+      // Check device compatibility first
+      await checkDeviceCompatibility();
+
       if (!isMediaPipeLoaded) {
         throw new Error('MediaPipe libraries are still loading. Please wait a moment.');
       }
 
       if (!window.Pose) {
         throw new Error('MediaPipe Pose is not loaded properly. Please refresh the page.');
-      }
-
-      // First check if the browser supports getUserMedia
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error(
-          "Your browser doesn't support camera access. Please try using a modern browser.",
-        );
       }
 
       // Request camera permissions with specific constraints
@@ -453,546 +473,32 @@ function PostureSense() {
             };
           }
         });
+
+        setIsCameraActive(true);
+        startPoseDetection();
       }
-
-      // Initialize MediaPipe Pose if not already initialized
-      if (!poseRef.current) {
-        const pose = new window.Pose({
-          locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`;
-          },
-        });
-
-        pose.setOptions({
-          modelComplexity: 1,
-          smoothLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-          selfieMode: cameraFacingRef.current === 'user',
-        });
-
-        pose.onResults((results) => {
-          if (results.poseLandmarks) {
-            const landmarks = results.poseLandmarks;
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            const video = videoRef.current;
-
-            // Set canvas size to match video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            // Clear canvas and prepare for drawing
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Apply mirroring if using front camera (selfie mode)
-            if (cameraFacingRef.current === 'user') {
-              ctx.save();
-              ctx.scale(-1, 1);
-              ctx.translate(-canvas.width, 0);
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              ctx.restore();
-            } else {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            }
-
-            // Get the selected exercise data
-            const exerciseData = exercises[selectedExercise];
-            // Get joint indices from the selected exercise
-            const joints = exerciseData.joints;
-            // Get landmarks for the selected joints based on exercise type
-            let joint1, joint2, joint3;
-            let angle = null; // Initialize angle variable here
-            if (exerciseData.isVertical) {
-              // For vertical exercises (pushups, squats, lunges, shoulder press)
-              if (selectedExercise === 'pushups') {
-                // For pushups, track shoulder, elbow, and wrist
-                joint1 = joints.shoulder
-                  ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
-                  : null;
-                joint2 = joints.elbow
-                  ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y]
-                  : null;
-                joint3 = joints.wrist
-                  ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y]
-                  : null;
-              } else if (selectedExercise === 'shoulderPress') {
-                // For shoulder press, track shoulder, elbow, and wrist
-                joint1 = joints.shoulder
-                  ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
-                  : null;
-                joint2 = joints.elbow
-                  ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y]
-                  : null;
-                joint3 = joints.wrist
-                  ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y]
-                  : null;
-                // Calculate angle for shoulder press
-                if (joint1 && joint2 && joint3) {
-                  // Calculate the angle between shoulder, elbow, and wrist
-                  const shoulderElbowAngle = Math.atan2(
-                    joint2[1] - joint1[1],
-                    joint2[0] - joint1[0],
-                  );
-                  const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
-                  angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
-                  if (angle > 180.0) {
-                    angle = 360 - angle;
-                  }
-                }
-              } else if (selectedExercise === 'lateralRaise') {
-                // For lateral raises, track hip, shoulder, and elbow to measure shoulder angle
-                joint1 = joints.hip ? [landmarks[joints.hip].x, landmarks[joints.hip].y] : null;
-                joint2 = joints.shoulder
-                  ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
-                  : null;
-                joint3 = joints.elbow
-                  ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y]
-                  : null;
-                // Calculate the angle between hip, shoulder, and elbow
-                const hipShoulderAngle = Math.atan2(joint2[1] - joint1[1], joint2[0] - joint1[0]);
-                const shoulderElbowAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
-                angle = Math.abs((shoulderElbowAngle - hipShoulderAngle * 180.0) / Math.PI);
-                if (angle > 180.0) {
-                  angle = 360 - angle;
-                }
-              } else if (selectedExercise === 'squats' || selectedExercise === 'lunges') {
-                // For squats and lunges, track hip, knee, and ankle
-                if (selectedExercise === 'squats') {
-                  joint1 = joints.hip ? [landmarks[joints.hip].x, landmarks[joints.hip].y] : null;
-                  joint2 = joints.knee
-                    ? [landmarks[joints.knee].x, landmarks[joints.knee].y]
-                    : null;
-                  joint3 = joints.ankle
-                    ? [landmarks[joints.ankle].x, landmarks[joints.ankle].y]
-                    : null;
-                } else if (selectedExercise === 'lunges') {
-                  // Directly track both legs for lunges
-                  const leftHip = landmarks[joints.leftHip];
-                  const leftKnee = landmarks[joints.leftKnee];
-                  const leftAnkle = landmarks[joints.leftAnkle];
-                  const rightHip = landmarks[joints.rightHip];
-                  const rightKnee = landmarks[joints.rightKnee];
-                  const rightAnkle = landmarks[joints.rightAnkle];
-                  // Calculate angles directly if landmarks exist
-                  let leftAngle = null;
-                  let rightAngle = null;
-                  if (leftHip && leftKnee && leftAnkle) {
-                    const v1 = [leftKnee.x - leftHip.x, leftKnee.y - leftHip.y];
-                    const v2 = [leftKnee.x - leftAnkle.x, leftKnee.y - leftAnkle.y];
-                    // Calculate dot product and magnitudes
-                    const dot = v1[0] * v2[0] + v1[1] * v2[1];
-                    const mag1 = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1]);
-                    const mag2 = Math.sqrt(v2[0] * v2[0] + v2[1] * v2[1]);
-                    // Calculate angle in degrees
-                    leftAngle = Math.acos(dot / (mag1 * mag2)) * (180 / Math.PI);
-                  }
-                  if (rightHip && rightKnee && rightAnkle) {
-                    const v1 = [rightKnee.x - rightHip.x, rightKnee.y - rightHip.y];
-                    const v2 = [rightKnee.x - rightAnkle.x, rightKnee.y - rightAnkle.y];
-                    // Calculate dot product and magnitudes
-                    const dot = v1[0] * v2[0] + v1[1] * v2[1];
-                    const mag1 = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1]);
-                    const mag2 = Math.sqrt(v2[0] * v2[0] + v2[1] * v2[1]);
-                    // Calculate angle in degrees
-                    rightAngle = Math.acos(dot / (mag1 * mag2)) * (180 / Math.PI);
-                  }
-                  // Use the smaller angle (more bent leg) for tracking
-                  if (leftAngle !== null && rightAngle !== null) {
-                    angle = Math.min(leftAngle, rightAngle);
-                    // Draw angles on screen if enabled
-                    if (showAnglesRef.current) {
-                      ctx.fillStyle = 'white';
-                      ctx.strokeStyle = 'black';
-                      ctx.lineWidth = 2;
-                      ctx.font = 'bold 16px Arial';
-                      // Left knee angle
-                      const leftText = `L: ${Math.round(leftAngle)}°`;
-                      ctx.strokeText(
-                        leftText,
-                        leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20,
-                      );
-                      ctx.fillText(
-                        leftText,
-                        leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20,
-                      );
-                      // Right knee angle
-                      const rightText = `R: ${Math.round(rightAngle)}°`;
-                      ctx.strokeText(
-                        rightText,
-                        rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20,
-                      );
-                      ctx.fillText(
-                        rightText,
-                        rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20,
-                      );
-                    }
-                  } else if (leftAngle !== null) {
-                    angle = leftAngle;
-                  } else if (rightAngle !== null) {
-                    angle = rightAngle;
-                  }
-                  // Skip the main angle calculation code below since we already have our angle
-                  if (angle !== null) {
-                    // Set joint references for drawing (not used for angle calculation)
-                    if (leftAngle !== null && (rightAngle === null || leftAngle <= rightAngle)) {
-                      joint1 = [leftHip.x, leftHip.y];
-                      joint2 = [leftKnee.x, leftKnee.y];
-                      joint3 = [leftAnkle.x, leftAnkle.y];
-                    } else {
-                      joint1 = [rightHip.x, rightHip.y];
-                      joint2 = [rightKnee.x, rightKnee.y];
-                      joint3 = [rightAnkle.x, rightAnkle.y];
-                    }
-                  }
-                } else if (selectedExercise === 'squats') {
-                  // ... existing code ...
-                }
-              }
-            } else {
-              // For arm exercises (bicep curls, shoulder press, lateral raise)
-              joint1 = joints.shoulder
-                ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
-                : null;
-              joint2 = joints.elbow ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y] : null;
-              joint3 = joints.wrist ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y] : null;
-              // Adjust angle calculation for shoulder press
-              if (selectedExercise === 'shoulderPress' && joint1 && joint2 && joint3) {
-                // Calculate the angle between shoulder, elbow, and wrist
-                const shoulderElbowAngle = Math.atan2(joint2[1] - joint1[1], joint2[0] - joint1[0]);
-                const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
-                angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
-                if (angle > 180.0) {
-                  angle = 360 - angle;
-                }
-              }
-            }
-            // Calculate angle if all necessary joints are detected
-            if (joint1 && joint2 && joint3) {
-              angle =
-                Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]) -
-                Math.atan2(joint1[1] - joint2[1], joint1[0] - joint2[0]);
-              angle = Math.abs((angle * 180.0) / Math.PI);
-
-              if (angle > 180.0) {
-                angle = 360 - angle;
-              }
-
-              // Update accuracy score based on current angle
-              updateAccuracyScore(angle, selectedExercise);
-              // Rep counting logic based on the selected exercise
-              const { downAngle, upAngle, invertStages } = exerciseData;
-              // Add debounce for lunges to prevent unwanted reps
-              if (selectedExercise === 'lunges') {
-                // Special case for lunges with simplified tracking
-                if (invertStages) {
-                  // Use downAngle and upAngle from exercise configuration
-                  const { downAngle, upAngle } = exercises.lunges;
-
-                  // Simple DOWN position detection
-                  if (angle <= downAngle + 10) {
-                    console.log(`Lunge DOWN position at: ${angle.toFixed(1)}°`);
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-                  }
-
-                  // Simple UP position and rep counting
-                  // Only count rep when coming up from DOWN position
-                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    console.log(`Lunge UP position at: ${angle.toFixed(1)}°, counting rep`);
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-
-                    // Count the rep
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-
-                    // Show celebration if target reached
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-
-                    // Reset after a short delay
-                    setTimeout(() => {
-                      stageRef.current = 'READY';
-                      setDisplayStage('READY');
-                    }, 500);
-                  }
-                }
-              } else if (invertStages) {
-                // Special dedicated tracking for pushups
-                if (selectedExercise === 'pushups') {
-                  // Log that we're calling trackPushups
-                  console.log(`Angle: ${angle.toFixed(1)}°`);
-
-                  // MUCH SIMPLER TRACKING ALGORITHM - no state machine
-                  // Use downAngle and upAngle from exercise configuration
-                  const { downAngle, upAngle } = exercises.pushups;
-
-                  // Simple DOWN position detection
-                  if (angle <= downAngle + 10) {
-                    // 80 degrees or less
-                    console.log(`DOWN position at: ${angle.toFixed(1)}°`);
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-                  }
-
-                  // Simple UP position and rep counting
-                  // Only count rep when coming up from DOWN position
-                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    // 100 degrees or more
-                    console.log(`UP position at: ${angle.toFixed(1)}°, counting rep`);
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-
-                    // Count the rep
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-
-                    // Show celebration if target reached
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-
-                    // Reset after a short delay
-                    setTimeout(() => {
-                      stageRef.current = 'READY';
-                      setDisplayStage('READY');
-                    }, 500);
-                  }
-                }
-                // Check if it's squats and use the same simplified approach
-                else if (selectedExercise === 'squats') {
-                  // Use downAngle and upAngle from exercise configuration
-                  const { downAngle, upAngle } = exercises.squats;
-
-                  // Simple DOWN position detection
-                  if (angle <= downAngle + 10) {
-                    console.log(`Squat DOWN position at: ${angle.toFixed(1)}°`);
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-                  }
-
-                  // Simple UP position and rep counting
-                  // Only count rep when coming up from DOWN position
-                  if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    console.log(`Squat UP position at: ${angle.toFixed(1)}°, counting rep`);
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-
-                    setTimeout(() => {
-                      stageRef.current = 'READY';
-                      setDisplayStage('READY');
-                    }, 500);
-                  }
-                }
-                // Original logic for other exercises (besides pushups and squats)
-                else {
-                  if (angle < upAngle) {
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-                  }
-                  if (angle > downAngle && stageRef.current === 'DOWN') {
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-                  }
-                }
-              } else {
-                // Special dedicated tracking for lateral raises
-                if (selectedExercise === 'lateralRaise') {
-                  // Log that we're tracking lateral raises
-                  console.log(`Angle: ${angle.toFixed(1)}°`);
-
-                  // Get angle thresholds from exercise configuration
-                  const { downAngle, upAngle } = exercises.lateralRaise;
-
-                  // Simple UP position detection (in lateral raises, UP means arms are raised)
-                  if (angle >= upAngle - 10) {
-                    // 60 degrees or more
-                    console.log(`UP position at: ${angle.toFixed(1)}°`);
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-                  }
-
-                  // Simple DOWN position and rep counting
-                  // Only count rep when arms are lowered from UP position
-                  if (angle <= downAngle + 10 && stageRef.current === 'UP') {
-                    // 30 degrees or less
-                    console.log(`DOWN position at: ${angle.toFixed(1)}°, counting rep`);
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-
-                    // Count the rep
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-
-                    // Show celebration if target reached
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-
-                    // Reset after a short delay
-                    setTimeout(() => {
-                      stageRef.current = 'READY';
-                      setDisplayStage('READY');
-                    }, 500);
-                  }
-                }
-                // For other non-inverted exercises like bicep curls
-                else {
-                  if (angle < upAngle) {
-                    stageRef.current = 'UP';
-                    setDisplayStage('UP');
-                  }
-                  if (angle > downAngle && stageRef.current === 'UP') {
-                    stageRef.current = 'DOWN';
-                    setDisplayStage('DOWN');
-                    counterRef.current += 1;
-                    setDisplayCounter(counterRef.current);
-                    if (counterRef.current >= targetReps) {
-                      setShowCelebration(true);
-                      setTimeout(() => setShowCelebration(false), 3000);
-                    }
-                  }
-                }
-              }
-            }
-            // Draw landmarks and connectors if enabled
-            if (showLandmarksRef.current) {
-              console.log('Drawing landmarks');
-              window.drawLandmarks(ctx, results.poseLandmarks, {
-                color: '#F542E6',
-                lineWidth: 2,
-                radius: 4,
-              });
-            }
-            if (showConnectorsRef.current) {
-              console.log('Drawing connectors');
-              window.drawConnectors(ctx, results.poseLandmarks, window.POSE_CONNECTIONS, {
-                color: '#F57542',
-                lineWidth: 2,
-              });
-            }
-            // Draw the stats container
-            if (showStatsRef.current) {
-              // Draw the stats container
-              const statsX = canvas.width / 2 - 150;
-              ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-              ctx.fillRect(statsX, 10, 300, 120);
-              ctx.fillStyle = 'white';
-              // Draw exercise name
-              ctx.font = 'bold 24px Arial';
-              ctx.fillText(exerciseData.name, statsX + 10, 40);
-              // Draw rep counter with target
-              ctx.font = 'bold 22px Arial';
-              ctx.fillText(`REPS: ${counterRef.current}/${targetReps}`, statsX + 10, 80);
-              // Draw progress bar for rep target
-              const progressWidth = 280;
-              const progress = Math.min(counterRef.current / targetReps, 1) * progressWidth;
-              // Progress bar background
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-              ctx.fillRect(statsX + 10, 90, progressWidth, 15);
-              // Progress bar fill
-              ctx.fillStyle = exerciseData.color || '#4CAF50';
-              ctx.fillRect(statsX + 10, 90, progress, 15);
-              // Draw current stage
-              ctx.fillStyle = 'white';
-              ctx.font = 'bold 22px Arial';
-              ctx.fillText(`STAGE: ${stageRef.current || 'Ready'}`, statsX + 170, 80);
-            }
-            // Draw angle on the joint if enabled
-            if (showAnglesRef.current && angle && joint2) {
-              ctx.fillStyle = 'white';
-              ctx.strokeStyle = 'black';
-              ctx.lineWidth = 2;
-              ctx.font = 'bold 16px Arial';
-              const text = `${Math.round(angle)}°`;
-              // Calculate text position based on joint position
-              const jointX = joint2[0] * canvas.width;
-              const jointY = joint2[1] * canvas.height;
-              // Draw text with outline
-              ctx.strokeText(text, jointX, jointY);
-              ctx.fillText(text, jointX, jointY);
-            }
-            // Draw instruction
-            if (stageRef.current && showInstructionsRef.current) {
-              const instruction = stageRef.current === 'DOWN' ? 'GO UP!' : 'GO DOWN!';
-              const instructionColor = stageRef.current === 'DOWN' ? '#4CAF50' : '#FFC107';
-              // Position at bottom center
-              ctx.textAlign = 'center';
-              ctx.font = 'bold 32px Arial';
-              ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-              ctx.fillRect(canvas.width / 2 - 100, canvas.height - 60, 200, 50);
-              // Draw instruction text
-              ctx.fillStyle = instructionColor;
-              ctx.fillText(instruction, canvas.width / 2, canvas.height - 25);
-              // Reset text alignment
-              ctx.textAlign = 'left';
-            }
-            ctx.restore();
-          }
-        });
-
-        poseRef.current = pose;
-      }
-
-      // Start processing frames
-      const processFrame = async () => {
-        if (
-          videoRef.current &&
-          videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA &&
-          !isPaused
-        ) {
-          await poseRef.current.send({ image: videoRef.current });
-        }
-        requestAnimationFrame(processFrame);
-      };
-
-      processFrame();
-      setIsCameraActive(true);
-      setError(null);
-      setWorkoutStartTime(new Date());
-      setNotification({
-        open: true,
-        message: 'Camera started. Begin your workout!',
-        color: 'success',
-      });
-      setIsLoading(false);
     } catch (error) {
       console.error('Error accessing camera:', error);
       let errorMessage = 'Error accessing camera. ';
+
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
         errorMessage += 'Please grant camera permissions in your browser settings. ';
         errorMessage += "Click the camera icon in your browser's address bar and allow access.";
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         errorMessage += 'No camera found. Please connect a camera and try again.';
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        errorMessage +=
-          'Camera is in use by another application. Please close other apps using the camera.';
+        errorMessage += 'Camera is in use by another application. Please close other apps using the camera.';
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage += 'Camera does not support the required resolution. Please try a different camera.';
+      } else if (error.message.includes('secure connection')) {
+        errorMessage = error.message;
       } else {
         errorMessage += error.message || 'Please try refreshing the page.';
       }
+
       setError(errorMessage);
       setIsCameraActive(false);
+    } finally {
       setIsLoading(false);
     }
   };
