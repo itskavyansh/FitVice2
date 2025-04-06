@@ -10,7 +10,7 @@ const app = express();
 
 // Environment variables
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://fitvice.netlify.app';
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'https://localhost:3001';
 
 if (!MONGODB_URI) {
   console.error('MongoDB URI is not defined in environment variables');
