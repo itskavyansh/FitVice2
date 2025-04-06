@@ -6,16 +6,26 @@ const auth = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
+      console.log('No token provided');
       return res.status(401).json({ 
         success: false,
         message: 'No authentication token provided' 
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not set in environment variables');
+      return res.status(500).json({
+        success: false,
+        message: 'Server configuration error'
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ _id: decoded.userId });
 
     if (!user) {
+      console.log('User not found for token:', decoded.userId);
       return res.status(401).json({ 
         success: false,
         message: 'User not found' 
