@@ -1,74 +1,96 @@
 import axios from 'axios';
 
-const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://fitvice.netlify.app/.netlify/functions/api'
-  : 'http://localhost:3001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // Create axios instance with default config
 const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
+  timeout: 10000, // 10 second timeout
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
   },
 });
 
-// Add request interceptor for setting auth token and logging
+// Retry logic
+const retryCount = 2;
+const retryDelay = 1000; // 1 second
+
+const retryRequest = async (failedRequest, retryAttempt = 0) => {
+  if (retryAttempt >= retryCount) {
+    throw failedRequest;
+  }
+
+  await new Promise(resolve => setTimeout(resolve, retryDelay * (retryAttempt + 1)));
+  
+  try {
+    const response = await axios({
+      ...failedRequest.config,
+      headers: {
+        ...failedRequest.config.headers,
+        'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : undefined
+      }
+    });
+    return response;
+  } catch (error) {
+    return retryRequest(error, retryAttempt + 1);
+  }
+};
+
+// Add request interceptor for logging and token refresh
 api.interceptors.request.use(
   (config) => {
-    // Log the full URL for debugging
-    console.log('Making request to:', config.baseURL + config.url);
-    console.log('Request headers:', config.headers);
-    
-    // Always check for token and set header from localStorage
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // Ensure CORS credentials are included
-    config.withCredentials = true;
-
-    // Log the request with masked token for security
-    const authHeader = config.headers.Authorization;
-    const maskedHeader = authHeader
-      ? `Bearer ${authHeader.split(' ')[1]?.substring(0, 5)}...`
-      : 'None';
-
-    console.log('Request:', {
-      method: config.method,
-      url: config.url,
-      data: config.data ? JSON.stringify(config.data) : '(no data)',
-      auth: maskedHeader,
-    });
-
     return config;
   },
   (error) => {
     console.error('Request error:', error);
     return Promise.reject(error);
-  },
+  }
 );
 
-// Add response interceptor for logging
+// Add response interceptor for logging and error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('Response:', {
-      status: response.status,
-      data: response.data,
-      headers: response.headers,
-    });
     return response;
   },
-  (error) => {
+  async (error) => {
     console.error('Response error:', {
       status: error.response?.status,
       data: error.response?.data,
       message: error.message,
     });
+
+    // Handle network errors
+    if (!error.response) {
+      return Promise.reject(new Error('Network error. Please check your connection.'));
+    }
+
+    // Handle timeout errors
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject(new Error('Request timed out. Please try again.'));
+    }
+
+    // Handle token expiration
+    if (error.response.status === 401 && error.response.data?.message?.includes('expired')) {
+      localStorage.removeItem('token');
+      window.location.href = '/auth/sign-in';
+      return Promise.reject(new Error('Session expired. Please sign in again.'));
+    }
+
+    // Retry on network errors or 5xx server errors
+    if (!error.response || (error.response.status >= 500 && error.response.status < 600)) {
+      try {
+        return await retryRequest(error);
+      } catch (retryError) {
+        return Promise.reject(new Error('Service temporarily unavailable. Please try again later.'));
+      }
+    }
+
     return Promise.reject(error);
-  },
+  }
 );
 
 const authService = {
