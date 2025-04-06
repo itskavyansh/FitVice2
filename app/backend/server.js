@@ -13,20 +13,31 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: function(origin, callback) {
+    console.log('Incoming request origin:', origin);
+    
     // In development, allow all origins
     if (process.env.NODE_ENV !== 'production') {
+      console.log('Development mode: allowing all origins');
       return callback(null, true);
     }
 
     const allowedOrigins = [
       'https://fitvice.netlify.app',
-      'http://localhost:3000'
-    ];
+      'https://fitvice2.netlify.app',
+      'http://localhost:3000',
+      process.env.FRONTEND_URL
+    ].filter(Boolean); // Remove any undefined values
+    
+    console.log('Allowed origins:', allowedOrigins);
     
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('No origin provided, allowing request');
+      return callback(null, true);
+    }
     
     if (allowedOrigins.includes(origin)) {
+      console.log('Origin allowed:', origin);
       callback(null, true);
     } else {
       console.error('CORS blocked request from:', origin);
@@ -60,12 +71,15 @@ app.use((req, res, next) => {
 
 // Connect to MongoDB
 const connectWithRetry = () => {
-  if (process.env.NODE_ENV === 'development' || process.env.USE_IN_MEMORY_DB === 'true') {
-    console.log('Using in-memory database for development');
+  if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI is not set in environment variables');
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MONGODB_URI must be set in production');
+    }
     return;
   }
 
-  console.log('Attempting to connect to MongoDB with URI:', process.env.MONGODB_URI);
+  console.log('Attempting to connect to MongoDB...');
   mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -77,6 +91,11 @@ const connectWithRetry = () => {
   })
   .then(() => {
     console.log('Connected to MongoDB successfully');
+    // Test the connection by trying to find a user
+    return mongoose.connection.db.admin().ping();
+  })
+  .then(() => {
+    console.log('MongoDB connection verified with ping');
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
@@ -86,8 +105,12 @@ const connectWithRetry = () => {
       code: err.code,
       stack: err.stack
     });
-    console.error('Retrying in 5 seconds...');
-    setTimeout(connectWithRetry, 5000);
+    if (process.env.NODE_ENV === 'production') {
+      console.error('Production environment detected, will retry connection...');
+      setTimeout(connectWithRetry, 5000);
+    } else {
+      console.error('Development environment detected, check MongoDB connection string');
+    }
   });
 };
 
