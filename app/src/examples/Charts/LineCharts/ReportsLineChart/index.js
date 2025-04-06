@@ -44,6 +44,7 @@ import MDTypography from 'components/MDTypography';
 // ReportsLineChart configurations
 import configs from 'examples/Charts/LineCharts/ReportsLineChart/configs';
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -52,7 +53,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler,
+  Filler
 );
 
 function ReportsLineChart({ color, title, description, date, chart }) {

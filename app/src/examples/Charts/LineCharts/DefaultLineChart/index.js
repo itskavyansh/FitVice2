@@ -64,7 +64,7 @@ function DefaultLineChart({ icon, title, description, height, chart }) {
         tension: 0,
         pointRadius: 3,
         borderWidth: 4,
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
         fill: true,
         pointBackgroundColor: colors[dataset.color]
           ? colors[dataset.color || 'dark'].main

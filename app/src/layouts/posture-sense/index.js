@@ -85,7 +85,7 @@ import {
   Tooltip as ChartTooltip,
   Legend,
 } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 // Register Chart.js components
 ChartJS.register(
@@ -96,7 +96,7 @@ ChartJS.register(
   BarElement,
   Title,
   ChartTooltip,
-  Legend,
+  Legend
 );
 
 import squatsImage from 'assets/images/squats.jpg';

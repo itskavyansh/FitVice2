@@ -223,11 +223,39 @@ const NutritionGuide = () => {
       icon: "FitnessCenter"
     }
   ]);
+  
+  // Add recipe tips state
+  const [recipeTips, setRecipeTips] = useState([
+    {
+      title: "Mise en Place",
+      description: "Prepare and organize all ingredients before starting to cook for better efficiency.",
+      icon: "Restaurant"
+    },
+    {
+      title: "Temperature Control",
+      description: "Learn to control heat levels - high heat isn't always best for cooking.",
+      icon: "LocalDining"
+    },
+    {
+      title: "Fresh Ingredients",
+      description: "Use fresh, quality ingredients for the best flavor in your dishes.",
+      icon: "FoodBank"
+    },
+    {
+      title: "Seasoning Balance",
+      description: "Season throughout cooking, not just at the end, for better flavor development.",
+      icon: "EmojiFoodBeverage"
+    }
+  ]);
+  
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [currentRecipeTipIndex, setCurrentRecipeTipIndex] = useState(0);
   const [tipsLoading, setTipsLoading] = useState(false);
   const [slideDirection, setSlideDirection] = useState('left');
+  const [recipeSlideDirection, setRecipeSlideDirection] = useState('left');
   const [carouselOffset, setCarouselOffset] = useState(0);
   const [carouselItems, setCarouselItems] = useState([]);
+  const [recipeCarouselItems, setRecipeCarouselItems] = useState([]);
 
   useEffect(() => {
     if (nutritionTips.length > 0) {
@@ -253,6 +281,30 @@ const NutritionGuide = () => {
       return () => clearInterval(interval);
     }
   }, [carouselItems.length, nutritionTips.length]);
+
+  useEffect(() => {
+    if (recipeTips.length > 0) {
+      const duplicatedTips = [...recipeTips, ...recipeTips, ...recipeTips];
+      setRecipeCarouselItems(duplicatedTips);
+    }
+  }, [recipeTips]);
+
+  useEffect(() => {
+    if (recipeCarouselItems.length > 0) {
+      const interval = setInterval(() => {
+        setRecipeSlideDirection('left');
+        setCurrentRecipeTipIndex((prevIndex) => {
+          const nextIndex = prevIndex + 1;
+          if (nextIndex >= recipeTips.length * 2) {
+            return recipeTips.length;
+          }
+          return nextIndex;
+        });
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [recipeCarouselItems.length, recipeTips.length]);
 
   const loadNutritionTips = async () => {
     try {
@@ -344,6 +396,28 @@ const NutritionGuide = () => {
     });
   };
 
+  const handleNextRecipeTip = () => {
+    setRecipeSlideDirection('left');
+    setCurrentRecipeTipIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= recipeTips.length * 2) {
+        return recipeTips.length;
+      }
+      return nextIndex;
+    });
+  };
+
+  const handlePrevRecipeTip = () => {
+    setRecipeSlideDirection('right');
+    setCurrentRecipeTipIndex((prevIndex) => {
+      const nextIndex = prevIndex - 1;
+      if (nextIndex < recipeTips.length) {
+        return recipeTips.length * 2 - 1;
+      }
+      return nextIndex;
+    });
+  };
+
   const renderRecipeGenerator = () => (
     <StyledPaper>
       <Typography variant="h5" gutterBottom>
@@ -373,6 +447,136 @@ const NutritionGuide = () => {
         >
           {loading ? <CircularProgress size={24} /> : 'Generate Recipe'}
         </Button>
+      </Box>
+
+      {/* Recipe Tips Carousel */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6" gutterBottom sx={{ color: 'text.primary', mb: 2 }}>
+          Cooking Tips
+        </Typography>
+        <Box sx={{ 
+          position: 'relative', 
+          width: '100%', 
+          overflow: 'hidden',
+          height: '150px',
+        }}>
+          <CarouselTrack sx={{ 
+            transform: `translateX(-${currentRecipeTipIndex * 100}%)`,
+            display: 'flex',
+            width: '100%',
+            height: '100%',
+          }}>
+            {recipeCarouselItems.map((tip, index) => {
+              const IconComponent = iconMap[tip.icon] || RestaurantIcon;
+              return (
+                <Box 
+                  key={index} 
+                  sx={{ 
+                    width: '100%', 
+                    flexShrink: 0,
+                    position: 'relative',
+                    zIndex: 2,
+                    padding: '0 5px',
+                    height: '100%',
+                  }}
+                >
+                  <Grow in={true} timeout={500}>
+                    <TipCard index={index % recipeTips.length} sx={{ height: '100%' }}>
+                      <StyledCardContent>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          marginBottom: 1,
+                        }}>
+                          <IconWrapper>
+                            <Zoom in={true} timeout={500}>
+                              <IconComponent 
+                                sx={{ 
+                                  color: 'white',
+                                  fontSize: '1.5rem',
+                                }}
+                              />
+                            </Zoom>
+                          </IconWrapper>
+                          <TitleWrapper>
+                            <Typography 
+                              variant="h6"
+                              sx={{ 
+                                color: 'white',
+                                fontWeight: 'bold',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                fontSize: '1.2rem',
+                                letterSpacing: '0.02em',
+                              }}
+                            >
+                              {tip.title}
+                            </Typography>
+                          </TitleWrapper>
+                        </Box>
+                        <DescriptionWrapper>
+                          <Typography 
+                            variant="body1"
+                            sx={{ 
+                              color: 'white',
+                              fontSize: '1rem',
+                              lineHeight: 1.6,
+                              textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                              letterSpacing: '0.01em',
+                              paddingLeft: '8px',
+                            }}
+                          >
+                            {tip.description}
+                          </Typography>
+                        </DescriptionWrapper>
+                      </StyledCardContent>
+                    </TipCard>
+                  </Grow>
+                </Box>
+              );
+            })}
+          </CarouselTrack>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              mt: 2,
+              gap: 2,
+              position: 'relative',
+              zIndex: 3,
+            }}
+          >
+            <IconButton 
+              onClick={handlePrevRecipeTip} 
+              sx={{ 
+                '&:hover': { transform: 'scale(1.2)' },
+                transition: 'transform 0.2s ease-in-out',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                }
+              }}
+            >
+              <NavigateBeforeIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {currentRecipeTipIndex % recipeTips.length + 1} / {recipeTips.length}
+            </Typography>
+            <IconButton 
+              onClick={handleNextRecipeTip} 
+              sx={{ 
+                '&:hover': { transform: 'scale(1.2)' },
+                transition: 'transform 0.2s ease-in-out',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                }
+              }}
+            >
+              <NavigateNextIcon />
+            </IconButton>
+          </Box>
+        </Box>
       </Box>
 
       {recipe && (
