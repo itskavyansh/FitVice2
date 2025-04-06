@@ -96,8 +96,13 @@ ChartJS.register(
   BarElement,
   Title,
   ChartTooltip,
-  Legend
+  Legend,
 );
+
+import squatsImage from 'assets/images/squats.jpg';
+import pushupsImage from 'assets/images/pushups.jpg';
+import lungesImage from 'assets/images/lunges.jpg';
+import lateralImage from 'assets/images/lateral.jpg';
 
 function PostureSense() {
   const videoRef = useRef(null);
@@ -205,8 +210,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Chest', 'Triceps', 'Shoulders'],
       caloriesPerRep: 0.6,
-      downAngle: 70, // SIMPLIFIED threshold - anything below this is DOWN
-      upAngle: 110, // SIMPLIFIED threshold - anything above this is UP
+      downAngle: 70,
+      upAngle: 110,
       invertStages: true,
       isVertical: false,
       joints: {
@@ -226,8 +231,7 @@ function PostureSense() {
         'Lower chest to ground',
       ],
       instructions: 'Keep body straight, lower chest to ground, then push back up.',
-      image:
-        'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      image: pushupsImage,
       color: '#2196F3',
     },
     squats: {
@@ -236,8 +240,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Quadriceps', 'Glutes', 'Core'],
       caloriesPerRep: 1.5,
-      downAngle: 90, // Keep at 90 for down position (knees bent at 90 degrees)
-      upAngle: 160, // Normal standing position
+      downAngle: 90,
+      upAngle: 160,
       invertStages: true,
       isVertical: true,
       joints: {
@@ -248,18 +252,16 @@ function PostureSense() {
       formFeedback: {
         good: 'Perfect squat form! Keep your back straight.',
         medium: 'Try to keep your knees aligned with toes.',
-        bad: 'Your knees are caving in. Push them out.',
+        bad: 'Keep your knees behind your toes and back straight.',
       },
       tips: [
         'Keep your back straight',
         'Knees aligned with toes',
-        'Hips back and down',
-        'Weight in your heels',
+        'Chest up',
+        'Hips back as if sitting',
       ],
-      instructions:
-        'Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.',
-      image:
-        'https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      instructions: 'Stand with feet shoulder-width apart, lower body until thighs are parallel to ground.',
+      image: squatsImage,
       color: '#FF9800',
     },
     shoulderPress: {
@@ -300,8 +302,8 @@ function PostureSense() {
       difficulty: 'Beginner',
       musclesWorked: ['Shoulders', 'Traps'],
       caloriesPerRep: 0.4,
-      downAngle: 20, // Lower start position angle (arms closer to body)
-      upAngle: 70, // Upper position angle (arms raised)
+      downAngle: 20,
+      upAngle: 70,
       invertStages: false,
       isVertical: true,
       joints: {
@@ -322,8 +324,7 @@ function PostureSense() {
       ],
       instructions:
         'Stand with weights by your sides, raise them out to shoulder height with slightly bent elbows.',
-      image:
-        'https://images.unsplash.com/photo-1599058917212-d750089bc07e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      image: lateralImage,
       color: '#E91E63',
     },
     lunges: {
@@ -332,8 +333,8 @@ function PostureSense() {
       difficulty: 'Intermediate',
       musclesWorked: ['Quadriceps', 'Hamstrings', 'Glutes'],
       caloriesPerRep: 0.5,
-      downAngle: 100, // Angle when in full lunge position (knee bent)
-      upAngle: 165, // Angle when standing straight
+      downAngle: 100,
+      upAngle: 165,
       invertStages: true,
       isVertical: true,
       joints: {
@@ -357,8 +358,7 @@ function PostureSense() {
       ],
       instructions:
         'Step forward with one leg, lower your hips until both knees are bent at 90 degrees.',
-      image:
-        'https://images.unsplash.com/photo-1434682881908-b43d0467b798?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      image: lungesImage,
       color: '#00BCD4',
     },
   };
@@ -381,10 +381,10 @@ function PostureSense() {
         await Promise.all([
           loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js'),
           loadScript(
-            'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js'
+            'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js',
           ),
           loadScript(
-            'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js'
+            'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js',
           ),
         ]);
 
@@ -421,7 +421,7 @@ function PostureSense() {
       // First check if the browser supports getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error(
-          "Your browser doesn't support camera access. Please try using a modern browser."
+          "Your browser doesn't support camera access. Please try using a modern browser.",
         );
       }
 
@@ -531,7 +531,7 @@ function PostureSense() {
                   // Calculate the angle between shoulder, elbow, and wrist
                   const shoulderElbowAngle = Math.atan2(
                     joint2[1] - joint1[1],
-                    joint2[0] - joint1[0]
+                    joint2[0] - joint1[0],
                   );
                   const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
                   angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
@@ -610,24 +610,24 @@ function PostureSense() {
                       ctx.strokeText(
                         leftText,
                         leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20
+                        leftKnee.y * canvas.height - 20,
                       );
                       ctx.fillText(
                         leftText,
                         leftKnee.x * canvas.width,
-                        leftKnee.y * canvas.height - 20
+                        leftKnee.y * canvas.height - 20,
                       );
                       // Right knee angle
                       const rightText = `R: ${Math.round(rightAngle)}°`;
                       ctx.strokeText(
                         rightText,
                         rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20
+                        rightKnee.y * canvas.height - 20,
                       );
                       ctx.fillText(
                         rightText,
                         rightKnee.x * canvas.width,
-                        rightKnee.y * canvas.height - 20
+                        rightKnee.y * canvas.height - 20,
                       );
                     }
                   } else if (leftAngle !== null) {
@@ -694,7 +694,6 @@ function PostureSense() {
 
                   // Simple DOWN position detection
                   if (angle <= downAngle + 10) {
-                    // 110 degrees or less
                     console.log(`Lunge DOWN position at: ${angle.toFixed(1)}°`);
                     stageRef.current = 'DOWN';
                     setDisplayStage('DOWN');
@@ -703,7 +702,6 @@ function PostureSense() {
                   // Simple UP position and rep counting
                   // Only count rep when coming up from DOWN position
                   if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    // 155 degrees or more
                     console.log(`Lunge UP position at: ${angle.toFixed(1)}°, counting rep`);
                     stageRef.current = 'UP';
                     setDisplayStage('UP');
@@ -775,7 +773,6 @@ function PostureSense() {
 
                   // Simple DOWN position detection
                   if (angle <= downAngle + 10) {
-                    // 100 degrees or less
                     console.log(`Squat DOWN position at: ${angle.toFixed(1)}°`);
                     stageRef.current = 'DOWN';
                     setDisplayStage('DOWN');
@@ -784,22 +781,17 @@ function PostureSense() {
                   // Simple UP position and rep counting
                   // Only count rep when coming up from DOWN position
                   if (angle >= upAngle - 10 && stageRef.current === 'DOWN') {
-                    // 150 degrees or more
                     console.log(`Squat UP position at: ${angle.toFixed(1)}°, counting rep`);
                     stageRef.current = 'UP';
                     setDisplayStage('UP');
-
-                    // Count the rep
                     counterRef.current += 1;
                     setDisplayCounter(counterRef.current);
 
-                    // Show celebration if target reached
                     if (counterRef.current >= targetReps) {
                       setShowCelebration(true);
                       setTimeout(() => setShowCelebration(false), 3000);
                     }
 
-                    // Reset after a short delay
                     setTimeout(() => {
                       stageRef.current = 'READY';
                       setDisplayStage('READY');

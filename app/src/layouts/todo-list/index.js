@@ -34,6 +34,7 @@ import {
   Stack,
   Tooltip,
   Badge,
+  Popover,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -45,6 +46,9 @@ import {
   DragIndicator as DragIndicatorIcon,
 } from '@mui/icons-material';
 import { SlArrowRight } from 'react-icons/sl';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 // @mui material components
 import Grid from '@mui/material/Grid';
@@ -65,6 +69,7 @@ const TodoList = () => {
       return parsedTodos.map((todo) => ({
         ...todo,
         dailyCompletions: todo.dailyCompletions || Array(7).fill(false),
+        weeklyCompletions: todo.weeklyCompletions || {},
         priority: todo.priority || 'medium',
         starred: todo.starred || false,
       }));
@@ -77,12 +82,19 @@ const TodoList = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editText, setEditText] = useState('');
   const [editPriority, setEditPriority] = useState('medium');
+  const [calendarAnchorEl, setCalendarAnchorEl] = useState(null);
+  const [selectedTodoForCalendar, setSelectedTodoForCalendar] = useState(null);
 
   const getCurrentDay = () => new Date().getDay();
 
   const getDayName = (index) => {
     const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     return days[index];
+  };
+
+  const isDayInFuture = (index) => {
+    const currentDay = getCurrentDay();
+    return index > currentDay;
   };
 
   useEffect(() => {
@@ -100,6 +112,7 @@ const TodoList = () => {
         text: newTodo,
         completed: false,
         dailyCompletions: Array(7).fill(false),
+        weeklyCompletions: {},
         priority: 'medium',
         starred: false,
         history: [],
@@ -130,11 +143,13 @@ const TodoList = () => {
           };
         }
         return todo;
-      })
+      }),
     );
   };
 
   const handleDailyToggle = (id, dayIndex) => {
+    if (isDayInFuture(dayIndex)) return;
+
     setTodos(
       todos.map((todo) => {
         if (todo.id === id) {
@@ -155,7 +170,7 @@ const TodoList = () => {
           };
         }
         return todo;
-      })
+      }),
     );
   };
 
@@ -191,8 +206,8 @@ const TodoList = () => {
     if (selectedTodo) {
       setTodos(
         todos.map((todo) =>
-          todo.id === selectedTodo.id ? { ...todo, text: editText, priority: editPriority } : todo
-        )
+          todo.id === selectedTodo.id ? { ...todo, text: editText, priority: editPriority } : todo,
+        ),
       );
       handleCloseEdit();
     }
@@ -201,7 +216,7 @@ const TodoList = () => {
   const handleToggleStar = (id) => {
     setTodos((prevTodos) => {
       const updatedTodos = prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, starred: !todo.starred, isAnimating: true } : todo
+        todo.id === id ? { ...todo, starred: !todo.starred, isAnimating: true } : todo,
       );
 
       // Sort todos: starred items first, then by original order
@@ -256,6 +271,52 @@ const TodoList = () => {
     setTodos(items);
   };
 
+  const handleCalendarOpen = (event, todo) => {
+    setCalendarAnchorEl(event.currentTarget);
+    setSelectedTodoForCalendar(todo);
+  };
+
+  const handleCalendarClose = () => {
+    setCalendarAnchorEl(null);
+    setSelectedTodoForCalendar(null);
+  };
+
+  const calendarOpen = Boolean(calendarAnchorEl);
+
+  const handleCalendarDateSelect = (date, todoId) => {
+    const selectedDate = date.format('YYYY-MM-DD');
+    const weekStart = date.startOf('week').format('YYYY-MM-DD');
+
+    setTodos((prevTodos) => {
+      return prevTodos.map((todo) => {
+        if (todo.id === todoId) {
+          const updatedWeeklyCompletions = {
+            ...todo.weeklyCompletions,
+            [weekStart]: {
+              ...(todo.weeklyCompletions[weekStart] || {}),
+              [selectedDate]: !(todo.weeklyCompletions[weekStart]?.[selectedDate] || false),
+            },
+          };
+
+          return {
+            ...todo,
+            weeklyCompletions: updatedWeeklyCompletions,
+          };
+        }
+        return todo;
+      });
+    });
+  };
+
+  const getDateCompletionStatus = (date, todoId) => {
+    const todo = todos.find((t) => t.id === todoId);
+    if (!todo) return false;
+
+    const weekStart = date.startOf('week').format('YYYY-MM-DD');
+    const dateStr = date.format('YYYY-MM-DD');
+    return todo.weeklyCompletions[weekStart]?.[dateStr] || false;
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -271,7 +332,7 @@ const TodoList = () => {
                     gutterBottom
                     sx={{
                       fontWeight: 'bold',
-                      color: 'rgba(52, 70, 102, 255)',
+                      color: 'rgba(52,70,102,255)',
                       mb: 2,
                       fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                       lineHeight: 1.2,
@@ -444,64 +505,71 @@ const TodoList = () => {
                                       >
                                         {Array(7)
                                           .fill(0)
-                                          .map((_, index) => (
-                                            <Box
-                                              key={index}
-                                              sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                position: 'relative',
-                                              }}
-                                            >
-                                              <Checkbox
-                                                checked={todo.dailyCompletions[index]}
-                                                onChange={() => handleDailyToggle(todo.id, index)}
-                                                size="small"
-                                                sx={{
-                                                  position: 'absolute',
-                                                  opacity: 0,
-                                                  width: '28px',
-                                                  height: '28px',
-                                                  cursor: 'pointer',
-                                                  zIndex: 1,
-                                                }}
-                                              />
+                                          .map((_, index) => {
+                                            const isFutureDay = isDayInFuture(index);
+                                            return (
                                               <Box
-                                                component="label"
+                                                key={index}
                                                 sx={{
-                                                  width: '28px',
-                                                  height: '28px',
                                                   display: 'flex',
+                                                  flexDirection: 'column',
                                                   alignItems: 'center',
-                                                  justifyContent: 'center',
-                                                  fontSize: '14px',
-                                                  fontWeight: 700,
-                                                  color: todo.dailyCompletions[index]
-                                                    ? 'white'
-                                                    : 'text.secondary',
-                                                  cursor: 'pointer',
-                                                  border: todo.dailyCompletions[index]
-                                                    ? 'none'
-                                                    : '2px solid',
-                                                  borderColor: 'text.secondary',
-                                                  borderRadius: '20%',
-                                                  backgroundColor: todo.dailyCompletions[index]
-                                                    ? '#4da3ff'
-                                                    : 'transparent',
-                                                  backgroundImage: todo.dailyCompletions[index]
-                                                    ? 'linear-gradient(147deg, #4da3ff 0%, #3089eb 74%)'
-                                                    : 'none',
-                                                  transition: 'all 0.3s ease',
-                                                  '&:hover': {
-                                                    transform: 'scale(1.1)',
-                                                  },
+                                                  position: 'relative',
+                                                  opacity: isFutureDay ? 0.5 : 1,
                                                 }}
                                               >
-                                                {getDayName(index)}
+                                                <Checkbox
+                                                  checked={todo.dailyCompletions[index]}
+                                                  onChange={() => handleDailyToggle(todo.id, index)}
+                                                  size="small"
+                                                  disabled={isFutureDay}
+                                                  sx={{
+                                                    position: 'absolute',
+                                                    opacity: 0,
+                                                    width: '28px',
+                                                    height: '28px',
+                                                    cursor: isFutureDay ? 'not-allowed' : 'pointer',
+                                                    zIndex: 1,
+                                                  }}
+                                                />
+                                                <Box
+                                                  component="label"
+                                                  sx={{
+                                                    width: '28px',
+                                                    height: '28px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '14px',
+                                                    fontWeight: 700,
+                                                    color: todo.dailyCompletions[index]
+                                                      ? 'white'
+                                                      : 'text.secondary',
+                                                    cursor: isFutureDay ? 'not-allowed' : 'pointer',
+                                                    border: todo.dailyCompletions[index]
+                                                      ? 'none'
+                                                      : '2px solid',
+                                                    borderColor: 'text.secondary',
+                                                    borderRadius: '20%',
+                                                    backgroundColor: todo.dailyCompletions[index]
+                                                      ? '#4da3ff'
+                                                      : 'transparent',
+                                                    backgroundImage: todo.dailyCompletions[index]
+                                                      ? 'linear-gradient(147deg, #4da3ff 0%, #3089eb 74%)'
+                                                      : 'none',
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                      transform: isFutureDay
+                                                        ? 'none'
+                                                        : 'scale(1.1)',
+                                                    },
+                                                  }}
+                                                >
+                                                  {getDayName(index)}
+                                                </Box>
                                               </Box>
-                                            </Box>
-                                          ))}
+                                            );
+                                          })}
                                         <IconButton
                                           size="small"
                                           sx={{
@@ -511,6 +579,7 @@ const TodoList = () => {
                                               transform: 'scale(1.1)',
                                             },
                                           }}
+                                          onClick={(e) => handleCalendarOpen(e, todo)}
                                         >
                                           <SlArrowRight />
                                         </IconButton>
@@ -775,11 +844,15 @@ const TodoList = () => {
       <Dialog
         open={editDialogOpen}
         onClose={handleCloseEdit}
-        maxWidth="sm"
-        fullWidth
+        maxWidth="xs"
         PaperProps={{
           sx: {
-            borderRadius: 2,
+            borderRadius: '12px',
+            overflow: 'hidden',
+            width: '300px',
+            height: '225px', // 4:3 ratio (300 * 0.75 = 225)
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       >
@@ -788,54 +861,144 @@ const TodoList = () => {
             bgcolor: '#3089eb',
             color: 'white',
             fontWeight: 'bold',
+            fontSize: '1.25rem',
+            py: 1.5,
+            flex: '0 0 auto',
           }}
         >
           Edit Task
         </DialogTitle>
-        <DialogContent sx={{ py: 3 }}>
+        <DialogContent
+          sx={{
+            pt: 2,
+            pb: 2,
+            px: 2,
+            flex: '1 1 auto',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
           <TextField
             fullWidth
-            label="Task"
+            placeholder="Task name"
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            sx={{ mb: 3 }}
+            variant="outlined"
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
           />
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant={editPriority === 'high' ? 'contained' : 'outlined'}
-              color="error"
-              onClick={() => setEditPriority('high')}
-              startIcon={<PriorityHighIcon />}
-            >
-              High
-            </Button>
-            <Button
-              variant={editPriority === 'medium' ? 'contained' : 'outlined'}
-              color="warning"
-              onClick={() => setEditPriority('medium')}
-              startIcon={<PriorityHighIcon />}
-            >
-              Medium
-            </Button>
-            <Button
-              variant={editPriority === 'low' ? 'contained' : 'outlined'}
-              color="success"
-              onClick={() => setEditPriority('low')}
-              startIcon={<PriorityHighIcon />}
-            >
-              Low
-            </Button>
-          </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleCloseEdit} variant="outlined" sx={{ mr: 1 }}>
+        <DialogActions
+          sx={{
+            px: 2,
+            pb: 2,
+            pt: 0,
+            flex: '0 0 auto',
+          }}
+        >
+          <Button
+            onClick={handleCloseEdit}
+            variant="outlined"
+            size="small"
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              px: 2,
+              borderColor: '#3089eb',
+              color: '#3089eb',
+              '&:hover': {
+                borderColor: '#3089eb',
+                backgroundColor: 'rgba(48, 137, 235, 0.1)',
+              },
+            }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleSaveEdit} variant="contained" color="primary">
+          <Button
+            onClick={handleSaveEdit}
+            variant="contained"
+            size="small"
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              px: 2,
+              backgroundColor: '#3089eb',
+              color: 'white !important',
+              '&:hover': {
+                backgroundColor: '#2776cc',
+              },
+            }}
+          >
             Save
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Popover
+        open={calendarOpen}
+        anchorEl={calendarAnchorEl}
+        onClose={handleCalendarClose}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        PaperProps={{
+          sx: {
+            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.97)',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            marginLeft: '8px',
+          },
+        }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateCalendar
+            onChange={(newDate) => {
+              if (selectedTodoForCalendar) {
+                handleCalendarDateSelect(newDate, selectedTodoForCalendar.id);
+              }
+            }}
+            renderDay={(day, _value, DayComponentProps) => {
+              const isCompleted =
+                selectedTodoForCalendar && getDateCompletionStatus(day, selectedTodoForCalendar.id);
+
+              return (
+                <Badge
+                  key={day.toString()}
+                  overlap="circular"
+                  badgeContent={isCompleted ? '✓' : null}
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      backgroundColor: '#4da3ff',
+                      color: 'white',
+                      fontSize: '0.8rem',
+                    },
+                  }}
+                >
+                  <Box
+                    {...DayComponentProps}
+                    sx={{
+                      ...DayComponentProps.sx,
+                      backgroundColor: isCompleted ? 'rgba(77, 163, 255, 0.1)' : 'transparent',
+                    }}
+                  >
+                    {day.date()}
+                  </Box>
+                </Badge>
+              );
+            }}
+          />
+        </LocalizationProvider>
+      </Popover>
 
       <Footer />
     </DashboardLayout>

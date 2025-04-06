@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Container, Typography, Paper, Link } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Paper,
+  Link,
+  Card,
+  TextField,
+  Alert,
+  Divider,
+} from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import { useMaterialUIController, setLayout } from 'context';
 import './auth.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signup, loginWithGoogle, loginWithGithub, loginWithLinkedIn } = useAuth();
   const [controller, dispatch] = useMaterialUIController();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -60,6 +71,37 @@ const SignUp = () => {
       navigate('/dashboard');
     } catch (error) {
       setError(error.message || 'Signup failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider) => {
+    setError('');
+    setLoading(true);
+    try {
+      let result;
+      switch (provider) {
+        case 'google':
+          result = await loginWithGoogle();
+          break;
+        case 'github':
+          result = await loginWithGithub();
+          break;
+        case 'linkedin':
+          result = await loginWithLinkedIn();
+          break;
+        default:
+          throw new Error('Invalid provider');
+      }
+
+      if (result.success) {
+        navigate('/dashboard', { replace: true });
+      } else {
+        setError(result.error || 'Signup failed. Please try again.');
+      }
+    } catch (error) {
+      setError(error.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -167,6 +209,40 @@ const SignUp = () => {
         <button className="submit" type="submit" disabled={loading}>
           {loading ? 'Processing...' : 'Submit'}
         </button>
+
+        <Divider sx={{ my: 2, color: 'text.secondary' }}>
+          <Typography variant="body2" color="text.secondary">OR</Typography>
+        </Divider>
+
+        <div className="social-login">
+          <button
+            type="button"
+            className="social-btn google"
+            onClick={() => handleSocialLogin('google')}
+            disabled={loading}
+          >
+            <img src="/google-icon.svg" alt="Google" />
+            <span>Continue with Google</span>
+          </button>
+          <button
+            type="button"
+            className="social-btn github"
+            onClick={() => handleSocialLogin('github')}
+            disabled={loading}
+          >
+            <img src="/github-icon.svg" alt="GitHub" />
+            <span>Continue with GitHub</span>
+          </button>
+          <button
+            type="button"
+            className="social-btn linkedin"
+            onClick={() => handleSocialLogin('linkedin')}
+            disabled={loading}
+          >
+            <img src="/linkedin-icon.svg" alt="LinkedIn" />
+            <span>Continue with LinkedIn</span>
+          </button>
+        </div>
 
         <p className="signin">
           Already have an account?{' '}

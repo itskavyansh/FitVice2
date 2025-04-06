@@ -1,0 +1,18 @@
+[build]
+  base = "app/"
+  publish = "build/"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[build.environment]
+  DISABLE_ESLINT_PLUGIN = "true"
+  CI = "false"
+  NODE_VERSION = "18.17.0"
+  NPM_VERSION = "9.6.7" 

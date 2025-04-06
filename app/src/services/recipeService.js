@@ -11,7 +11,7 @@ const generateRecipe = async (ingredients) => {
   } catch (error) {
     console.error('Error generating recipe:', error);
     throw new Error(
-      error.response?.data?.message || 'Failed to generate recipe. Please try again.'
+      error.response?.data?.message || 'Failed to generate recipe. Please try again.',
     );
   }
 };

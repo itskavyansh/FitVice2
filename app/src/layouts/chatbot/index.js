@@ -152,7 +152,7 @@ function Chatbot({ isDialog, botName }) {
         id: 1,
         text: `Hello${
           user ? ` ${user.firstName}` : ''
-        }! I'm <span style="color:#4caf50">${botName}</span>, your fitness assistant. How can I help with your fitness journey today?`,
+        }! I'm Jarvis, your fitness assistant. How can I help with your fitness journey today?`,
         sender: 'bot',
         timestamp: new Date(),
       },
@@ -229,7 +229,7 @@ function Chatbot({ isDialog, botName }) {
         id: 1,
         text: `Hello${
           user ? ` ${user.firstName}` : ''
-        }! I'm <span style="color:#4caf50">${botName}</span>, your fitness assistant. How can I help with your fitness journey today?`,
+        }! I'm Jarvis, your fitness assistant. How can I help with your fitness journey today?`,
         sender: 'bot',
         timestamp: new Date(),
       };

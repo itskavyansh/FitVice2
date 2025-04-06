@@ -49,7 +49,7 @@ function ReportsBarChart({ color, title, description, date, chart }) {
 
   return (
     <Card sx={{ height: '100%' }}>
-      <MDBox padding="1rem">
+      <MDBox padding="1rem" height="100%">
         {useMemo(
           () => (
             <MDBox
@@ -59,13 +59,20 @@ function ReportsBarChart({ color, title, description, date, chart }) {
               coloredShadow={color}
               py={2}
               pr={0.5}
-              mt={-5}
-              height="12.5rem"
+              mt={0}
+              sx={{
+                height: '15rem',
+                padding: '1rem',
+                '& canvas': {
+                  height: '100% !important',
+                  marginTop: '0 !important'
+                }
+              }}
             >
               <Bar data={data} options={options} redraw />
             </MDBox>
           ),
-          [color, chart]
+          [chart, color],
         )}
         <MDBox pt={3} pb={1} px={1}>
           <MDTypography variant="h6" textTransform="capitalize">

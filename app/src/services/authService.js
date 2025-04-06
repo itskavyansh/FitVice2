@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://fitvice.netlify.app/.netlify/functions/api'
+  : 'http://localhost:3001/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -8,18 +10,25 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
 
 // Add request interceptor for setting auth token and logging
 api.interceptors.request.use(
   (config) => {
+    // Log the full URL for debugging
+    console.log('Making request to:', config.baseURL + config.url);
+    console.log('Request headers:', config.headers);
+    
     // Always check for token and set header from localStorage
     const token = localStorage.getItem('token');
     if (token) {
-      // Always set the Authorization header from localStorage token
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Ensure CORS credentials are included
+    config.withCredentials = true;
 
     // Log the request with masked token for security
     const authHeader = config.headers.Authorization;
@@ -30,7 +39,7 @@ api.interceptors.request.use(
     console.log('Request:', {
       method: config.method,
       url: config.url,
-      data: config.data ? '(data present)' : '(no data)',
+      data: config.data ? JSON.stringify(config.data) : '(no data)',
       auth: maskedHeader,
     });
 
@@ -39,7 +48,7 @@ api.interceptors.request.use(
   (error) => {
     console.error('Request error:', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add response interceptor for logging
@@ -59,7 +68,7 @@ api.interceptors.response.use(
       message: error.message,
     });
     return Promise.reject(error);
-  }
+  },
 );
 
 const authService = {
@@ -322,6 +331,36 @@ const authService = {
       localStorage.removeItem('token');
       delete api.defaults.headers.common['Authorization'];
       return { authenticated: false };
+    }
+  },
+
+  loginWithGoogle: async () => {
+    try {
+      // Redirect to Google OAuth
+      window.location.href = `${API_URL}/auth/google`;
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw new Error('Google login failed. Please try again.');
+    }
+  },
+
+  loginWithGithub: async () => {
+    try {
+      // Redirect to GitHub OAuth
+      window.location.href = `${API_URL}/auth/github`;
+    } catch (error) {
+      console.error('GitHub login error:', error);
+      throw new Error('GitHub login failed. Please try again.');
+    }
+  },
+
+  loginWithLinkedIn: async () => {
+    try {
+      // Redirect to LinkedIn OAuth
+      window.location.href = `${API_URL}/auth/linkedin`;
+    } catch (error) {
+      console.error('LinkedIn login error:', error);
+      throw new Error('LinkedIn login failed. Please try again.');
     }
   },
 };

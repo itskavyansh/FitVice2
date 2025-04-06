@@ -104,7 +104,12 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log('Login attempt:', { email });
+    console.log('Login attempt details:', {
+      email,
+      hasPassword: !!password,
+      headers: req.headers,
+      origin: req.get('origin'),
+    });
 
     // Validate required fields
     if (!email || !password) {
@@ -127,6 +132,8 @@ router.post('/login', async (req, res) => {
 
     // Check password
     const isMatch = await user.comparePassword(password);
+    console.log('Password match result:', { email, isMatch });
+
     if (!isMatch) {
       console.log('Invalid password for user:', email);
       return res.status(401).json({ 
@@ -146,6 +153,7 @@ router.post('/login', async (req, res) => {
 
     // Set token in response header
     res.setHeader('Authorization', `Bearer ${token}`);
+    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
 
     res.json({
       success: true,

@@ -38,21 +38,21 @@ Coded by www.creative-tim.com
 // Material Dashboard 2 React layouts
 import Dashboard from 'layouts/dashboard';
 import WorkoutPlans from 'layouts/workout-plans';
-import YogaClasses from 'layouts/yoga-classes';
-import HealthTips from 'layouts/health-tips';
+import Consultancy from 'layouts/consultancy';
 import NutritionGuide from 'layouts/nutrition';
 import BMICalculator from 'layouts/bmi-calculator';
 import PostureSense from 'layouts/posture-sense';
 import TodoList from 'layouts/todo-list';
 import MusclePedia from 'layouts/muscle-pedia';
+import ExerciseDetails from 'layouts/muscle-pedia/exercise-details';
 import Chatbot from 'layouts/chatbot';
-import Profile from 'layouts/profile';
 import Landing from 'layouts/landing';
+import AuthProfile from 'components/auth/Profile';
+import Leaderboard from 'layouts/leaderboard';
 
 // Auth components
 import SignIn from 'components/auth/SignIn';
 import SignUp from 'components/auth/SignUp';
-import AuthProfile from 'components/auth/Profile';
 
 // @mui icons
 import Icon from '@mui/material/Icon';
@@ -98,31 +98,31 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'Workout·Plans',
-    key: 'workout-plans',
-    icon: <Icon fontSize="small">fitness_center</Icon>,
-    route: '/workout-plans',
-    component: <WorkoutPlans />,
+    name: 'PostureSense',
+    key: 'posture-sense',
+    icon: <Icon fontSize="small">accessibility_new</Icon>,
+    route: '/posture-sense',
+    component: <PostureSense />,
   },
   {
     type: 'collapse',
-    name: 'Yoga·Classes',
-    key: 'yoga-classes',
+    name: 'MusclePedia',
+    key: 'muscle-pedia',
+    icon: <Icon fontSize="small">science</Icon>,
+    route: '/muscle-pedia',
+    component: <MusclePedia />,
+  },
+  {
+    type: 'collapse',
+    name: 'Consultancy',
+    key: 'consultancy',
     icon: <Icon fontSize="small">self_improvement</Icon>,
-    route: '/yoga-classes',
-    component: <YogaClasses />,
+    route: '/consultancy',
+    component: <Consultancy />,
   },
   {
     type: 'collapse',
-    name: 'Health·Tips',
-    key: 'health-tips',
-    icon: <Icon fontSize="small">health_and_safety</Icon>,
-    route: '/health-tips',
-    component: <HealthTips />,
-  },
-  {
-    type: 'collapse',
-    name: 'Nutrition·Guide',
+    name: 'Nutrition·&·Health',
     key: 'nutrition',
     icon: <Icon fontSize="small">restaurant_menu</Icon>,
     route: '/nutrition',
@@ -138,14 +138,6 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'PostureSense',
-    key: 'posture-sense',
-    icon: <Icon fontSize="small">accessibility_new</Icon>,
-    route: '/posture-sense',
-    component: <PostureSense />,
-  },
-  {
-    type: 'collapse',
     name: 'ToDo·List',
     key: 'todo-list',
     icon: <Icon fontSize="small">checklist</Icon>,
@@ -154,11 +146,20 @@ const routes = [
   },
   {
     type: 'collapse',
-    name: 'MusclePedia',
-    key: 'muscle-pedia',
+    name: 'Leaderboard',
+    key: 'leaderboard',
+    icon: <Icon fontSize="small">leaderboard</Icon>,
+    route: '/leaderboard',
+    component: <Leaderboard />,
+  },
+  {
+    type: 'collapse',
+    name: 'MusclePedia Details',
+    key: 'muscle-pedia-details',
     icon: <Icon fontSize="small">science</Icon>,
-    route: '/muscle-pedia',
-    component: <MusclePedia />,
+    route: '/muscle-pedia/:muscleName',
+    component: <ExerciseDetails />,
+    hideInNav: true,
   },
   {
     type: 'collapse',
@@ -168,14 +169,6 @@ const routes = [
     route: '/chatbot',
     component: <Chatbot />,
     hideInNav: true,
-  },
-  {
-    type: 'collapse',
-    name: 'Profile',
-    key: 'profile',
-    icon: <Icon fontSize="small">person</Icon>,
-    route: '/profile',
-    component: <AuthProfile />,
   },
 ];
 

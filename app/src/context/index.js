@@ -104,7 +104,7 @@ function useMaterialUIController() {
 
   if (!context) {
     throw new Error(
-      'useMaterialUIController should be used inside the MaterialUIControllerProvider.'
+      'useMaterialUIController should be used inside the MaterialUIControllerProvider.',
     );
   }
 
