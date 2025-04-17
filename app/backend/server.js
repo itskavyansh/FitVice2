@@ -11,44 +11,46 @@ const fs = require('fs');
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: function(origin, callback) {
-    console.log('Incoming request origin:', origin);
-    
-    // In development, allow all origins
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Development mode: allowing all origins');
-      return callback(null, true);
-    }
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      console.log('Incoming request origin:', origin);
 
-    const allowedOrigins = [
-      'https://fitvice.netlify.app',
-      'https://fitvice2.netlify.app',
-      'http://localhost:3000',
-      process.env.FRONTEND_URL
-    ].filter(Boolean); // Remove any undefined values
-    
-    console.log('Allowed origins:', allowedOrigins);
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      console.log('No origin provided, allowing request');
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      console.log('Origin allowed:', origin);
-      callback(null, true);
-    } else {
-      console.error('CORS blocked request from:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  exposedHeaders: ['Authorization'],
-}));
+      // In development, allow all origins
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Development mode: allowing all origins');
+        return callback(null, true);
+      }
+
+      const allowedOrigins = [
+        'https://fitvice.netlify.app',
+        'https://fitvice2.netlify.app',
+        'http://localhost:3000',
+        process.env.FRONTEND_URL,
+      ].filter(Boolean); // Remove any undefined values
+
+      console.log('Allowed origins:', allowedOrigins);
+
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) {
+        console.log('No origin provided, allowing request');
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        console.log('Origin allowed:', origin);
+        callback(null, true);
+      } else {
+        console.error('CORS blocked request from:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Authorization'],
+  }),
+);
 app.use(express.json());
 
 // Create uploads directory if it doesn't exist
@@ -80,72 +82,69 @@ const connectWithRetry = () => {
   }
 
   console.log('Attempting to connect to MongoDB...');
-  mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000,
-    socketTimeoutMS: 45000,
-    family: 4,
-    retryWrites: true,
-    w: 'majority'
-  })
-  .then(() => {
-    console.log('Connected to MongoDB successfully');
-    // Test the connection by trying to find a user
-    return mongoose.connection.db.admin().ping();
-  })
-  .then(() => {
-    console.log('MongoDB connection verified with ping');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    console.error('Error details:', {
-      name: err.name,
-      message: err.message,
-      code: err.code,
-      stack: err.stack
+  mongoose
+    .connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4,
+      retryWrites: true,
+      w: 'majority',
+    })
+    .then(() => {
+      console.log('Connected to MongoDB successfully');
+      // Test the connection by trying to find a user
+      return mongoose.connection.db.admin().ping();
+    })
+    .then(() => {
+      console.log('MongoDB connection verified with ping');
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err);
+      console.error('Error details:', {
+        name: err.name,
+        message: err.message,
+        code: err.code,
+        stack: err.stack,
+      });
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Production environment detected, will retry connection...');
+        setTimeout(connectWithRetry, 5000);
+      } else {
+        console.error('Development environment detected, check MongoDB connection string');
+      }
     });
-    if (process.env.NODE_ENV === 'production') {
-      console.error('Production environment detected, will retry connection...');
-      setTimeout(connectWithRetry, 5000);
-    } else {
-      console.error('Development environment detected, check MongoDB connection string');
-    }
-  });
 };
 
 // Start MongoDB connection
 connectWithRetry();
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/recipes', recipeRoutes);
-app.use('/api/jarvis', jarvisRoutes);
+// Routes - Remove /api prefix
+app.use('/auth', authRoutes);
+app.use('/recipes', recipeRoutes);
+app.use('/jarvis', jarvisRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     success: false,
     message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
   });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     success: false,
-    message: 'Route not found' 
+    message: 'Route not found',
   });
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Database: MongoDB`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
@@ -163,4 +162,4 @@ process.on('unhandledRejection', (err) => {
   if (process.env.NODE_ENV !== 'production') {
     process.exit(1);
   }
-}); 
+});
