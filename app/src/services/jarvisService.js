@@ -1,131 +1,92 @@
+// Standardize API URL definition based on NODE_ENV
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://fitvice.netlify.app/.netlify/functions/api' // Production
+  : 'http://localhost:3001'; // Local development (points to backend server)
+
+// Helper to get auth token (replace with your actual implementation if needed)
+const getAuthToken = () => {
+  return localStorage.getItem('token');
+};
+
 class JarvisService {
   constructor() {
+    // Keep history management in the frontend service
     this.conversationHistory = [];
-    this.initializeAPI();
+    // No API key needed here anymore
   }
 
-  initializeAPI() {
-    const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-    if (!apiKey) {
-      console.error('API key is missing. Please check your .env file.');
-      return;
-    }
-    this.apiKey = apiKey.replace(/["']/g, '').trim();
-  }
+  // Removed initializeAPI method
 
   async processCommand(userInput) {
     try {
-      if (!this.apiKey) {
-        throw new Error('API key is not configured. Please check your .env file.');
+      const token = getAuthToken();
+      if (!token) {
+        // Handle cases where user is not logged in, maybe redirect or show message
+        console.warn('User not authenticated, cannot process command requiring auth.');
+        return {
+          type: 'error',
+          message: 'Please log in to use Jarvis features.',
+        };
       }
 
-      // Add user message to history
-      this.conversationHistory.push({
-        role: "user",
-        content: userInput
-      });
+      // 1. Add user message to local history BEFORE sending
+      const userMessage = { role: 'user', content: userInput };
+      this.conversationHistory.push(userMessage);
+      // Keep history relatively short for API calls
+      const historyToSend = this.conversationHistory.slice(-10);
 
-      // Prepare the conversation context
-      const prompt = `You are Jarvis, a professional fitness coach with extensive experience in helping clients achieve their health and fitness goals. You maintain a balance between professional expertise and approachable communication.
+      // REMOVE /api prefix from the target URL construction
+      const targetUrl = `${API_BASE_URL}/jarvis/command`;
+      console.log(`[JarvisService] Attempting to fetch: ${targetUrl}`); // Log the exact URL
+      console.log(
+        '[JarvisService] Request Body:',
+        JSON.stringify({ command: userInput, history: historyToSend }),
+      ); // Log the body
 
-Your communication style:
-- Professional yet warm and encouraging
-- Clear and concise in your explanations
-- Evidence-based in your recommendations
-- Respectful and understanding
-- Focused on practical, achievable goals
-- Knowledgeable about fitness and nutrition
-
-Response Guidelines:
-- Keep responses around 4-6 sentences
-- Start with a professional greeting
-- Provide 2-3 key points or recommendations
-- Include relevant scientific or practical insights
-- End with a thoughtful question
-- Use professional language while remaining approachable
-- Format with clean markdown for clarity
-
-Example responses:
-"Good day! I understand that starting a new fitness routine can be challenging. Based on my experience, the most effective approach is to begin with manageable 15-minute sessions three times per week. Consistency is key, and we can gradually increase intensity as you build confidence. What type of physical activities have you enjoyed in the past?"
-
-"Thank you for asking about meal planning. A balanced approach starts with incorporating lean proteins and vegetables into your meals. For example, a simple yet effective meal could be grilled chicken with roasted vegetables - it provides essential nutrients while keeping you satisfied. How would you describe your current cooking routine? This will help me suggest practical meal options that fit your lifestyle."
-
-Previous conversation:
-${this.conversationHistory.slice(-10).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
-
-Current user message: ${userInput}`;
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`, {
-        method: "POST",
+      // 2. Call the backend /command endpoint
+      const response = await fetch(targetUrl, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 800,
-            topP: 0.8,
-            topK: 40
-          },
-          safetySettings: [
-            {
-              category: "HARM_CATEGORY_HARASSMENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_HATE_SPEECH",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            }
-          ]
-        })
+          command: userInput,
+          history: historyToSend,
+        }),
       });
+
+      console.log(`[JarvisService] Fetch response status: ${response.status}`); // Log status
+      const responseText = await response.text(); // Get raw response text first
+      console.log('[JarvisService] Raw response text:', responseText.substring(0, 500) + '...'); // Log raw response (truncated)
+
+      // Try to parse as JSON *after* logging raw text
+      const result = JSON.parse(responseText);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('API Error:', errorData);
-        throw new Error(errorData.error?.message || 'Failed to get AI response');
+        console.error('Backend Error:', result);
+        throw new Error(result.error || result.message || 'Failed to get response from backend');
       }
 
-      const data = await response.json();
-      
-      if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-        throw new Error('Invalid response format from API');
+      // 3. Add assistant response from backend to local history
+      // Ensure we add the actual message content, not just the confirmation
+      if (result.message) {
+        const assistantMessage = { role: 'assistant', content: result.message };
+        this.conversationHistory.push(assistantMessage);
       }
 
-      const aiResponse = data.candidates[0].content.parts[0].text;
-
-      // Add AI response to history
-      this.conversationHistory.push({
-        role: "assistant",
-        content: aiResponse
-      });
-
+      // 4. Return the backend response (contains message, type, and potentially data)
       return {
-        type: 'text',
-        message: aiResponse
+        type: result.type || 'unknown', // Type determined by backend (general_response, workout_plan etc.)
+        message: result.message, // The actual response content for the user
+        data: result.data, // Optional structured data (task, plan etc.)
       };
-
     } catch (error) {
-      console.error('Error processing command:', error);
-      
-      // Return a more specific error message
+      // Log the error which might now include the raw text if parsing failed
+      console.error('[JarvisService] Error processing command via backend:', error);
       return {
         type: 'error',
-        message: error.message || 'An error occurred. Please try again.',
-        error: error.message
+        message: error.message || 'An error occurred processing your request. Please try again.',
       };
     }
   }
