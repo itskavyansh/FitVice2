@@ -4,52 +4,48 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoutes = require('../../backend/routes/auth');
 const recipeRoutes = require('../../backend/routes/recipes');
-require('dotenv').config();
 
 const app = express();
 
-// Environment variables
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://fitvice.netlify.app';
-const MONGODB_URI = process.env.MONGODB_URI || 'https://localhost:3001';
-
-if (!MONGODB_URI) {
-  console.error('MongoDB URI is not defined in environment variables');
-}
-
-// CORS configuration
+// Middleware
 app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://fitvice.netlify.app',
+      'http://localhost:3000'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposedHeaders: ['Authorization'],
 }));
 
 app.use(express.json());
 
-// MongoDB connection with retry logic
-const connectWithRetry = async () => {
-  try {
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    // Retry after 5 seconds
-    setTimeout(connectWithRetry, 5000);
-  }
-};
-
-connectWithRetry();
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
 app.use('/.netlify/functions/api/auth', authRoutes);
 app.use('/.netlify/functions/api/recipes', recipeRoutes);
 
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
-  console.error('API Error:', err);
+  console.error('Error:', err);
   res.status(500).json({ 
     success: false,
     message: 'Something went wrong!',
@@ -57,20 +53,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Netlify Functions handler
-exports.handler = async (event, context) => {
-  console.log('API function called with path:', event.path);
-  
-  try {
-    return serverless(app)(event, context);
-  } catch (error) {
-    console.error('Handler error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        success: false,
-        message: 'Internal server error'
-      })
-    };
-  }
-}; 
+// Export the serverless function
+module.exports.handler = serverless(app); 

@@ -109,9 +109,6 @@ router.post('/login', async (req, res) => {
       hasPassword: !!password,
       headers: req.headers,
       origin: req.get('origin'),
-      host: req.get('host'),
-      'x-forwarded-for': req.get('x-forwarded-for'),
-      'x-forwarded-proto': req.get('x-forwarded-proto')
     });
 
     // Validate required fields
@@ -145,32 +142,18 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    if (!process.env.JWT_SECRET) {
-      console.error('JWT_SECRET is not set in environment variables');
-      return res.status(500).json({
-        success: false,
-        message: 'Server configuration error'
-      });
-    }
-
     console.log('Login successful:', email);
 
     // Generate token
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
     );
 
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
-
     // Set token in response header
     res.setHeader('Authorization', `Bearer ${token}`);
+    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
 
     res.json({
       success: true,
