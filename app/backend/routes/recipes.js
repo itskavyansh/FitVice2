@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const OpenAI = require("openai");
 const auth = require("../middleware/auth");
 
-// Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+// Initialize OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Generate recipe based on ingredients
 router.post("/generate", auth, async (req, res) => {
@@ -20,7 +21,7 @@ router.post("/generate", auth, async (req, res) => {
     }
 
     const prompt = `Create a healthy recipe using these ingredients: ${ingredients}. 
-    Please provide the recipe strictly in the following JSON format, with no introductory text or markdown formatting:
+    Please provide the recipe in the following JSON format:
     {
       "title": "Recipe Title",
       "description": "Brief description of the recipe",
@@ -34,23 +35,24 @@ router.post("/generate", auth, async (req, res) => {
       }
     }`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    let recipe;
-    try {
-      const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
-      recipe = JSON.parse(cleanedText);
-    } catch (parseError) {
-        console.error("Failed to parse Gemini response:", parseError);
-        console.error("Raw Gemini response text:", text);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to parse recipe data from AI response.",
-            rawResponse: process.env.NODE_ENV === 'development' ? text : undefined
-        });
-    }
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a professional nutritionist and chef. Create healthy, balanced recipes with accurate nutritional information.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    const recipe = JSON.parse(completion.choices[0].message.content);
 
     res.json({
       success: true,
@@ -58,13 +60,9 @@ router.post("/generate", auth, async (req, res) => {
     });
   } catch (error) {
     console.error("Recipe generation error:", error);
-    if (error.response) {
-        console.error("Gemini API Error details:", error.response.data);
-    }
     res.status(500).json({
       success: false,
       message: "Failed to generate recipe. Please try again.",
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
