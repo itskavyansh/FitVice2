@@ -42,7 +42,10 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
-import geminiService from '../../services/geminiService';
+import { FitViceApiService } from '../../services/FitViceApiService';
+
+// Create an instance of the service
+const fitViceApiService = new FitViceApiService();
 
 // Icon mapping
 const iconMap = {
@@ -308,7 +311,7 @@ const NutritionGuide = () => {
 
   const loadNutritionTips = async () => {
     try {
-      const response = await geminiService.getNutritionTips();
+      const response = await fitViceApiService.getNutritionTips();
       if (response.success) {
         setNutritionTips(response.data);
       }
@@ -334,7 +337,7 @@ const NutritionGuide = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await geminiService.generateRecipe(ingredients);
+      const response = await fitViceApiService.generateRecipe(ingredients);
       console.log('Recipe response:', response);
       if (response.success) {
         setRecipe(response.data);
@@ -359,7 +362,7 @@ const NutritionGuide = () => {
     setAiLoading(true);
     setAiError('');
     try {
-      const response = await geminiService.askHealthQuestion(healthQuestion);
+      const response = await fitViceApiService.askHealthQuestion(healthQuestion);
       console.log('AI response:', response);
       if (response.success) {
         setAiResponse(response.data);

@@ -117,6 +117,8 @@ import ExerciseDetails from 'layouts/muscle-pedia/exercise-details';
 import MusclePedia from 'layouts/muscle-pedia';
 import Chatbot from 'layouts/chatbot';
 import AuthCallback from './components/auth/AuthCallback';
+import Workouts from 'layouts/workouts';
+import ActiveWorkout from 'layouts/workouts/ActiveWorkout';
 
 export default function App() {
   return (
@@ -433,6 +435,22 @@ const AppContent = () => {
           element={
             <PrivateRoute>
               <NutritionGuide />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/workouts"
+          element={
+            <PrivateRoute>
+              <Workouts />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/workouts/new"
+          element={
+            <PrivateRoute>
+              <ActiveWorkout />
             </PrivateRoute>
           }
         />

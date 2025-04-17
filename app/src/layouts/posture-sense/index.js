@@ -9,9 +9,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActionArea from '@mui/material/CardActionArea';
 import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -99,10 +96,167 @@ ChartJS.register(
   Legend
 );
 
+// Import 3D card components
+import { CardContainer, CardBody, CardItem } from 'components/ui/3d-card';
+import PropTypes from 'prop-types'; // Add PropTypes
+
 import squatsImage from 'assets/images/squats.jpg';
 import pushupsImage from 'assets/images/pushups.jpg';
 import lungesImage from 'assets/images/lunges.jpg';
 import lateralImage from 'assets/images/lateral.jpg';
+
+// --- START: Define ExerciseCard3D Component ---
+function ExerciseCard3D({ exercise, isSelected, onClick }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cardRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (x - centerX) / -20;
+    setMousePosition({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
+  };
+
+  return (
+    <CardContainer>
+      <CardBody
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={onClick} // Use the passed onClick handler
+        sx={{
+          transform: `rotateX(${mousePosition.x}deg) rotateY(${mousePosition.y}deg) ${isSelected ? 'scale(1.02)' : 'scale(1)'}`, // Add scale based on selection
+          position: 'relative',
+          backgroundColor: '#f9fafb',
+          borderRadius: '12px',
+          padding: '16px', // Keep adjusted padding
+          border: isSelected ? `2px solid ${exercise.color}` : '1px solid rgba(0,0,0,0.1)', // Border based on selection
+          cursor: 'pointer',
+          // Remove explicit transition on CardBody
+          boxShadow: isSelected ? '0 8px 16px rgba(0,0,0,0.1)' : 'none', // Apply selection shadow or none by default
+          '&:hover': {
+             // Apply MuscleCard hover shadow ONLY if NOT selected, otherwise keep selection shadow
+             boxShadow: isSelected ? '0 8px 16px rgba(0,0,0,0.1)' : '0 25px 50px -12px rgba(0,0,0,0.25)',
+             // Apply MuscleCard hover effect on content
+            '& .card-content': {
+              transform: 'scale(1.05)', // MuscleCard scale effect
+              transition: 'all 0.5s ease', // MuscleCard transition
+              transformOrigin: 'center center',
+            },
+          },
+          // Apply MuscleCard base transition on content
+          '& .card-content': {
+            transition: 'all 0.5s ease',
+            transformOrigin: 'center center',
+          },
+        }}
+      >
+        {/* --- START: Reorder content to match MuscleCard (Image last) --- */}
+         <CardItem translateZ={50}>
+          <Typography
+            className="card-content"
+            variant="h6"
+            fontWeight="bold"
+            color="text.primary"
+            gutterBottom
+             sx={{ fontSize: '1rem', lineHeight: '1.4rem' }} // Adjust typography if needed
+          >
+            {exercise.name}
+          </Typography>
+        </CardItem>
+        <CardItem translateZ={60}>
+           <Typography
+            className="card-content"
+            variant="body2"
+            color="text.secondary"
+            mb={1}
+             sx={{
+                fontSize: '0.75rem', lineHeight: '1.1rem',
+                maxHeight: '3.3rem', // Limit height (3 lines)
+                overflow: 'hidden', textOverflow: 'ellipsis',
+                display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {exercise.instructions}
+          </Typography>
+        </CardItem>
+         <CardItem translateZ={70}>
+           <Box className="card-content" mt={1} display="flex" flexWrap="wrap" gap={0.5}>
+             {exercise.musclesWorked.map((muscle) => (
+               <Chip
+                 key={muscle}
+                 label={muscle}
+                 size="small"
+                 sx={{
+                   fontSize: '0.65rem', height: '20px',
+                   backgroundColor: `${exercise.color}20`, color: exercise.color,
+                 }}
+               />
+             ))}
+           </Box>
+        </CardItem>
+         <CardItem translateZ={80}>
+           <Box
+             className="card-content"
+             mt={1}
+             display="flex"
+             justifyContent="space-between"
+             alignItems="center"
+             width="100%"
+           >
+             <Chip
+               label={exercise.difficulty}
+               size="small"
+               sx={{
+                 fontSize: '0.65rem', height: '20px',
+                 backgroundColor:
+                   exercise.difficulty === 'Beginner' ? '#4caf5020' :
+                   exercise.difficulty === 'Intermediate' ? '#ff980020' : '#f4433620',
+                 color:
+                   exercise.difficulty === 'Beginner' ? '#4caf50' :
+                   exercise.difficulty === 'Intermediate' ? '#ff9800' : '#f44336',
+               }}
+             />
+             <Icon sx={{ color: exercise.color }}>{exercise.icon}</Icon>
+           </Box>
+        </CardItem>
+
+        {/* Image CardItem - Moved to be the last item */}
+        <CardItem translateZ={100} sx={{ width: '100%', mt: 2 }}>
+          <img
+            className="card-content"
+            src={exercise.image}
+            alt={exercise.name}
+            style={{
+              height: '140px', // Match original height
+              width: '100%',
+              objectFit: 'cover',
+              borderRadius: '12px', // Use MuscleCard radius
+              filter: !isSelected ? 'grayscale(50%)' : 'none', // Apply grayscale if not selected
+            }}
+          />
+        </CardItem>
+         {/* --- END: Reorder content to match MuscleCard (Image last) --- */}
+      </CardBody>
+    </CardContainer>
+  );
+}
+
+ExerciseCard3D.propTypes = {
+  exercise: PropTypes.object.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+// --- END: Define ExerciseCard3D Component ---
 
 function PostureSense() {
   const videoRef = useRef(null);
@@ -1216,7 +1370,7 @@ function PostureSense() {
         <Grid container spacing={3}>
           {/* Left Panel - Exercise Selection & Camera */}
           <Grid item xs={12} lg={8}>
-            <Card sx={{ height: '100%', overflow: 'hidden' }}>
+            <Card sx={{ height: '100%', overflow: 'visible' }}> {/* Allow overflow for 3D effect */}
               <MDBox p={3}>
                 <MDTypography variant="h4" color="dark" gutterBottom fontWeight="bold">
                   AI Posture Sense
@@ -1225,91 +1379,16 @@ function PostureSense() {
                   Select an exercise and let our AI track your form in real-time
                 </MDTypography>
 
-                {/* Exercise Selection */}
+                {/* Exercise Selection - Use ExerciseCard3D */}
                 <MDBox mb={3}>
                   <Grid container spacing={2}>
                     {Object.entries(exercises).map(([key, exercise]) => (
                       <Grid item xs={12} sm={6} md={4} key={key}>
-                        <Card
+                        <ExerciseCard3D
+                          exercise={exercise}
+                          isSelected={selectedExercise === key}
                           onClick={() => setSelectedExercise(key)}
-                          sx={{
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            transform: selectedExercise === key ? 'scale(1.02)' : 'scale(1)',
-                            border:
-                              selectedExercise === key ? `2px solid ${exercise.color}` : 'none',
-                            position: 'relative',
-                            overflow: 'hidden',
-                            boxShadow:
-                              selectedExercise === key
-                                ? '0 8px 16px rgba(0,0,0,0.1)'
-                                : '0 4px 6px rgba(0,0,0,0.05)',
-                          }}
-                        >
-                          <CardActionArea>
-                            <CardMedia
-                              component="img"
-                              height="140"
-                              image={exercise.image}
-                              alt={exercise.name}
-                              sx={{
-                                filter: selectedExercise !== key ? 'grayscale(50%)' : 'none',
-                                transition: 'filter 0.3s ease',
-                              }}
-                            />
-                            <CardContent>
-                              <MDTypography variant="h6" color="dark" gutterBottom>
-                                {exercise.name}
-                              </MDTypography>
-                              <MDTypography variant="body2" color="text" mb={1}>
-                                {exercise.instructions}
-                              </MDTypography>
-                              <Box mt={1} display="flex" flexWrap="wrap" gap={0.5}>
-                                {exercise.musclesWorked.map((muscle) => (
-                                  <Chip
-                                    key={muscle}
-                                    label={muscle}
-                                    size="small"
-                                    sx={{
-                                      fontSize: '0.65rem',
-                                      height: '20px',
-                                      backgroundColor: `${exercise.color}20`,
-                                      color: exercise.color,
-                                    }}
-                                  />
-                                ))}
-                              </Box>
-                              <Box
-                                mt={1}
-                                display="flex"
-                                justifyContent="space-between"
-                                alignItems="center"
-                              >
-                                <Chip
-                                  label={exercise.difficulty}
-                                  size="small"
-                                  sx={{
-                                    fontSize: '0.65rem',
-                                    height: '20px',
-                                    backgroundColor:
-                                      exercise.difficulty === 'Beginner'
-                                        ? '#4caf5020'
-                                        : exercise.difficulty === 'Intermediate'
-                                        ? '#ff980020'
-                                        : '#f4433620',
-                                    color:
-                                      exercise.difficulty === 'Beginner'
-                                        ? '#4caf50'
-                                        : exercise.difficulty === 'Intermediate'
-                                        ? '#ff9800'
-                                        : '#f44336',
-                                  }}
-                                />
-                                <Icon sx={{ color: exercise.color }}>{exercise.icon}</Icon>
-                              </Box>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
+                        />
                       </Grid>
                     ))}
                   </Grid>

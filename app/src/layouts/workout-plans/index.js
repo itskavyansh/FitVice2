@@ -7,8 +7,6 @@
 // @mui material components
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
@@ -42,7 +40,8 @@ import strengthImage from 'assets/images/strength.jpeg';
 import flexibilityImage from 'assets/images/flexibility.jpeg';
 
 // React imports
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 // Icons
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -54,6 +53,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TimerIcon from '@mui/icons-material/Timer';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ActiveProgram from './ActiveProgram';
+
+// Import necessary components and hooks for 3D card
+import { CardContainer, CardBody, CardItem } from 'components/ui/3d-card';
 
 const categories = [
   { id: 'all', label: 'All Programs' },
@@ -168,6 +170,154 @@ const sampleWorkoutPlans = [
   },
 ];
 
+// Define the WorkoutPlanCard component
+function WorkoutPlanCard({ plan, onClick }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cardRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20; // Adjust rotation sensitivity if needed
+    const rotateY = (x - centerX) / -20; // Invert Y rotation for intuitive feel
+    setMousePosition({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
+  };
+
+  return (
+    <CardContainer>
+      <CardBody
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={() => onClick(plan)} // Use the passed onClick handler
+        sx={{
+          transform: `rotateX(${mousePosition.x}deg) rotateY(${mousePosition.y}deg)`,
+          position: 'relative',
+          backgroundColor: 'background.paper', // Keep theme background or change to #f9fafb like muscle-pedia?
+          borderRadius: '12px',
+          padding: '24px',
+          border: '1px solid rgba(0,0,0,0.1)',
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'column',
+          // Remove separate transition for box-shadow
+          '&:hover': {
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', // Use MuscleCard shadow
+            '& .card-content': {
+              transform: 'scale(1.05)', // Use MuscleCard scale
+              transition: 'all 0.5s ease', // Use MuscleCard transition
+              transformOrigin: 'center center',
+            },
+          },
+          '& .card-content': {
+            transition: 'all 0.5s ease', // Use MuscleCard transition
+            transformOrigin: 'center center',
+          },
+        }}
+      >
+        <Box> {/* Wrapper for top content */}
+          <CardItem translateZ={50}>
+            <MDTypography
+              className="card-content"
+              variant="h5"
+              fontWeight="bold"
+              color="text.primary"
+              gutterBottom
+              sx={{ fontSize: '1.2rem', lineHeight: '1.5rem' }} // Adjust typography if needed
+            >
+              {plan.title}
+            </MDTypography>
+          </CardItem>
+          <CardItem translateZ={60}>
+            <MDTypography
+              className="card-content"
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                mt: 1,
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
+                maxHeight: '5rem', // Limit description height
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 3, // Show max 3 lines
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              {plan.description}
+            </MDTypography>
+          </CardItem>
+          <CardItem translateZ={70} sx={{ mt: 2 }}>
+            <Chip
+               className="card-content"
+               icon={<FlagIcon />}
+               label={plan.level}
+               size="small"
+               variant="outlined"
+               sx={{ mr: 1, mb: 1 }}
+             />
+            <Chip
+              className="card-content"
+              icon={<TimerIcon />}
+              label={plan.duration}
+              size="small"
+              variant="outlined"
+              sx={{ mr: 1, mb: 1 }}
+            />
+             <Chip
+              className="card-content"
+              icon={<AccessTimeIcon />}
+              label={plan.timePerWorkout}
+              size="small"
+              variant="outlined"
+              sx={{ mb: 1 }}
+            />
+          </CardItem>
+        </Box>
+
+        <CardItem translateZ={80} sx={{ width: '100%', mt: 2 }}>
+          <img
+            className="card-content"
+            src={plan.image}
+            alt={plan.title}
+            style={{
+              height: '180px', // Adjusted image height
+              width: '100%',
+              objectFit: 'cover',
+              borderRadius: '8px', // Slightly smaller radius for image
+            }}
+          />
+        </CardItem>
+      </CardBody>
+    </CardContainer>
+  );
+}
+
+WorkoutPlanCard.propTypes = {
+  plan: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    duration: PropTypes.string.isRequired,
+    level: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    workoutsPerWeek: PropTypes.number.isRequired,
+    timePerWorkout: PropTypes.string.isRequired,
+    features: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
 function WorkoutPlans() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -243,47 +393,8 @@ function WorkoutPlans() {
 
             <Grid container spacing={3}>
               {filteredPlans.map((plan) => (
-                <Grid item xs={12} md={4} key={plan.id}>
-                  <Card
-                    sx={{
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s',
-                      '&:hover': { transform: 'scale(1.02)' },
-                    }}
-                    onClick={() => handlePlanClick(plan)}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="200"
-                      image={plan.image}
-                      alt={plan.title}
-                      onError={(e) => {
-                        e.target.src =
-                          'https://images.pexels.com/photos/4498151/pexels-photo-4498151.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-                      }}
-                      sx={{
-                        objectFit: 'cover',
-                        backgroundColor: 'grey.200',
-                      }}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {plan.title}
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-                        <Chip icon={<AccessTimeIcon />} label={plan.duration} size="small" />
-                        <Chip icon={<FlagIcon />} label={plan.level} size="small" />
-                        <Chip
-                          icon={<TimerIcon />}
-                          label={`${plan.workoutsPerWeek}x/week`}
-                          size="small"
-                        />
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {plan.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                <Grid item xs={12} md={6} lg={4} key={plan.id}> {/* Adjusted grid size */}
+                  <WorkoutPlanCard plan={plan} onClick={handlePlanClick} />
                 </Grid>
               ))}
             </Grid>
