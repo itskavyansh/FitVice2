@@ -1,5 +1,6 @@
 // Assume this base URL points to your backend
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001'; // CORRECTED PORT
+const API_BASE_URL = 'https://fitvice-oad4.onrender.com'; // Hardcoded for debugging
+// const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001'; // CORRECTED PORT
 
 // Helper to get auth token (replace with your actual implementation)
 

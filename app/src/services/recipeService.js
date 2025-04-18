@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = 'https://fitvice-oad4.onrender.com'; // Hardcoded for debugging
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 const generateRecipe = async (ingredients) => {
   try {

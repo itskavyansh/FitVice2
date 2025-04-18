@@ -1,12 +1,13 @@
 import axios from 'axios';
 
-const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://fitvice.netlify.app/.netlify/functions/api'
-  : 'http://localhost:3001';
+const API_BASE_URL = 'https://fitvice-oad4.onrender.com';
+// const API_BASE_URL = process.env.REACT_APP_API_URL
+//  ? process.env.REACT_APP_API_URL
+//  : 'http://localhost:3001';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -337,7 +338,7 @@ const authService = {
   loginWithGoogle: async () => {
     try {
       // Redirect to Google OAuth
-      window.location.href = `${API_URL}/auth/google`;
+      window.location.href = `${API_BASE_URL}/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
       throw new Error('Google login failed. Please try again.');
@@ -347,7 +348,7 @@ const authService = {
   loginWithGithub: async () => {
     try {
       // Redirect to GitHub OAuth
-      window.location.href = `${API_URL}/auth/github`;
+      window.location.href = `${API_BASE_URL}/auth/github`;
     } catch (error) {
       console.error('GitHub login error:', error);
       throw new Error('GitHub login failed. Please try again.');
@@ -357,7 +358,7 @@ const authService = {
   loginWithLinkedIn: async () => {
     try {
       // Redirect to LinkedIn OAuth
-      window.location.href = `${API_URL}/auth/linkedin`;
+      window.location.href = `${API_BASE_URL}/auth/linkedin`;
     } catch (error) {
       console.error('LinkedIn login error:', error);
       throw new Error('LinkedIn login failed. Please try again.');
