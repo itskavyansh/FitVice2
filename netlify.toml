@@ -1,13 +1,10 @@
 [build]
   base = "app/"
   publish = "build/"
-  command = "npm run build && cd netlify/functions && npm install"
+  command = "npm run build"
 
 [functions]
   directory = "netlify/functions"
-
-[[plugins]]
-  package = "@netlify/plugin-functions-install-core"
 
 [[redirects]]
   from = "/api/*"
