@@ -1,8 +1,5 @@
-// Standardize API URL definition based on NODE_ENV
-const API_BASE_URL = 'https://fitvice-oad4.onrender.com'; // Hardcoded for debugging
-// const API_BASE_URL = process.env.NODE_ENV === 'production'
-//   ? process.env.REACT_APP_API_URL // Use Render URL for production
-//   : 'http://localhost:3001'; // Local development (points to backend server)
+// Use relative paths - Netlify proxy will handle routing
+const API_BASE_URL = '/api';
 
 // Helper to get auth token (replace with your actual implementation if needed)
 const getAuthToken = () => {

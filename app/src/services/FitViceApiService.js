@@ -1,6 +1,5 @@
-// Assume this base URL points to your backend
-const API_BASE_URL = 'https://fitvice-oad4.onrender.com'; // Hardcoded for debugging
-// const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001'; // CORRECTED PORT
+// Use relative paths - Netlify proxy will handle routing
+const API_BASE_URL = '/api';
 
 // Helper to get auth token (replace with your actual implementation)
 
@@ -13,8 +12,8 @@ export class FitViceApiService {
   async generateRecipe(ingredients) {
     try {
       const token = getAuthToken();
-      // Add /api prefix back
-      const response = await fetch(`${API_BASE_URL}/api/recipes/generate`, {
+      // Use relative path: /api/recipes/generate
+      const response = await fetch(`${API_BASE_URL}/recipes/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,8 +44,8 @@ export class FitViceApiService {
   async askHealthQuestion(question, history = []) {
     try {
       const token = getAuthToken();
-      // Add /api prefix back
-      const response = await fetch(`${API_BASE_URL}/api/jarvis/command`, {
+      // Use relative path: /api/jarvis/command
+      const response = await fetch(`${API_BASE_URL}/jarvis/command`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,8 +81,8 @@ export class FitViceApiService {
     try {
       const token = getAuthToken();
       const command = "Generate 5 nutrition tips for general health.";
-      // Add /api prefix back
-      const response = await fetch(`${API_BASE_URL}/api/jarvis/command`, {
+      // Use relative path: /api/jarvis/command
+      const response = await fetch(`${API_BASE_URL}/jarvis/command`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

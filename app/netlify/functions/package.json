@@ -1,0 +1,20 @@
+{
+  "name": "fitvice-netlify-functions",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "groq-sdk": "latest",
+    "mongoose": "^8.0.0", 
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-linkedin-oauth2": "^2.0.0",
+    "serverless-http": "^3.2.0"
+  },
+  "engines": {
+    "node": "18.17.0"
+  }
+} 

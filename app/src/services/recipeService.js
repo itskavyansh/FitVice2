@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'https://fitvice-oad4.onrender.com'; // Hardcoded for debugging
-// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+// Use relative paths - Netlify proxy will handle routing
+const API_URL = '/api';
 
 const generateRecipe = async (ingredients) => {
   try {
+    // Uses relative path: /api/recipes/generate
     const response = await axios.post(`${API_URL}/recipes/generate`, {
       ingredients,
     });

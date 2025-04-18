@@ -1,27 +1,25 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://fitvice-oad4.onrender.com';
-// const API_BASE_URL = process.env.REACT_APP_API_URL
-//  ? process.env.REACT_APP_API_URL
-//  : 'http://localhost:3001';
+// Use relative paths - Netlify proxy will handle routing
+const API_BASE_URL = '/api';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL, // Use relative base URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json', // Corrected quotes for linter
   },
 });
 
 // Add request interceptor for setting auth token and logging
 api.interceptors.request.use(
   (config) => {
-    // Log the full URL for debugging
+    // Log the full URL for debugging (will show relative path now)
     console.log('Making request to:', config.baseURL + config.url);
     console.log('Request headers:', config.headers);
-    
+
     // Always check for token and set header from localStorage
     const token = localStorage.getItem('token');
     if (token) {
@@ -39,7 +37,7 @@ api.interceptors.request.use(
 
     console.log('Request:', {
       method: config.method,
-      url: config.url,
+      url: config.url, // Shows relative URL
       data: config.data ? JSON.stringify(config.data) : '(no data)',
       auth: maskedHeader,
     });
@@ -76,6 +74,7 @@ const authService = {
   login: async (email, password) => {
     try {
       console.log('Attempting login for:', email);
+      // Uses relative path: /api/auth/login
       const response = await api.post('/auth/login', {
         email,
         password,
@@ -105,6 +104,7 @@ const authService = {
   signup: async (userData) => {
     try {
       console.log('Attempting signup for:', userData.email);
+      // Uses relative path: /api/auth/signup
       const response = await api.post('/auth/signup', userData);
 
       if (response.data.success && response.data.token) {
@@ -155,6 +155,7 @@ const authService = {
 
       try {
         // First try to get the me endpoint to validate the token
+        // Uses relative path: /api/auth/me
         const response = await api.get('/auth/me');
 
         console.log('Current user API response:', {
@@ -197,6 +198,7 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Uploading profile picture');
+      // Uses relative path: /api/auth/profile/picture
       const response = await api.post('/auth/profile/picture', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -223,6 +225,7 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Fetching profile');
+      // Uses relative path: /api/auth/profile
       const response = await api.get('/auth/profile');
 
       if (response.data.success) {
@@ -245,6 +248,7 @@ const authService = {
       if (!token) throw new Error('Not authenticated');
 
       console.log('Updating profile');
+      // Uses relative path: /api/auth/profile
       const response = await api.put('/auth/profile', profileData);
 
       if (response.data.success) {
@@ -271,6 +275,7 @@ const authService = {
       }
 
       console.log('Verifying token');
+      // Uses relative path: /api/auth/verify
       const response = await api.get('/auth/verify');
 
       const isValid = response.data.success && response.data.valid;
@@ -312,6 +317,7 @@ const authService = {
       console.log('Set auth header for initialization');
 
       // Try to verify the token by fetching the user
+      // Uses relative path: /api/auth/verify
       const response = await api.get('/auth/verify');
 
       if (response.data.success && response.data.valid) {
@@ -337,7 +343,7 @@ const authService = {
 
   loginWithGoogle: async () => {
     try {
-      // Redirect to Google OAuth
+      // Redirect to Google OAuth - Uses relative path
       window.location.href = `${API_BASE_URL}/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
@@ -347,7 +353,7 @@ const authService = {
 
   loginWithGithub: async () => {
     try {
-      // Redirect to GitHub OAuth
+      // Redirect to GitHub OAuth - Uses relative path
       window.location.href = `${API_BASE_URL}/auth/github`;
     } catch (error) {
       console.error('GitHub login error:', error);
@@ -357,7 +363,7 @@ const authService = {
 
   loginWithLinkedIn: async () => {
     try {
-      // Redirect to LinkedIn OAuth
+      // Redirect to LinkedIn OAuth - Uses relative path
       window.location.href = `${API_BASE_URL}/auth/linkedin`;
     } catch (error) {
       console.error('LinkedIn login error:', error);
