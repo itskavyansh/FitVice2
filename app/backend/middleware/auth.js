@@ -3,6 +3,9 @@ const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   try {
+    // Log the incoming Authorization header for debugging
+    console.log('[Auth Middleware] Authorization Header:', req.header('Authorization'));
+    
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {

@@ -49,6 +49,8 @@ import Chatbot from 'layouts/chatbot';
 import Landing from 'layouts/landing';
 import AuthProfile from 'components/auth/Profile';
 import Leaderboard from 'layouts/leaderboard';
+import Workouts from 'layouts/workouts';
+import ActiveWorkout from 'layouts/workouts/ActiveWorkout';
 
 // Auth components
 import SignIn from 'components/auth/SignIn';
@@ -98,9 +100,26 @@ const routes = [
   },
   {
     type: 'collapse',
+    name: 'Workouts',
+    key: 'workouts',
+    icon: <Icon fontSize="small">fitness_center</Icon>,
+    route: '/workouts',
+    component: <Workouts />,
+  },
+  {
+    type: 'collapse',
+    name: 'Log Workout',
+    key: 'workouts-new',
+    icon: <Icon fontSize="small">edit_note</Icon>,
+    route: '/workouts/new',
+    component: <ActiveWorkout />,
+    hideInNav: true,
+  },
+  {
+    type: 'collapse',
     name: 'Workout·Plans',
     key: 'workout-plans',
-    icon: <Icon fontSize="small">fitness_center</Icon>,
+    icon: <Icon fontSize="small">assignment</Icon>,
     route: '/workout-plans',
     component: <WorkoutPlans />,
   },
