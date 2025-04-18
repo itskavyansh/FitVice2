@@ -1,7 +1,7 @@
 [build]
   base = "app/"
   publish = "build/"
-  command = "cd netlify/functions && npm install && cd .. && cross-env CI=false react-scripts build"
+  command = "npm run build"
 
 [functions]
   directory = "netlify/functions"
