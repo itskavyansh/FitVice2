@@ -3,13 +3,6 @@
   publish = "build/"
   command = "npm run build"
 
-[functions]
-  directory = "netlify/functions"
-
-# Ensure this plugin is present to install function dependencies
-[[plugins]]
-  package = "@netlify/plugin-functions-install-core"
-
 # Proxy rule: All requests to /api/* on Netlify will be forwarded to Render
 [[redirects]]
   from = "/api/*"
