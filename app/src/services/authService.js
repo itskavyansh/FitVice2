@@ -409,7 +409,7 @@ const authService = {
           console.log('Token verified during initialization:', response.data.user?.email);
           return {
             authenticated: true,
-            user: response.data.user,
+            user: response.data.user
           };
         } else {
           console.log('Token invalid during verification');

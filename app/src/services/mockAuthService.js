@@ -44,7 +44,7 @@ const generateMockToken = (userId) => {
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock login function
-export const mockLogin = async (email, password) => {
+const mockLogin = async (email, password) => {
   console.log('Using MOCK authentication (offline mode)');
   
   // Simulate network delay
@@ -90,7 +90,7 @@ export const mockLogin = async (email, password) => {
 };
 
 // Mock signup function
-export const mockSignup = async (email, password, username) => {
+const mockSignup = async (email, password, username) => {
   console.log('Using MOCK signup (offline mode)');
   
   // Simulate network delay
@@ -142,7 +142,7 @@ export const mockSignup = async (email, password, username) => {
 };
 
 // Verify token function
-export const mockVerifyToken = async (token) => {
+const mockVerifyToken = async (token) => {
   console.log('Using MOCK token verification (offline mode)');
   
   // Simulate network delay
