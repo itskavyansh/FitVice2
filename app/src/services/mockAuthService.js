@@ -210,4 +210,10 @@ export const mockVerifyToken = async (token) => {
       message: 'Invalid token'
     };
   }
-}; 
+};
+
+// Export all required functions
+export { mockLogin, mockSignup, mockVerifyToken };
+
+// Also export the mock users for reference if needed
+export const MOCK_USER_LIST = MOCK_USERS; 

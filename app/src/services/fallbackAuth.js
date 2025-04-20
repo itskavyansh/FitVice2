@@ -7,7 +7,7 @@ import axios from 'axios';
 import { mockLogin, mockSignup } from './mockAuthService';
 
 // Check if the backend is down by making a ping request
-const isBackendDown = async () => {
+export const isBackendDown = async () => {
   try {
     // Try multiple health check endpoints
     try {

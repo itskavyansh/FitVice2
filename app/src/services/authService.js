@@ -145,6 +145,26 @@ const authService = {
 
       console.log('Fetching current user with token:', token.substring(0, 15) + '...');
 
+      // Check if backend is down
+      const { isBackendDown } = await import('./fallbackAuth');
+      const backendDown = await isBackendDown();
+      
+      if (backendDown) {
+        console.log('Backend is down during getCurrentUser - using mock validation');
+        // Use mock token validation
+        const { mockVerifyToken } = await import('./mockAuthService');
+        const result = await mockVerifyToken(token);
+        
+        if (result.success && result.valid && result.user) {
+          console.log('Mock token validation successful');
+          return result.user;
+        }
+        
+        console.log('Mock token validation failed');
+        localStorage.removeItem('token');
+        return null;
+      }
+
       // Always ensure the Authorization header is properly set
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
@@ -173,6 +193,19 @@ const authService = {
           status: apiError.response?.status,
           message: apiError.message,
         });
+
+        // Check if the backend might be down
+        if (apiError.response?.status === 404 || !apiError.response) {
+          console.log('Backend may be down - attempting mock validation as fallback');
+          // Try mock validation as a fallback
+          const { mockVerifyToken } = await import('./mockAuthService');
+          const result = await mockVerifyToken(token);
+          
+          if (result.success && result.valid && result.user) {
+            console.log('Fallback mock token validation successful');
+            return result.user;
+          }
+        }
 
         // If token is invalid or expired
         if (apiError.response?.status === 401) {
@@ -272,12 +305,42 @@ const authService = {
       }
 
       console.log('Verifying token');
-      // Uses relative path: /api/auth/verify
-      const response = await api.get('/auth/verify');
+      
+      // Check if backend is down
+      const { isBackendDown } = await import('./fallbackAuth');
+      const backendDown = await isBackendDown();
+      
+      if (backendDown) {
+        console.log('Backend is down during verifyToken - using mock validation');
+        // Use mock token validation
+        const { mockVerifyToken } = await import('./mockAuthService');
+        const result = await mockVerifyToken(token);
+        
+        return result.success && result.valid;
+      }
+      
+      // Backend is up, use normal verification
+      try {
+        // Uses relative path: /api/auth/verify
+        const response = await api.get('/auth/verify');
 
-      const isValid = response.data.success && response.data.valid;
-      console.log('Token verification result:', isValid);
-      return isValid;
+        const isValid = response.data.success && response.data.valid;
+        console.log('Token verification result:', isValid);
+        return isValid;
+      } catch (apiError) {
+        console.error('API verification error:', apiError.message);
+        
+        // If the API call failed, try mock validation as fallback
+        if (apiError.response?.status === 404 || !apiError.response) {
+          console.log('API verification failed - attempting mock validation');
+          const { mockVerifyToken } = await import('./mockAuthService');
+          const result = await mockVerifyToken(token);
+          return result.success && result.valid;
+        }
+        
+        localStorage.removeItem('token');
+        return false;
+      }
     } catch (error) {
       console.error('Verify token error:', error);
       localStorage.removeItem('token');
@@ -309,22 +372,70 @@ const authService = {
     }
 
     try {
+      // Check if backend is down
+      const { isBackendDown } = await import('./fallbackAuth');
+      const backendDown = await isBackendDown();
+      
+      if (backendDown) {
+        console.log('Backend is down during initialization - using mock validation');
+        // Use mock token validation
+        const { mockVerifyToken } = await import('./mockAuthService');
+        const result = await mockVerifyToken(token);
+        
+        if (result.success && result.valid) {
+          console.log('Mock token verification successful during initialization');
+          return {
+            authenticated: true,
+            user: result.user,
+            offlineMode: true
+          };
+        } else {
+          console.log('Mock token validation failed during initialization');
+          localStorage.removeItem('token');
+          return { authenticated: false, offlineMode: true };
+        }
+      }
+      
       // Set the auth header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       console.log('Set auth header for initialization');
 
-      // Try to verify the token by fetching the user
-      // Uses relative path: /api/auth/verify
-      const response = await api.get('/auth/verify');
+      try {
+        // Try to verify the token by fetching the user
+        // Uses relative path: /api/auth/verify
+        const response = await api.get('/auth/verify');
 
-      if (response.data.success && response.data.valid) {
-        console.log('Token verified during initialization:', response.data.user?.email);
-        return {
-          authenticated: true,
-          user: response.data.user,
-        };
-      } else {
-        console.log('Token invalid during verification');
+        if (response.data.success && response.data.valid) {
+          console.log('Token verified during initialization:', response.data.user?.email);
+          return {
+            authenticated: true,
+            user: response.data.user,
+          };
+        } else {
+          console.log('Token invalid during verification');
+          localStorage.removeItem('token');
+          delete api.defaults.headers.common['Authorization'];
+          return { authenticated: false };
+        }
+      } catch (apiError) {
+        console.error('API verification error during initialization:', apiError.message);
+        
+        // If the API call failed, try mock validation as fallback
+        if (apiError.response?.status === 404 || !apiError.response) {
+          console.log('API verification failed - attempting mock validation');
+          const { mockVerifyToken } = await import('./mockAuthService');
+          const result = await mockVerifyToken(token);
+          
+          if (result.success && result.valid) {
+            console.log('Fallback mock verification successful');
+            return {
+              authenticated: true,
+              user: result.user,
+              offlineMode: true
+            };
+          }
+        }
+        
         localStorage.removeItem('token');
         delete api.defaults.headers.common['Authorization'];
         return { authenticated: false };
