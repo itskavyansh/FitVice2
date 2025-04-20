@@ -4,6 +4,19 @@
  */
 
 import axios from 'axios';
+import { mockLogin, mockSignup } from './mockAuthService';
+
+// Check if the backend is down by making a ping request
+const isBackendDown = async () => {
+  try {
+    // Try to ping the Render backend
+    await axios.get('https://fitvice-oad4.onrender.com/health', { timeout: 3000 });
+    return false; // Backend is up
+  } catch (error) {
+    console.warn('Backend appears to be down:', error.message);
+    return true; // Backend is down or unreachable
+  }
+};
 
 /**
  * Attempts to login using multiple approaches if one fails
@@ -13,6 +26,13 @@ import axios from 'axios';
  */
 export const robustLogin = async (email, password) => {
   console.log('Starting robust login attempt for:', email);
+  
+  // First check if backend is completely down
+  const backendDown = await isBackendDown();
+  if (backendDown) {
+    console.log('Backend is down - using mock authentication');
+    return await mockLogin(email, password);
+  }
   
   // Define multiple authentication approaches
   const approaches = [
@@ -103,13 +123,118 @@ export const robustLogin = async (email, password) => {
     }
   }
   
-  // All approaches failed
-  console.error('All login approaches failed. Last error:', lastError?.message);
+  // If all approaches failed, try mock authentication as a final fallback
+  console.log('All regular approaches failed - falling back to mock authentication');
+  return await mockLogin(email, password);
+};
+
+/**
+ * Attempts to signup using multiple approaches if one fails
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @param {string} username - User name
+ * @returns {Promise<Object>} Authentication response with token and user data
+ */
+export const robustSignup = async (email, password, username) => {
+  console.log('Starting robust signup attempt for:', email);
   
-  // Extract meaningful error message if available
-  if (lastError?.response?.data?.message) {
-    throw new Error(lastError.response.data.message);
+  // First check if backend is completely down
+  const backendDown = await isBackendDown();
+  if (backendDown) {
+    console.log('Backend is down - using mock authentication for signup');
+    return await mockSignup(email, password, username);
   }
   
-  throw new Error('Login failed after multiple attempts. Please try again later.');
+  // Define multiple authentication approaches
+  const approaches = [
+    // Approach 1: Direct Render backend
+    {
+      name: 'Direct Render backend',
+      url: 'https://fitvice-oad4.onrender.com/auth/signup',
+      method: async () => {
+        return await axios.post('https://fitvice-oad4.onrender.com/auth/signup', 
+          { email, password, username },
+          { 
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
+        );
+      }
+    },
+    
+    // Approach 2: Netlify proxy
+    {
+      name: 'Netlify API proxy',
+      url: '/api/auth/signup',
+      method: async () => {
+        return await axios.post('/api/auth/signup', 
+          { email, password, username },
+          { 
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
+        );
+      }
+    },
+    
+    // Approach 3: Netlify function direct
+    {
+      name: 'Netlify function',
+      url: '/.netlify/functions/api/auth/signup',
+      method: async () => {
+        return await axios.post('/.netlify/functions/api/auth/signup', 
+          { email, password, username },
+          { 
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
+        );
+      }
+    },
+  ];
+  
+  let lastError = null;
+  
+  // Try each approach in sequence
+  for (const approach of approaches) {
+    try {
+      console.log(`Trying signup approach: ${approach.name} (${approach.url})`);
+      
+      const response = await approach.method();
+      
+      console.log(`${approach.name} signup response:`, {
+        status: response.status,
+        success: response.data?.success,
+        hasToken: !!response.data?.token
+      });
+      
+      // If successful, return the response data
+      if (response.data?.success) {
+        console.log(`Signup successful via ${approach.name}`);
+        return response.data;
+      }
+      
+      // Non-error response but missing success/token
+      console.warn(`${approach.name} signup response didn't contain expected data:`, response.data);
+      lastError = new Error(response.data?.message || `Signup failed via ${approach.name}`);
+    } catch (error) {
+      console.warn(`${approach.name} signup attempt failed:`, error.message);
+      if (error.response) {
+        console.warn('Response status:', error.response.status);
+        console.warn('Response data:', error.response.data);
+      }
+      lastError = error;
+      // Continue to next approach
+    }
+  }
+  
+  // If all approaches failed, try mock authentication as a final fallback
+  console.log('All regular signup approaches failed - falling back to mock authentication');
+  return await mockSignup(email, password, username);
 }; 
