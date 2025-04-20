@@ -1,7 +1,7 @@
-// Use relative paths - Netlify proxy will handle routing
-const API_BASE_URL = '/api';
+import apiConfig from './apiConfig';
 
-// Helper to get auth token (replace with your actual implementation)
+// Helper to get auth token from localStorage
+const getAuthToken = () => localStorage.getItem('token') || '';
 
 // Export the class directly
 export class FitViceApiService {
@@ -12,14 +12,15 @@ export class FitViceApiService {
   async generateRecipe(ingredients) {
     try {
       const token = getAuthToken();
-      // Use relative path: /api/recipes/generate
-      const response = await fetch(`${API_BASE_URL}/recipes/generate`, {
+      // Use recipes endpoint from apiConfig
+      const response = await fetch(`${apiConfig.RECIPES_ENDPOINT}/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ ingredients })
+        body: JSON.stringify({ ingredients }),
+        credentials: 'include'
       });
 
       const result = await response.json();
@@ -44,14 +45,15 @@ export class FitViceApiService {
   async askHealthQuestion(question, history = []) {
     try {
       const token = getAuthToken();
-      // Use relative path: /api/jarvis/command
-      const response = await fetch(`${API_BASE_URL}/jarvis/command`, {
+      // Use jarvis endpoint from apiConfig
+      const response = await fetch(`${apiConfig.JARVIS_ENDPOINT}/command`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ command: question, history: history })
+        body: JSON.stringify({ command: question, history: history }),
+        credentials: 'include'
       });
 
       const result = await response.json();
@@ -81,14 +83,15 @@ export class FitViceApiService {
     try {
       const token = getAuthToken();
       const command = "Generate 5 nutrition tips for general health.";
-      // Use relative path: /api/jarvis/command
-      const response = await fetch(`${API_BASE_URL}/jarvis/command`, {
+      // Use jarvis endpoint from apiConfig
+      const response = await fetch(`${apiConfig.JARVIS_ENDPOINT}/command`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ command: command, history: history })
+        body: JSON.stringify({ command: command, history: history }),
+        credentials: 'include'
       });
 
       const result = await response.json();

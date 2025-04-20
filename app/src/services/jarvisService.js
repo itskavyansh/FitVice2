@@ -1,10 +1,7 @@
-// Use relative paths - Netlify proxy will handle routing
-const API_BASE_URL = '/api';
+import apiConfig from './apiConfig';
 
-// Helper to get auth token (replace with your actual implementation if needed)
-const getAuthToken = () => {
-  return localStorage.getItem('token');
-};
+// Helper to get auth token from localStorage
+const getAuthToken = () => localStorage.getItem('token') || '';
 
 class JarvisService {
   constructor() {
@@ -33,8 +30,8 @@ class JarvisService {
       // Keep history relatively short for API calls
       const historyToSend = this.conversationHistory.slice(-10);
 
-      // REMOVE /api prefix from the target URL construction
-      const targetUrl = `${API_BASE_URL}/jarvis/command`;
+      // Use jarvis endpoint from apiConfig
+      const targetUrl = `${apiConfig.JARVIS_ENDPOINT}/command`;
       console.log(`[JarvisService] Attempting to fetch: ${targetUrl}`); // Log the exact URL
       console.log(
         '[JarvisService] Request Body:',
@@ -52,6 +49,7 @@ class JarvisService {
           command: userInput,
           history: historyToSend,
         }),
+        credentials: 'include',
       });
 
       console.log(`[JarvisService] Fetch response status: ${response.status}`); // Log status

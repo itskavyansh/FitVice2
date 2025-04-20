@@ -15,10 +15,24 @@
   status = 200 # Important: Use 200 for proxying
   force = true # Ensure this rule takes precedence
 
+# Specifically handle auth endpoints with CORS headers
+[[redirects]]
+  from = "/api/auth/*"
+  to = "https://fitvice-oad4.onrender.com/auth/:splat"
+  status = 200
+  force = true
+  headers = {Access-Control-Allow-Origin = "*", Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS", Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"}
+
 # Internal API redirect for Netlify Functions
 [[redirects]]
   from = "/.netlify/functions/*"
   to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA fallback for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
 
 [build.environment]

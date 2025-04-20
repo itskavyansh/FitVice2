@@ -1,22 +1,17 @@
 import axios from 'axios';
-
-// Use relative paths - Netlify proxy will handle routing
-const API_BASE_URL = '/api';
+import apiConfig from './apiConfig';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: API_BASE_URL, // Use relative base URL
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json', // Corrected quotes for linter
-  },
+  baseURL: apiConfig.API_BASE_URL,
+  ...apiConfig.corsConfig,
+  headers: apiConfig.defaultHeaders,
 });
 
 // Add request interceptor for setting auth token and logging
 api.interceptors.request.use(
   (config) => {
-    // Log the full URL for debugging (will show relative path now)
+    // Log the full URL for debugging
     console.log('Making request to:', config.baseURL + config.url);
     console.log('Request headers:', config.headers);
 
@@ -37,7 +32,7 @@ api.interceptors.request.use(
 
     console.log('Request:', {
       method: config.method,
-      url: config.url, // Shows relative URL
+      url: config.url,
       data: config.data ? JSON.stringify(config.data) : '(no data)',
       auth: maskedHeader,
     });
@@ -344,7 +339,7 @@ const authService = {
   loginWithGoogle: async () => {
     try {
       // Redirect to Google OAuth - Uses relative path
-      window.location.href = `${API_BASE_URL}/auth/google`;
+      window.location.href = `${apiConfig.API_BASE_URL}/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
       throw new Error('Google login failed. Please try again.');
@@ -354,7 +349,7 @@ const authService = {
   loginWithGithub: async () => {
     try {
       // Redirect to GitHub OAuth - Uses relative path
-      window.location.href = `${API_BASE_URL}/auth/github`;
+      window.location.href = `${apiConfig.API_BASE_URL}/auth/github`;
     } catch (error) {
       console.error('GitHub login error:', error);
       throw new Error('GitHub login failed. Please try again.');
@@ -364,7 +359,7 @@ const authService = {
   loginWithLinkedIn: async () => {
     try {
       // Redirect to LinkedIn OAuth - Uses relative path
-      window.location.href = `${API_BASE_URL}/auth/linkedin`;
+      window.location.href = `${apiConfig.API_BASE_URL}/auth/linkedin`;
     } catch (error) {
       console.error('LinkedIn login error:', error);
       throw new Error('LinkedIn login failed. Please try again.');
