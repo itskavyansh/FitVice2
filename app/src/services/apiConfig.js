@@ -9,8 +9,12 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Get the current hostname to determine the environment
 const currentHostname = window.location.hostname;
 
-// Configure API base URLs for different environments
-let API_BASE_URL = '/api'; // Default for both environments - uses proxy
+// Configure API base URLs - use direct Render URL for production
+const isNetlify = currentHostname.includes('netlify');
+const RENDER_BACKEND = 'https://fitvice-oad4.onrender.com';
+
+// Use direct backend URL on Netlify, relative URL otherwise
+let API_BASE_URL = isNetlify ? RENDER_BACKEND : '/api';
 
 // Export configuration
 export default {
@@ -20,6 +24,7 @@ export default {
   JARVIS_ENDPOINT: `${API_BASE_URL}/jarvis`,
   WORKOUTS_ENDPOINT: `${API_BASE_URL}/workouts`,
   isProduction,
+  isNetlify,
   
   // Helper function to build full API URLs
   buildUrl: (endpoint) => `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`,

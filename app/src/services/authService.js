@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiConfig from './apiConfig';
+import { robustLogin } from './fallbackAuth';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -68,31 +69,25 @@ api.interceptors.response.use(
 const authService = {
   login: async (email, password) => {
     try {
-      console.log('Attempting login for:', email);
-      // Uses relative path: /api/auth/login
-      const response = await api.post('/auth/login', {
-        email,
-        password,
-      });
-
-      if (response.data.success && response.data.token) {
+      // Use the robust login function that tries multiple approaches
+      const result = await robustLogin(email, password);
+      
+      // Handle the successful result
+      if (result && result.token) {
         // Store token in localStorage
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', result.token);
 
         // Set default authorization header for future requests
-        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        api.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
 
         console.log('Login successful for:', email);
-        return response.data;
+        return result;
       }
-      console.error('Login failed - invalid response:', response.data);
-      throw new Error(response.data.message || 'Login failed. Please try again.');
+      
+      throw new Error('Invalid response from authentication service');
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Login failed. Please try again.');
+      throw error; // The robust login already formats error messages
     }
   },
 

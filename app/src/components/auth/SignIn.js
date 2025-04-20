@@ -53,20 +53,31 @@ const SignIn = () => {
     }
 
     try {
-      console.log('Attempting login...');
+      console.log('Attempting login with multi-approach solution...');
+      
+      // Provide detailed debug info to user during development
+      if (process.env.NODE_ENV === 'development') {
+        setError('Trying multiple authentication approaches...');
+      }
+      
       const result = await login(formData.email, formData.password);
       console.log('Login result:', result);
 
-      if (result.success) {
+      if (result && (result.success || result.token)) {
         console.log('Login successful, navigating to dashboard...');
         navigate('/dashboard', { replace: true });
       } else {
-        console.error('Login failed:', result.error);
-        setError(result.error || 'Login failed. Please try again.');
+        console.error('Login failed - invalid response:', result);
+        setError('Invalid response from authentication service. Please try again.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message || 'An unexpected error occurred. Please try again.');
+      
+      // Show detailed error message
+      setError(error.message || 'Authentication failed. Please try again.');
+      
+      // Offer alternative login methods
+      console.log('Suggesting alternative login methods due to error');
     } finally {
       setLoading(false);
     }
@@ -98,6 +109,41 @@ const SignIn = () => {
       }
     } catch (error) {
       setError(error.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle direct login to bypass normal flow in emergency cases
+  const handleDirectLogin = async () => {
+    try {
+      setError('Attempting direct login to backend...');
+      setLoading(true);
+      
+      const response = await fetch('https://fitvice-oad4.onrender.com/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success && data.token) {
+        // Store token manually
+        localStorage.setItem('token', data.token);
+        console.log('Direct login successful!');
+        navigate('/dashboard', { replace: true });
+      } else {
+        setError('Direct login failed: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Direct login error:', err);
+      setError('Direct login error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -164,6 +210,18 @@ const SignIn = () => {
         <button className="submit" type="submit" disabled={loading}>
           {loading ? 'Processing...' : 'Submit'}
         </button>
+        
+        {error && error.includes('failed') && (
+          <button 
+            className="submit" 
+            type="button" 
+            style={{ marginTop: '8px', backgroundColor: '#ff9800' }}
+            onClick={handleDirectLogin}
+            disabled={loading}
+          >
+            Try Direct Login
+          </button>
+        )}
 
         <Divider sx={{ my: 2, color: 'text.secondary' }}>
           <Typography variant="body2" color="text.secondary">OR</Typography>
