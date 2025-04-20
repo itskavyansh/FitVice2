@@ -9,9 +9,30 @@ import { mockLogin, mockSignup } from './mockAuthService';
 // Check if the backend is down by making a ping request
 const isBackendDown = async () => {
   try {
-    // Try to ping the Render backend
-    await axios.get('https://fitvice-oad4.onrender.com/health', { timeout: 3000 });
-    return false; // Backend is up
+    // Try multiple health check endpoints
+    try {
+      // First try the /health endpoint
+      await axios.get('https://fitvice-oad4.onrender.com/health', { timeout: 3000 });
+      console.log('Backend is up via /health endpoint');
+      return false; // Backend is up
+    } catch (healthError) {
+      console.warn('Health endpoint check failed:', healthError.message);
+      
+      // If /health fails, try the root endpoint as fallback
+      try {
+        const rootResponse = await axios.get('https://fitvice-oad4.onrender.com/', { timeout: 3000 });
+        if (rootResponse.status === 200) {
+          console.log('Backend is up via root endpoint');
+          return false; // Backend is up
+        }
+      } catch (rootError) {
+        console.warn('Root endpoint check failed:', rootError.message);
+      }
+    }
+    
+    // All checks failed
+    console.warn('Backend appears to be down - all health checks failed');
+    return true; // Backend is down or unreachable
   } catch (error) {
     console.warn('Backend appears to be down:', error.message);
     return true; // Backend is down or unreachable

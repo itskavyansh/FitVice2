@@ -155,6 +155,83 @@ const SignIn = () => {
     }
   };
 
+  // Add a function to fill demo credentials
+  const fillDemoCredentials = (email, password) => {
+    setFormData({
+      email,
+      password
+    });
+    setError('');
+  };
+
+  // Update renderErrorMessage to include clickable demo accounts
+  const renderErrorMessage = () => {
+    if (!error) return null;
+    
+    const isOfflineMode = error.includes('offline mode') || error.includes('demo@example.com');
+    
+    if (isOfflineMode) {
+      return (
+        <div style={{ 
+          padding: '10px', 
+          backgroundColor: '#fffde7', 
+          border: '1px solid #ffd54f',
+          borderRadius: '4px',
+          marginBottom: '15px' 
+        }}>
+          <p style={{ color: '#ff8f00', marginBottom: '5px', fontWeight: 'bold' }}>
+            ⚠️ Offline Mode Detected
+          </p>
+          <p style={{ color: '#424242', fontSize: '14px', marginBottom: '5px' }}>
+            The backend server appears to be unavailable. Click on a demo account to log in:
+          </p>
+          <ul style={{ color: '#424242', fontSize: '14px', marginLeft: '20px' }}>
+            <li>
+              <button 
+                type="button"
+                onClick={() => fillDemoCredentials('demo@example.com', 'password123')}
+                style={{ 
+                  background: 'none',
+                  border: 'none',
+                  padding: '0',
+                  color: '#1976d2',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Demo User
+              </button> (demo@example.com / password123)
+            </li>
+            <li>
+              <button 
+                type="button"
+                onClick={() => fillDemoCredentials('admin@example.com', 'admin123')}
+                style={{ 
+                  background: 'none',
+                  border: 'none',
+                  padding: '0',
+                  color: '#1976d2',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Admin User
+              </button> (admin@example.com / admin123)
+            </li>
+          </ul>
+        </div>
+      );
+    }
+    
+    return (
+      <p style={{ color: 'red', marginBottom: '10px', fontSize: '14px' }}>{error}</p>
+    );
+  };
+
   return (
     <Box
       className="auth-container"
@@ -185,7 +262,7 @@ const SignIn = () => {
         <p className="title">Sign in</p>
         <p className="message">Sign in now and get full access to our app.</p>
 
-        {error && <p style={{ color: 'red', marginBottom: '10px', fontSize: '14px' }}>{error}</p>}
+        {renderErrorMessage()}
 
         <label>
           <input
