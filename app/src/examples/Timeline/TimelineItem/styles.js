@@ -1,20 +1,24 @@
-function timelineItem(theme, ownerState) {
-  const { borders } = theme;
-  const { lastItem, isDark } = ownerState;
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
 
-  const { borderWidth, borderColor } = borders;
+* Product Page: https://www.creative-tim.com/product/material-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
 
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+function timelineItem(theme) {
   return {
-    '&:after': {
-      content: !lastItem && "''",
-      position: 'absolute',
-      top: '2rem',
-      left: '17px',
-      height: '100%',
-      opacity: isDark ? 0.1 : 1,
-      borderRight: `${borderWidth[2]} solid ${borderColor}`,
+    "& .timeline-icon": {
+      boxShadow: theme.shadows[3],
     },
   };
 }
 
-export default timelineItem;
+export default timelineItem; 

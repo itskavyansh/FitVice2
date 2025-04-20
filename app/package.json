@@ -29,6 +29,7 @@
     "ajv": "^8.12.0",
     "ajv-keywords": "^5.1.0",
     "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.8",
     "chroma-js": "^2.4.2",
     "cors": "^2.8.5",
@@ -38,6 +39,10 @@
     "express": "^4.18.2",
     "framer-motion": "^10.16.4",
     "gapi-script": "^1.2.0",
+    "groq-sdk": "^0.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1",
+    "multer": "^1.4.5-lts.1",
     "openai": "^4.20.1",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
@@ -102,5 +107,6 @@
   },
   "overrides": {
     "svgo": "^3.2.0"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }

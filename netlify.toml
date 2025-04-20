@@ -2,6 +2,11 @@
   base = "app/"
   publish = "build/"
   command = "npm run build"
+  functions = "netlify/functions/"
+
+# Add the Functions Install Core plugin
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
 
 # Proxy rule: All requests to /api/* on Netlify will be forwarded to Render
 [[redirects]]
@@ -10,11 +15,11 @@
   status = 200 # Important: Use 200 for proxying
   force = true # Ensure this rule takes precedence
 
-# This rule is likely no longer needed if api.js is just serving the backend routes
-# [[redirects]]
-#   from = "/api/*"
-#   to = "/.netlify/functions/api/:splat"
-#   status = 200
+# Internal API redirect for Netlify Functions
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 
 [build.environment]
   DISABLE_ESLINT_PLUGIN = "true"

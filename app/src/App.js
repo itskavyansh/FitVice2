@@ -13,6 +13,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
+import MuiAlert from "@mui/material/Alert";
 
 // Material Dashboard 2 React components
 import MDBox from 'components/MDBox';
@@ -58,7 +59,7 @@ import ChatbotContent from 'layouts/chatbot';
 import authService from './services/authService';
 
 // Images
-import brandWhite from 'assets/images/logo-ct.png';
+import brandWhite from 'assets/images/logo-fitvice.png';
 import brandDark from 'assets/images/logo-ct-dark.png';
 
 // Custom chatbot button styles

@@ -120,10 +120,10 @@ const connectWithRetry = () => {
 // Start MongoDB connection
 connectWithRetry();
 
-// Routes - Remove /api prefix
-app.use('/auth', authRoutes);
-app.use('/recipes', recipeRoutes);
-app.use('/jarvis', jarvisRoutes);
+// Routes - Mount under /api prefix
+app.use('/api/auth', authRoutes);
+app.use('/api/recipes', recipeRoutes);
+app.use('/api/jarvis', jarvisRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
