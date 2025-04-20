@@ -90,9 +90,19 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Logging in user:', email);
       const response = await authService.login(email, password);
-      console.log('Login successful, setting user state');
-      setUser(response.user);
-      return { success: true };
+      
+      // Only set user if login was successful
+      if (response.success && response.user) {
+        console.log('Login successful, setting user state');
+        setUser(response.user);
+        return { success: true };
+      }
+      
+      // Handle unsuccessful login
+      return { 
+        success: false, 
+        error: response.message || 'Login failed. Please check your credentials.' 
+      };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: error.message };

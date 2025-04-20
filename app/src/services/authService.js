@@ -84,6 +84,13 @@ const authService = {
         return result;
       }
       
+      // If mock authentication returns a response with success: false,
+      // return it instead of throwing an error
+      if (result && result.success === false) {
+        console.log('Login unsuccessful but handled:', result.message);
+        return result;
+      }
+      
       throw new Error('Invalid response from authentication service');
     } catch (error) {
       console.error('Login error:', error);

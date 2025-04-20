@@ -63,12 +63,18 @@ const SignIn = () => {
       const result = await login(formData.email, formData.password);
       console.log('Login result:', result);
 
-      if (result && (result.success || result.token)) {
+      if (result.success) {
         console.log('Login successful, navigating to dashboard...');
         navigate('/dashboard', { replace: true });
       } else {
         console.error('Login failed - invalid response:', result);
-        setError('Invalid response from authentication service. Please try again.');
+        // Display the specific error message from the authentication service
+        setError(result.error || 'Authentication failed. Please try again.');
+        
+        // Check if we are in offline mode and provide additional guidance
+        if (result.error && result.error.includes('offline mode')) {
+          setError(`${result.error} You can use demo@example.com with password "password123" to login in offline mode.`);
+        }
       }
     } catch (error) {
       console.error('Login error:', error);

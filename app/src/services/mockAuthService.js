@@ -57,7 +57,7 @@ export const mockLogin = async (email, password) => {
     console.log('Mock login: User not found');
     return {
       success: false,
-      message: 'Invalid email or password'
+      message: 'User not found. In offline mode, only demo@example.com (password: password123) and admin@example.com (password: admin123) are available.'
     };
   }
   
@@ -66,7 +66,7 @@ export const mockLogin = async (email, password) => {
     console.log('Mock login: Invalid password');
     return {
       success: false,
-      message: 'Invalid email or password'
+      message: 'Invalid password. Please try again or use demo@example.com (password: password123).'
     };
   }
   
