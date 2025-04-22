@@ -26,6 +26,7 @@ app.use(
         'https://fitvice.netlify.app',
         'https://fitvice2.netlify.app',
         'http://localhost:3000',
+        'http://127.0.0.1:3000',
         process.env.FRONTEND_URL,
       ].filter(Boolean); // Remove any undefined values
 
@@ -47,11 +48,16 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     exposedHeaders: ['Authorization'],
   }),
 );
 app.use(express.json());
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Server is running' });
+});
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads', 'profiles');
@@ -124,6 +130,11 @@ connectWithRetry();
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/jarvis', jarvisRoutes);
+
+// Backward compatibility for routes without /api prefix
+app.use('/auth', authRoutes);
+app.use('/recipes', recipeRoutes);
+app.use('/jarvis', jarvisRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

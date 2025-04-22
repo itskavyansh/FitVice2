@@ -164,7 +164,53 @@ const SignIn = () => {
     setError('');
   };
 
-  // Update renderErrorMessage to include clickable demo accounts
+  // Add a function to directly test and use the local backend
+  const handleLocalBackendTest = async () => {
+    try {
+      setError('Testing connection to local backend...');
+      setLoading(true);
+      
+      // Attempt to directly connect to local backend
+      const response = await fetch('http://localhost:3001/health', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        // Don't send credentials in preflight request
+        credentials: 'omit',
+        mode: 'cors'
+      });
+      
+      console.log('Local backend test response:', response.status);
+      
+      if (response.status >= 200 && response.status < 500) {
+        setError(`Local backend is reachable with status ${response.status}! 
+          
+You need to configure CORS on your backend server with these headers:
+
+response.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+response.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+response.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+response.header('Access-Control-Allow-Credentials', 'true');
+
+For Express, install cors middleware: npm install cors
+Then add: app.use(cors({origin: 'http://localhost:3000', credentials: true}));`);
+      } else {
+        setError(`Local backend returned status ${response.status}. Make sure your backend server is running on port 3001.`);
+      }
+    } catch (error) {
+      console.error('Local backend test error:', error);
+      setError(`Failed to connect to local backend: ${error.message}. 
+      
+This is likely a CORS error. You must configure your backend server to accept requests from localhost:3000.
+
+For Express, install cors middleware: npm install cors
+Then add: app.use(cors({origin: 'http://localhost:3000', credentials: true}));
+      `);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update renderErrorMessage to include direct backend connection option
   const renderErrorMessage = () => {
     if (!error) return null;
     
@@ -183,7 +229,28 @@ const SignIn = () => {
             ⚠️ Offline Mode Detected
           </p>
           <p style={{ color: '#424242', fontSize: '14px', marginBottom: '5px' }}>
-            The backend server appears to be unavailable. Click on a demo account to log in:
+            The backend server appears to be unavailable. 
+          </p>
+          
+          <button 
+            type="button"
+            onClick={handleLocalBackendTest}
+            style={{ 
+              marginBottom: '10px',
+              backgroundColor: '#4caf50',
+              color: 'white',
+              border: 'none',
+              padding: '5px 10px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Test Local Backend Connection
+          </button>
+          
+          <p style={{ color: '#424242', fontSize: '14px', marginBottom: '5px' }}>
+            You can also use these demo accounts for offline mode:
           </p>
           <ul style={{ color: '#424242', fontSize: '14px', marginLeft: '20px' }}>
             <li>

@@ -342,11 +342,52 @@ const NutritionGuide = () => {
       if (response.success) {
         setRecipe(response.data);
       } else {
-        setError(response.message);
+        console.error('API returned error:', response.message);
+        setError(response.message || 'Failed to generate recipe. Please try again.');
+        
+        // Create a sample recipe as fallback when API fails
+        const mainIngredient = ingredients.split(',')[0].trim();
+        setRecipe({
+          title: `Simple ${mainIngredient.charAt(0).toUpperCase() + mainIngredient.slice(1)} Recipe`,
+          description: `A healthy recipe featuring ${ingredients}. This is a fallback recipe created when the API connection failed.`,
+          ingredients: ingredients.split(',').map(i => `${i.trim()} - as needed`),
+          instructions: [
+            `Prepare ${mainIngredient} and other ingredients`,
+            "Cook according to your preference",
+            "Enjoy your meal!"
+          ],
+          nutritionInfo: {
+            calories: "350",
+            protein: "15g",
+            carbs: "40g",
+            fat: "10g"
+          },
+          image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`
+        });
       }
     } catch (err) {
       console.error('Recipe generation error:', err);
-      setError(err.message);
+      setError('An error occurred while generating the recipe. Please try again.');
+      
+      // Create a sample recipe as fallback when there's an exception
+      const mainIngredient = ingredients.split(',')[0].trim();
+      setRecipe({
+        title: `Simple ${mainIngredient.charAt(0).toUpperCase() + mainIngredient.slice(1)} Recipe`,
+        description: `A healthy recipe featuring ${ingredients}. This is a sample recipe created when we couldn't connect to our AI service.`,
+        ingredients: ingredients.split(',').map(i => `${i.trim()} - as needed`),
+        instructions: [
+          `Prepare ${mainIngredient} and other ingredients`,
+          "Cook according to your preference",
+          "Enjoy your meal!"
+        ],
+        nutritionInfo: {
+          calories: "350",
+          protein: "15g",
+          carbs: "40g",
+          fat: "10g"
+        },
+        image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`
+      });
     } finally {
       setLoading(false);
     }
@@ -584,7 +625,17 @@ const NutritionGuide = () => {
 
       {recipe && (
         <RecipeCard>
-          <CardMedia component="img" height="200" image={recipe.image} alt={recipe.title} />
+          <CardMedia 
+            component="img" 
+            height="200" 
+            image={recipe.image} 
+            alt={recipe.title}
+            onError={(e) => {
+              console.log('Image failed to load, using fallback');
+              e.target.onerror = null; // Prevent infinite loop
+              e.target.src = `https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600&q=80`;
+            }}
+          />
           <CardContent>
             <Typography variant="h6" gutterBottom>
               {recipe.title}
@@ -622,7 +673,14 @@ const NutritionGuide = () => {
               {recipe.ingredients &&
                 recipe.ingredients.map((ingredient, index) => (
                   <Grid item key={index}>
-                    <Chip label={ingredient} size="small" />
+                    <Chip 
+                      label={typeof ingredient === 'string' 
+                        ? ingredient 
+                        : (ingredient.name && ingredient.quantity)
+                          ? `${ingredient.name} - ${ingredient.quantity}`
+                          : (ingredient.name || JSON.stringify(ingredient))} 
+                      size="small" 
+                    />
                   </Grid>
                 ))}
             </Grid>

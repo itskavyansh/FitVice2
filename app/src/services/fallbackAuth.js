@@ -5,36 +5,77 @@
 
 import axios from 'axios';
 import { mockLogin, mockSignup } from './mockAuthService';
+import apiConfig from './apiConfig';
 
 // Check if the backend is down by making a ping request
 export const isBackendDown = async () => {
   try {
-    // Try multiple health check endpoints
-    try {
-      // First try the /health endpoint
-      await axios.get('https://fitvice-oad4.onrender.com/health', { timeout: 3000 });
-      console.log('Backend is up via /health endpoint');
-      return false; // Backend is up
-    } catch (healthError) {
-      console.warn('Health endpoint check failed:', healthError.message);
+    // Check if we're in local development
+    if (apiConfig.isLocalDev) {
+      console.log('Detected local development environment');
+      console.log('Local backend URL:', apiConfig.API_BASE_URL);
       
-      // If /health fails, try the root endpoint as fallback
-      try {
-        const rootResponse = await axios.get('https://fitvice-oad4.onrender.com/', { timeout: 3000 });
-        if (rootResponse.status === 200) {
-          console.log('Backend is up via root endpoint');
-          return false; // Backend is up
+      // Try multiple local endpoints to check if backend is running
+      const localEndpointsToTry = [
+        '/health',
+        '/',
+        '/api',
+        '/auth/status',
+        '/status'
+      ];
+      
+      for (const endpoint of localEndpointsToTry) {
+        try {
+          const url = `${apiConfig.API_BASE_URL}${endpoint}`;
+          console.log(`Trying to connect to local backend at: ${url}`);
+          
+          const response = await axios.get(url, { 
+            timeout: 5000,
+            headers: apiConfig.defaultHeaders,
+            // Important: Don't throw error on bad status codes
+            validateStatus: (status) => true
+          });
+          
+          console.log(`Response from ${url}:`, {
+            status: response.status,
+            statusText: response.statusText,
+            data: response.data ? 'Data received' : 'No data'
+          });
+          
+          // Even a 404 means the server is up - we just got the wrong endpoint
+          if (response.status) {
+            console.log('Local backend is up! (Returned status code:', response.status, ')');
+            return false; // Local backend is up
+          }
+        } catch (endpointError) {
+          console.warn(`Failed to connect to ${endpoint}:`, endpointError.message);
         }
-      } catch (rootError) {
-        console.warn('Root endpoint check failed:', rootError.message);
+      }
+      
+      console.warn('All local backend endpoints failed');
+      
+      // If nothing worked, try direct connection without path
+      try {
+        console.log('Trying direct connection to local backend host...');
+        const response = await axios.get(apiConfig.API_BASE_URL, { 
+          timeout: 5000,
+          validateStatus: (status) => true
+        });
+        
+        if (response) {
+          console.log('Local backend host is reachable!');
+          return false; // The host is reachable
+        }
+      } catch (hostError) {
+        console.error('Local backend host unreachable:', hostError.message);
       }
     }
     
-    // All checks failed
-    console.warn('Backend appears to be down - all health checks failed');
-    return true; // Backend is down or unreachable
+    // Fall back to using mock authentication
+    console.warn('Activating offline mode - no backend available');
+    return true;
   } catch (error) {
-    console.warn('Backend appears to be down:', error.message);
+    console.error('Backend checking error:', error.message);
     return true; // Backend is down or unreachable
   }
 };
@@ -56,7 +97,27 @@ export const robustLogin = async (email, password) => {
   }
   
   // Define multiple authentication approaches
-  const approaches = [
+  const approaches = [];
+  
+  // Add local backend approach if in development mode
+  if (apiConfig.isLocalDev) {
+    approaches.push({
+      name: 'Local development backend',
+      url: `${apiConfig.API_BASE_URL}/auth/login`,
+      method: async () => {
+        return await axios.post(`${apiConfig.API_BASE_URL}/auth/login`, 
+          { email, password },
+          { 
+            headers: apiConfig.defaultHeaders,
+            withCredentials: true
+          }
+        );
+      }
+    });
+  }
+  
+  // Add standard approaches
+  approaches.push(
     // Approach 1: Direct Render backend
     {
       name: 'Direct Render backend',
@@ -106,8 +167,8 @@ export const robustLogin = async (email, password) => {
           }
         );
       }
-    },
-  ];
+    }
+  );
   
   let lastError = null;
   
@@ -167,7 +228,27 @@ export const robustSignup = async (email, password, username) => {
   }
   
   // Define multiple authentication approaches
-  const approaches = [
+  const approaches = [];
+  
+  // Add local backend approach if in development mode
+  if (apiConfig.isLocalDev) {
+    approaches.push({
+      name: 'Local development backend',
+      url: `${apiConfig.API_BASE_URL}/auth/signup`,
+      method: async () => {
+        return await axios.post(`${apiConfig.API_BASE_URL}/auth/signup`, 
+          { email, password, username },
+          { 
+            headers: apiConfig.defaultHeaders,
+            withCredentials: true
+          }
+        );
+      }
+    });
+  }
+  
+  // Add standard approaches
+  approaches.push(
     // Approach 1: Direct Render backend
     {
       name: 'Direct Render backend',
@@ -217,8 +298,8 @@ export const robustSignup = async (email, password, username) => {
           }
         );
       }
-    },
-  ];
+    }
+  );
   
   let lastError = null;
   
