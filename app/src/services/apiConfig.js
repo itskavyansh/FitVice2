@@ -10,10 +10,13 @@ const isProduction = process.env.NODE_ENV === 'production';
 const currentHostname = window.location.hostname;
 const currentPort = window.location.port;
 
-// Configure API base URLs - use direct Render URL for production
+// Configure API base URLs with multiple fallback options
 const isNetlify = currentHostname.includes('netlify');
 const isLocalDev = currentHostname === 'localhost' || currentHostname === '127.0.0.1';
+
 const RENDER_BACKEND = 'https://fitvice-oad4.onrender.com';
+const BACKUP_RENDER_BACKEND = 'https://fitvice-backup.onrender.com'; // Backup Render instance if exists
+const NETLIFY_FUNCTION_BACKEND = 'https://fitvice.netlify.app/.netlify/functions/api';
 const LOCAL_BACKEND = 'http://localhost:3001';
 
 // Choose the appropriate API base URL
@@ -26,21 +29,47 @@ if (isNetlify) {
   API_BASE_URL = '/api';
 }
 
+// Alternative endpoints for fallback - ordered by preference
+const BACKUP_ENDPOINTS = [
+  RENDER_BACKEND,
+  BACKUP_RENDER_BACKEND,
+  NETLIFY_FUNCTION_BACKEND
+].filter(endpoint => endpoint !== API_BASE_URL && endpoint);
+
 // Configure headers based on environment
 const headers = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
 };
 
-// Don't add CORS headers from the frontend - these should come from the backend
+// Return the complete API configuration for use in services
+export function getApiConfig() {
+  return {
+    apiBaseUrl: API_BASE_URL,
+    renderBaseUrl: RENDER_BACKEND,
+    backupRenderBaseUrl: BACKUP_RENDER_BACKEND,
+    netlifyBaseUrl: NETLIFY_FUNCTION_BACKEND,
+    localBaseUrl: LOCAL_BACKEND,
+    backupEndpoints: BACKUP_ENDPOINTS,
+    isProduction,
+    isNetlify,
+    isLocalDev,
+    defaultHeaders: headers,
+    timeout: 15000, // 15 seconds default timeout
+    retryAttempts: 2, // Default retry attempts
+    healthEndpoint: '/health',
+  };
+}
 
 // Export configuration
 export default {
   API_BASE_URL,
   AUTH_ENDPOINT: `${API_BASE_URL}/auth`,
+  USERS_ENDPOINT: `${API_BASE_URL}/users`,
   RECIPES_ENDPOINT: `${API_BASE_URL}/recipes`,
   JARVIS_ENDPOINT: `${API_BASE_URL}/jarvis`,
   WORKOUTS_ENDPOINT: `${API_BASE_URL}/workouts`,
+  BACKUP_ENDPOINTS,
   isProduction,
   isNetlify,
   isLocalDev,
