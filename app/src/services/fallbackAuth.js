@@ -10,6 +10,35 @@ import apiConfig from './apiConfig';
 // Check if the backend is down by making a ping request
 export const isBackendDown = async () => {
   try {
+    // Check the Render backend first if we're on Netlify 
+    if (apiConfig.isNetlify || apiConfig.isVercel) {
+      console.log('Checking Render backend availability from Netlify/Vercel...');
+      try {
+        const url = `${apiConfig.RENDER_BACKEND}/health`;
+        console.log(`Trying to connect to Render backend at: ${url}`);
+        
+        const response = await axios.get(url, { 
+          timeout: 8000, // Longer timeout for production
+          headers: apiConfig.defaultHeaders,
+          // Important: Don't throw error on bad status codes
+          validateStatus: (status) => true
+        });
+        
+        console.log(`Response from Render health check:`, {
+          status: response.status,
+          statusText: response.statusText,
+          data: response.data
+        });
+        
+        if (response.status === 200) {
+          console.log('Render backend is up and healthy!');
+          return false; // Backend is up
+        }
+      } catch (renderError) {
+        console.warn(`Failed to connect to Render backend:`, renderError.message);
+      }
+    }
+    
     // Check if we're in local development
     if (apiConfig.isLocalDev) {
       console.log('Detected local development environment');
@@ -94,10 +123,32 @@ export const robustLogin = async (email, password) => {
   if (backendDown) {
     console.log('Backend is down - using mock authentication');
     return await mockLogin(email, password);
+  } else {
+    console.log('Backend is up and available - using real authentication');
   }
   
   // Define multiple authentication approaches
   const approaches = [];
+  
+  // Always add the direct Render backend check first when on Netlify or Vercel
+  if (apiConfig.isNetlify || apiConfig.isVercel) {
+    approaches.unshift({
+      name: 'Direct Render backend with explicit URL',
+      url: `${apiConfig.RENDER_BACKEND}/auth/login`,
+      method: async () => {
+        console.log(`Attempting direct login to: ${apiConfig.RENDER_BACKEND}/auth/login`);
+        return await axios.post(`${apiConfig.RENDER_BACKEND}/auth/login`, 
+          { email, password },
+          { 
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
+        );
+      }
+    });
+  }
   
   // Add local backend approach if in development mode
   if (apiConfig.isLocalDev) {

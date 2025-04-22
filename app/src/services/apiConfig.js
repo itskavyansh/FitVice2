@@ -61,11 +61,16 @@ const resetToMainBackend = () => {
 // Test backend connectivity
 const testBackendConnectivity = async (url) => {
   try {
+    console.log(`Testing connectivity to ${url}/health`);
     const response = await fetch(`${url}/health`, {
       method: 'GET',
       headers,
       timeout: 5000,
     });
+    
+    const result = await response.text();
+    console.log(`Backend ${url} health check result:`, response.status, result);
+    
     return response.ok;
   } catch (error) {
     console.warn(`Backend ${url} is not responding:`, error.message);
@@ -115,20 +120,16 @@ export default {
   isNetlify,
   isVercel,
   isLocalDev,
-  
   // Helper function to build full API URLs
   buildUrl: (endpoint) => getEndpointUrl(endpoint),
-  
   // Backend management functions
   getCurrentBackendUrl,
   markBackendUnavailable,
   resetToMainBackend,
   testBackendConnectivity,
   findWorkingBackend,
-  
   // Default headers for API requests
   defaultHeaders: headers,
-  
   // CORS configuration - for axios requests
   corsConfig: {
     // Don't send credentials for local development to avoid preflight complexity

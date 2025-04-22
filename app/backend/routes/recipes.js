@@ -60,24 +60,24 @@ router.post('/generate', auth, async (req, res) => {
     
     try {
       // Groq API call with simplified error handling
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
             content: 'You are a recipe expert. Always respond with valid JSON that can be parsed directly. Don\'t include markdown code blocks or any text outside the JSON.',
-          },
-          {
-            role: 'user',
-            content: promptContent,
-          },
-        ],
-        model: groqModel,
+        },
+        {
+          role: 'user',
+          content: promptContent,
+        },
+      ],
+      model: groqModel,
         temperature: 0.7,
         stream: false,
       });
 
       console.log('Received response from Groq API');
-      const text = chatCompletion.choices[0]?.message?.content || '';
+    const text = chatCompletion.choices[0]?.message?.content || '';
       console.log('Raw response length:', text.length);
       
       // Create a fallback recipe
@@ -100,9 +100,9 @@ router.post('/generate', auth, async (req, res) => {
         image: getRecipeImageUrl(mainIngredient)
       };
 
-      // Attempt to parse the text response as JSON
-      let recipe;
-      try {
+    // Attempt to parse the text response as JSON
+    let recipe;
+    try {
         // First try: direct parsing
         try {
           recipe = JSON.parse(text);
@@ -111,10 +111,10 @@ router.post('/generate', auth, async (req, res) => {
           console.log('Direct parsing failed, trying to extract JSON from markdown');
           
           // Second try: extract JSON from markdown code blocks
-          const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
           if (jsonMatch) {
             const jsonString = jsonMatch[1].trim();
-            recipe = JSON.parse(jsonString);
+      recipe = JSON.parse(jsonString);
             console.log('Successfully parsed JSON from markdown code block');
           } else {
             // Third try: look for opening and closing braces
@@ -158,7 +158,7 @@ router.post('/generate', auth, async (req, res) => {
           success: true,
           data: recipe,
         });
-      } catch (parseError) {
+    } catch (parseError) {
         console.error('Failed to parse Groq response:', parseError.message);
         console.log('Using fallback recipe due to parsing failure');
         
