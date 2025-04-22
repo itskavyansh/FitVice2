@@ -36,9 +36,6 @@ import MDInput from 'components/MDInput';
 import Breadcrumbs from 'examples/Breadcrumbs';
 import NotificationItem from 'examples/Items/NotificationItem';
 
-// Custom components
-import BackendStatus from 'components/BackendStatus';
-
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -167,10 +164,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                 <Icon sx={iconsStyle}>settings</Icon>
               </IconButton>
-              
-              {/* Backend Status Component */}
-              <BackendStatus />
-              
               <IconButton
                 size="small"
                 disableRipple
