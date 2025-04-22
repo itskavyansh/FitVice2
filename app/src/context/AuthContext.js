@@ -113,9 +113,45 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Signing up user:', userData.email);
       const response = await authService.signup(userData);
-      console.log('Signup successful, setting user state');
-      setUser(response.user);
-      return { success: true };
+      
+      console.log('Signup response received:', {
+        success: response.success,
+        hasToken: !!response.token,
+        hasUser: !!response.user
+      });
+      
+      // Check if response has expected format
+      if (response.success && response.token) {
+        // Store token in localStorage
+        localStorage.setItem('token', response.token);
+        
+        // Set default authorization header for future requests
+        authService.setupAuthHeaderForServiceCalls();
+        
+        if (response.user) {
+          console.log('Signup successful, setting user state');
+          setUser(response.user);
+          return { success: true };
+        } else {
+          // If we have a token but no user data, try to fetch the user
+          try {
+            const userData = await authService.getCurrentUser();
+            if (userData) {
+              setUser(userData);
+              return { success: true };
+            }
+          } catch (userFetchError) {
+            console.error('Failed to fetch user after signup:', userFetchError);
+          }
+        }
+      }
+      
+      // If we get here, something went wrong with the signup
+      console.error('Signup failed - invalid response:', response);
+      return { 
+        success: false, 
+        error: response.message || 'Signup failed. Please try again.'
+      };
     } catch (error) {
       console.error('Signup error:', error);
       return { success: false, error: error.message };

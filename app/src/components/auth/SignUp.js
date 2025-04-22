@@ -67,10 +67,19 @@ const SignUp = () => {
 
     try {
       const { confirmPassword, ...signupData } = formData;
+      console.log('Attempting signup with data:', { ...signupData, password: '[REDACTED]' });
       const result = await signup(signupData);
-      navigate('/dashboard');
+      
+      if (result.success) {
+        console.log('Signup successful! Redirecting to dashboard...');
+        navigate('/dashboard');
+      } else {
+        console.error('Signup returned error:', result.error);
+        setError(result.error || 'Signup failed. Please try again.');
+      }
     } catch (error) {
-      setError(error.message || 'Signup failed');
+      console.error('Signup exception caught:', error);
+      setError(error.message || 'Signup failed. Network error or server unavailable.');
     } finally {
       setLoading(false);
     }
