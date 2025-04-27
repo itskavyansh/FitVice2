@@ -586,13 +586,18 @@ function PostureSense() {
     // Check if all required joints are visible with good confidence
     const VISIBILITY_THRESHOLD = 0.7;
     const allJointsVisible = requiredJoints.every(
-      (jointIndex) => landmarks[jointIndex] && landmarks[jointIndex].visibility > VISIBILITY_THRESHOLD
+      (jointIndex) =>
+        landmarks[jointIndex] && landmarks[jointIndex].visibility > VISIBILITY_THRESHOLD,
     );
 
     // For exercises that need a specific body part view
     let messagePrefix = '';
     const exerciseData = exercises[exercise];
-    if (exerciseData.name.includes('Bicep') || exerciseData.name.includes('Shoulder') || exerciseData.name.includes('Lateral')) {
+    if (
+      exerciseData.name.includes('Bicep') ||
+      exerciseData.name.includes('Shoulder') ||
+      exerciseData.name.includes('Lateral')
+    ) {
       messagePrefix = 'Please ensure your upper body is fully visible from the side view.';
     } else if (exerciseData.name.includes('Push')) {
       messagePrefix = 'Please ensure your full body is visible from the side view.';
@@ -600,7 +605,11 @@ function PostureSense() {
       messagePrefix = 'Please ensure your full body is visible from the side view.';
     }
 
-    setBodyInFrameMessage(allJointsVisible ? '' : `${messagePrefix} Move back until you can see all required body parts.`);
+    setBodyInFrameMessage(
+      allJointsVisible
+        ? ''
+        : `${messagePrefix} Move back until you can see all required body parts.`,
+    );
     return allJointsVisible;
   };
 
@@ -700,7 +709,7 @@ function PostureSense() {
             if (bodyInFrame) {
               // Clear any warning message
               setBodyInFrameMessage('');
-              
+
               // Continue with existing exercise tracking code
               const exerciseData = exercises[selectedExercise];
               const joints = exerciseData.joints;
@@ -738,7 +747,10 @@ function PostureSense() {
                       joint2[1] - joint1[1],
                       joint2[0] - joint1[0],
                     );
-                    const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
+                    const elbowWristAngle = Math.atan2(
+                      joint3[1] - joint2[1],
+                      joint3[0] - joint2[0],
+                    );
                     angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
                     if (angle > 180.0) {
                       angle = 360 - angle;
@@ -755,7 +767,10 @@ function PostureSense() {
                     : null;
                   // Calculate the angle between hip, shoulder, and elbow
                   const hipShoulderAngle = Math.atan2(joint2[1] - joint1[1], joint2[0] - joint1[0]);
-                  const shoulderElbowAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
+                  const shoulderElbowAngle = Math.atan2(
+                    joint3[1] - joint2[1],
+                    joint3[0] - joint2[0],
+                  );
                   angle = Math.abs((shoulderElbowAngle - hipShoulderAngle * 180.0) / Math.PI);
                   if (angle > 180.0) {
                     angle = 360 - angle;
@@ -862,12 +877,19 @@ function PostureSense() {
                 joint1 = joints.shoulder
                   ? [landmarks[joints.shoulder].x, landmarks[joints.shoulder].y]
                   : null;
-                joint2 = joints.elbow ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y] : null;
-                joint3 = joints.wrist ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y] : null;
+                joint2 = joints.elbow
+                  ? [landmarks[joints.elbow].x, landmarks[joints.elbow].y]
+                  : null;
+                joint3 = joints.wrist
+                  ? [landmarks[joints.wrist].x, landmarks[joints.wrist].y]
+                  : null;
                 // Adjust angle calculation for shoulder press
                 if (selectedExercise === 'shoulderPress' && joint1 && joint2 && joint3) {
                   // Calculate the angle between shoulder, elbow, and wrist
-                  const shoulderElbowAngle = Math.atan2(joint2[1] - joint1[1], joint2[0] - joint1[0]);
+                  const shoulderElbowAngle = Math.atan2(
+                    joint2[1] - joint1[1],
+                    joint2[0] - joint1[0],
+                  );
                   const elbowWristAngle = Math.atan2(joint3[1] - joint2[1], joint3[0] - joint2[0]);
                   angle = Math.abs((elbowWristAngle - shoulderElbowAngle * 180.0) / Math.PI);
                   if (angle > 180.0) {
@@ -1117,7 +1139,7 @@ function PostureSense() {
               ctx.font = 'bold 20px Arial';
               ctx.textAlign = 'center';
               ctx.fillText(bodyInFrameMessage, canvas.width / 2, canvas.height - 60);
-              ctx.fillText("Move a little away", canvas.width / 2, canvas.height - 30); // Added second line of text
+              ctx.fillText('Move a little away', canvas.width / 2, canvas.height - 30); // Added second line of text
               ctx.textAlign = 'left';
             }
 
