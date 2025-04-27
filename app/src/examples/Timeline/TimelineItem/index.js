@@ -28,19 +28,23 @@ import timelineItem from 'examples/Timeline/TimelineItem/styles';
 
 function TimelineItem({ color, icon, title, dateTime, lastItem }) {
   return (
-    <MDBox position="relative" mb={!lastItem && 3} sx={(theme) => ({
-      "&:after": {
-        content: !lastItem && "''",
-        position: "absolute",
-        top: 0,
-        left: "14px",
-        height: "100%",
-        width: "2px",
-        backgroundColor: "lightgray",
-        transform: "translateX(-50%)"
-      },
-      ...timelineItem(theme),
-    })}>
+    <MDBox
+      position="relative"
+      mb={!lastItem && 3}
+      sx={(theme) => ({
+        '&:after': {
+          content: !lastItem && "''",
+          position: 'absolute',
+          top: 0,
+          left: '14px',
+          height: '100%',
+          width: '2px',
+          backgroundColor: 'lightgray',
+          transform: 'translateX(-50%)',
+        },
+        ...timelineItem(theme),
+      })}
+    >
       <MDBox
         display="flex"
         justifyContent="center"
@@ -75,21 +79,21 @@ function TimelineItem({ color, icon, title, dateTime, lastItem }) {
 
 // Setting default values for the props of TimelineItem
 TimelineItem.defaultProps = {
-  color: "info",
+  color: 'info',
   lastItem: false,
 };
 
 // Typechecking props for the TimelineItem
 TimelineItem.propTypes = {
   color: PropTypes.oneOf([
-    "primary",
-    "secondary",
-    "info",
-    "success",
-    "warning",
-    "error",
-    "dark",
-    "light",
+    'primary',
+    'secondary',
+    'info',
+    'success',
+    'warning',
+    'error',
+    'dark',
+    'light',
   ]),
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
@@ -97,4 +101,4 @@ TimelineItem.propTypes = {
   lastItem: PropTypes.bool,
 };
 
-export default TimelineItem; 
+export default TimelineItem;

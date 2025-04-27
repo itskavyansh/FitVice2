@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Box, 
-  Avatar, 
-  Menu, 
-  MenuItem, 
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Avatar,
+  Menu,
+  MenuItem,
   Divider,
   ListItemIcon,
   ListItemText,
@@ -23,9 +23,9 @@ import {
   useMediaQuery,
   TextField,
   Button,
-  Stack
+  Stack,
 } from '@mui/material';
-import { 
+import {
   Person as PersonIcon,
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
@@ -39,7 +39,7 @@ import {
   Email as EmailIcon,
   Phone as PhoneIcon,
   Edit as EditIcon,
-  Save as SaveIcon
+  Save as SaveIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 
@@ -48,7 +48,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notificationsAnchor, setNotificationsAnchor] = React.useState(null);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
@@ -103,9 +103,9 @@ const Navbar = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -120,30 +120,36 @@ const Navbar = () => {
   };
 
   const SettingsPanel = () => (
-    <Box sx={{ 
-      width: isMobile ? '100%' : 420, 
-      p: 3,
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 4,
-        position: 'sticky',
-        top: 0,
-        zIndex: 1,
-        backgroundColor: 'background.paper'
-      }}>
-        <Typography variant="h5" fontWeight="bold">Settings</Typography>
+    <Box
+      sx={{
+        width: isMobile ? '100%' : 420,
+        p: 3,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          backgroundColor: 'background.paper',
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          Settings
+        </Typography>
         <IconButton onClick={() => setSettingsOpen(false)}>
           <CloseIcon />
         </IconButton>
       </Box>
-      
+
       <List sx={{ flex: 1, overflow: 'hidden' }}>
         <ListItem disablePadding sx={{ mb: 2 }}>
           <ListItemButton sx={{ borderRadius: 1, py: 1.5 }}>
@@ -151,13 +157,10 @@ const Navbar = () => {
               <DarkModeIcon />
             </ListItemIcon>
             <ListItemText primary="Dark Mode" />
-            <Switch
-              checked={darkMode}
-              onChange={(e) => setDarkMode(e.target.checked)}
-            />
+            <Switch checked={darkMode} onChange={(e) => setDarkMode(e.target.checked)} />
           </ListItemButton>
         </ListItem>
-        
+
         <ListItem disablePadding sx={{ mb: 2 }}>
           <ListItemButton sx={{ borderRadius: 1, py: 1.5 }}>
             <ListItemIcon>
@@ -170,7 +173,7 @@ const Navbar = () => {
             />
           </ListItemButton>
         </ListItem>
-        
+
         <ListItem disablePadding sx={{ mb: 2 }}>
           <ListItemButton sx={{ borderRadius: 1, py: 1.5 }}>
             <ListItemIcon>
@@ -179,7 +182,7 @@ const Navbar = () => {
             <ListItemText primary="Language" secondary="English" />
           </ListItemButton>
         </ListItem>
-        
+
         <ListItem disablePadding sx={{ mb: 2 }}>
           <ListItemButton sx={{ borderRadius: 1, py: 1.5 }}>
             <ListItemIcon>
@@ -193,25 +196,31 @@ const Navbar = () => {
   );
 
   const AccountPanel = () => (
-    <Box sx={{ 
-      width: isMobile ? '100%' : 460, 
-      p: 3,
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 4,
-        position: 'sticky',
-        top: 0,
-        zIndex: 1,
-        backgroundColor: 'background.paper'
-      }}>
-        <Typography variant="h5" fontWeight="bold">My Account</Typography>
+    <Box
+      sx={{
+        width: isMobile ? '100%' : 460,
+        p: 3,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          backgroundColor: 'background.paper',
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          My Account
+        </Typography>
         <Stack direction="row" spacing={1}>
           {editMode ? (
             <IconButton onClick={handleSave} color="primary">
@@ -228,28 +237,32 @@ const Navbar = () => {
         </Stack>
       </Box>
 
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        mb: 4,
-        position: 'relative'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mb: 4,
+          position: 'relative',
+        }}
+      >
         <Avatar
-          src={user?.profilePicture ? `${process.env.REACT_APP_API_URL}${user.profilePicture}` : null}
-          sx={{ 
-            width: 140, 
-            height: 140, 
+          src={
+            user?.profilePicture ? `${process.env.REACT_APP_API_URL}${user.profilePicture}` : null
+          }
+          sx={{
+            width: 140,
+            height: 140,
             mb: 2,
-            boxShadow: theme.shadows[3]
+            boxShadow: theme.shadows[3],
           }}
         >
           {user?.firstName?.[0]?.toUpperCase()}
         </Avatar>
         {editMode && (
-          <Button 
-            variant="outlined" 
-            color="primary" 
+          <Button
+            variant="outlined"
+            color="primary"
             size="small"
             sx={{ position: 'absolute', bottom: 0 }}
           >
@@ -349,13 +362,13 @@ const Navbar = () => {
           </Typography>
           {user && (
             <Stack direction="row" spacing={2} alignItems="center">
-              <IconButton 
-                color="inherit" 
+              <IconButton
+                color="inherit"
                 onClick={handleNotifications}
-                sx={{ 
-                  '&:hover': { 
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)' 
-                  } 
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
                 }}
               >
                 <Badge badgeContent={3} color="error">
@@ -364,26 +377,30 @@ const Navbar = () => {
               </IconButton>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     display: { xs: 'none', sm: 'block' },
-                    fontWeight: 500
+                    fontWeight: 500,
                   }}
                 >
                   {user.firstName} {user.lastName}
                 </Typography>
                 <Avatar
-                  src={user.profilePicture ? `${process.env.REACT_APP_API_URL}${user.profilePicture}` : null}
+                  src={
+                    user.profilePicture
+                      ? `${process.env.REACT_APP_API_URL}${user.profilePicture}`
+                      : null
+                  }
                   alt={user.firstName}
                   onClick={handleMenu}
-                  sx={{ 
+                  sx={{
                     cursor: 'pointer',
                     width: 40,
                     height: 40,
                     '&:hover': {
-                      boxShadow: '0 0 0 2px rgba(255,255,255,0.5)'
-                    }
+                      boxShadow: '0 0 0 2px rgba(255,255,255,0.5)',
+                    },
                   }}
                 >
                   {user.firstName?.[0]?.toUpperCase()}
@@ -405,7 +422,7 @@ const Navbar = () => {
                       py: 1,
                       px: 2,
                     },
-                  }
+                  },
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -451,11 +468,11 @@ const Navbar = () => {
             borderRadius: isMobile ? 0 : '16px 0 0 16px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             width: isMobile ? '100%' : 420,
-            transition: 'none'
-          }
+            transition: 'none',
+          },
         }}
         SlideProps={{
-          timeout: 0
+          timeout: 0,
         }}
       >
         <SettingsPanel />
@@ -470,11 +487,11 @@ const Navbar = () => {
             borderRadius: isMobile ? 0 : '16px 0 0 16px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             width: isMobile ? '100%' : 460,
-            transition: 'none'
-          }
+            transition: 'none',
+          },
         }}
         SlideProps={{
-          timeout: 0
+          timeout: 0,
         }}
       >
         <AccountPanel />

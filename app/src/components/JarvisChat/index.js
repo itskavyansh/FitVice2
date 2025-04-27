@@ -36,23 +36,23 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const MessageBubble = ({ message, isUser, darkMode }) => {
   const { getJarvisResponse } = useJarvis();
-  
+
   // Helper function to detect intents in the message text
   const detectIntents = (text) => {
     const intents = {
       workout: /workout|exercise|fitness|training|gym|cardio|strength/i.test(text),
       nutrition: /nutrition|diet|food|meal|eat|recipe|calorie|protein|carb|fat/i.test(text),
       schedule: /schedule|calendar|plan|remind|appointment|event/i.test(text),
-      progress: /progress|track|monitor|measure|record|log|weight/i.test(text)
+      progress: /progress|track|monitor|measure|record|log|weight/i.test(text),
     };
-    
-    return Object.keys(intents).filter(key => intents[key]);
+
+    return Object.keys(intents).filter((key) => intents[key]);
   };
-  
+
   // Function to handle button actions
   const handleActionClick = (action) => {
     let prompt = '';
-    switch(action) {
+    switch (action) {
       case 'create_workout':
         prompt = 'Create a detailed workout plan based on this';
         break;
@@ -74,53 +74,50 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
       default:
         prompt = 'Tell me more about this';
     }
-    
+
     // Get the original message content as context
-    const messageContent = typeof message === 'string' 
-      ? message 
-      : (message.message || 'this information');
-      
+    const messageContent =
+      typeof message === 'string' ? message : message.message || 'this information';
+
     // Submit the follow-up prompt
     getJarvisResponse(`${prompt}: "${messageContent.slice(0, 100)}..."`);
   };
-  
+
   const renderActionButtons = () => {
     // Don't show action buttons on user messages
     if (isUser) return null;
-    
-    const messageText = typeof message === 'string' 
-      ? message 
-      : (message.message || '');
-      
+
+    const messageText = typeof message === 'string' ? message : message.message || '';
+
     const detectedIntents = detectIntents(messageText);
-    
+
     // Don't show buttons if no intents were detected
     if (detectedIntents.length === 0) return null;
-    
+
     const buttons = [];
-    
+
     if (detectedIntents.includes('workout')) {
       buttons.push(
-        <Button 
-          key="workout" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="workout"
+          variant="outlined"
+          size="small"
           color="primary"
           startIcon={<FitnessCenterIcon />}
           onClick={() => handleActionClick('create_workout')}
           sx={{ m: 0.5 }}
         >
           Create Workout
-        </Button>
+        </Button>,
       );
     }
-    
+
     if (detectedIntents.includes('nutrition')) {
       buttons.push(
-        <Button 
-          key="nutrition" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="nutrition"
+          variant="outlined"
+          size="small"
           color="primary"
           startIcon={<RestaurantIcon />}
           onClick={() => handleActionClick('show_nutrition')}
@@ -128,68 +125,68 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
         >
           Meal Plan
         </Button>,
-        <Button 
-          key="recipe" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="recipe"
+          variant="outlined"
+          size="small"
           color="primary"
           startIcon={<RestaurantIcon />}
           onClick={() => handleActionClick('recipe_ideas')}
           sx={{ m: 0.5 }}
         >
           Recipe Ideas
-        </Button>
+        </Button>,
       );
     }
-    
+
     if (detectedIntents.includes('schedule')) {
       buttons.push(
-        <Button 
-          key="schedule" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="schedule"
+          variant="outlined"
+          size="small"
           color="primary"
           startIcon={<ScheduleIcon />}
           onClick={() => handleActionClick('set_reminder')}
           sx={{ m: 0.5 }}
         >
           Set Reminder
-        </Button>
+        </Button>,
       );
     }
-    
+
     if (detectedIntents.includes('progress')) {
       buttons.push(
-        <Button 
-          key="progress" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="progress"
+          variant="outlined"
+          size="small"
           color="primary"
           startIcon={<PlaylistAddCheckIcon />}
           onClick={() => handleActionClick('track_progress')}
           sx={{ m: 0.5 }}
         >
           Track Progress
-        </Button>
+        </Button>,
       );
     }
-    
+
     // Always offer a "more details" button if we detected any intent
     if (buttons.length > 0) {
       buttons.push(
-        <Button 
-          key="more" 
-          variant="outlined" 
-          size="small" 
+        <Button
+          key="more"
+          variant="outlined"
+          size="small"
           color="secondary"
           onClick={() => handleActionClick('view_details')}
           sx={{ m: 0.5 }}
         >
           More Details
-        </Button>
+        </Button>,
       );
     }
-    
+
     return buttons.length > 0 ? (
       <Box mt={2} display="flex" flexWrap="wrap">
         {buttons}
@@ -221,28 +218,32 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
       const plan = message.metadata.data || {};
       return (
         <>
-          <Card variant="outlined" sx={{ 
-            backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-            borderColor: darkMode ? 'grey.700' : 'grey.300'
-          }}>
+          <Card
+            variant="outlined"
+            sx={{
+              backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: darkMode ? 'grey.700' : 'grey.300',
+            }}
+          >
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={1}>
                 <FitnessCenterIcon color="primary" />
                 <Typography variant="h6">Workout Plan</Typography>
               </Box>
-              {Array.isArray(plan.exercises) && plan.exercises.map((exercise, index) => (
-                <Box key={index} mb={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    {exercise.name}
-                    {exercise.duration ? ` - ${exercise.duration}` : ''}
-                    {exercise.sets ? ` - ${exercise.sets} sets of ${exercise.reps} reps` : ''}
-                  </Typography>
-                </Box>
-              ))}
+              {Array.isArray(plan.exercises) &&
+                plan.exercises.map((exercise, index) => (
+                  <Box key={index} mb={1}>
+                    <Typography variant="body2" color="text.secondary">
+                      {exercise.name}
+                      {exercise.duration ? ` - ${exercise.duration}` : ''}
+                      {exercise.sets ? ` - ${exercise.sets} sets of ${exercise.reps} reps` : ''}
+                    </Typography>
+                  </Box>
+                ))}
               <Box mt={2} display="flex" flexWrap="wrap">
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<ScheduleIcon />}
                   onClick={() => handleActionClick('set_reminder')}
@@ -250,9 +251,9 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
                 >
                   Schedule Workout
                 </Button>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<PlaylistAddCheckIcon />}
                   onClick={() => handleActionClick('track_progress')}
@@ -271,32 +272,36 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
       const plan = message.metadata.data || {};
       return (
         <>
-          <Card variant="outlined" sx={{ 
-            backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-            borderColor: darkMode ? 'grey.700' : 'grey.300'
-          }}>
+          <Card
+            variant="outlined"
+            sx={{
+              backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: darkMode ? 'grey.700' : 'grey.300',
+            }}
+          >
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={1}>
                 <RestaurantIcon color="primary" />
                 <Typography variant="h6">Meal Plan</Typography>
               </Box>
-              {Array.isArray(plan.meals) && plan.meals.map((meal, index) => (
-                <Box key={index} mb={1}>
-                  <Typography variant="subtitle2" color="primary">
-                    {meal.type.charAt(0).toUpperCase() + meal.type.slice(1)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {Array.isArray(meal.items) ? meal.items.join(', ') : meal.items}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {meal.calories} calories
-                  </Typography>
-                </Box>
-              ))}
+              {Array.isArray(plan.meals) &&
+                plan.meals.map((meal, index) => (
+                  <Box key={index} mb={1}>
+                    <Typography variant="subtitle2" color="primary">
+                      {meal.type.charAt(0).toUpperCase() + meal.type.slice(1)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {Array.isArray(meal.items) ? meal.items.join(', ') : meal.items}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {meal.calories} calories
+                    </Typography>
+                  </Box>
+                ))}
               <Box mt={2} display="flex" flexWrap="wrap">
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<RestaurantIcon />}
                   onClick={() => handleActionClick('recipe_ideas')}
@@ -304,9 +309,9 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
                 >
                   Recipe Ideas
                 </Button>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<ScheduleIcon />}
                   onClick={() => handleActionClick('set_reminder')}
@@ -325,10 +330,13 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
       const task = message.metadata.data || {};
       return (
         <>
-          <Card variant="outlined" sx={{ 
-            backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-            borderColor: darkMode ? 'grey.700' : 'grey.300'
-          }}>
+          <Card
+            variant="outlined"
+            sx={{
+              backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: darkMode ? 'grey.700' : 'grey.300',
+            }}
+          >
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={1}>
                 <AssignmentIcon color="primary" />
@@ -340,19 +348,22 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
                   Due: {new Date(task.dueDate).toLocaleDateString()}
                 </Typography>
               )}
-              <Chip 
-                label={task.priority || 'normal'} 
+              <Chip
+                label={task.priority || 'normal'}
                 size="small"
                 sx={{ mt: 1 }}
                 color={
-                  task.priority === 'high' ? 'error' :
-                  task.priority === 'medium' ? 'warning' : 'default'
+                  task.priority === 'high'
+                    ? 'error'
+                    : task.priority === 'medium'
+                      ? 'warning'
+                      : 'default'
                 }
               />
               <Box mt={2} display="flex" flexWrap="wrap">
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<ScheduleIcon />}
                   onClick={() => handleActionClick('set_reminder')}
@@ -360,9 +371,9 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
                 >
                   Set Reminder
                 </Button>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   color="primary"
                   startIcon={<PlaylistAddCheckIcon />}
                   onClick={() => handleActionClick('track_progress')}
@@ -390,14 +401,14 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
                 onClick={() => getJarvisResponse(suggestion)}
                 color="primary"
                 variant="outlined"
-                sx={{ 
+                sx={{
                   mb: 1,
                   backgroundColor: darkMode ? 'rgba(66, 66, 66, 0.6)' : 'rgba(255, 255, 255, 0.8)',
                   borderColor: darkMode ? 'primary.dark' : 'primary.main',
                   '&:hover': {
                     backgroundColor: darkMode ? 'primary.dark' : 'primary.light',
                     color: darkMode ? 'common.white' : 'primary.main',
-                  }
+                  },
                 }}
               />
             ))}
@@ -429,16 +440,22 @@ const MessageBubble = ({ message, isUser, darkMode }) => {
         sx={{
           p: 2,
           maxWidth: '80%',
-          backgroundColor: isUser 
-            ? (darkMode ? 'primary.dark' : 'primary.light')
-            : (darkMode ? 'grey.800' : 'background.paper'),
-          color: isUser 
-            ? (darkMode ? 'primary.contrastText' : 'primary.contrastText')
-            : (darkMode ? 'common.white' : 'text.primary'),
+          backgroundColor: isUser
+            ? darkMode
+              ? 'primary.dark'
+              : 'primary.light'
+            : darkMode
+              ? 'grey.800'
+              : 'background.paper',
+          color: isUser
+            ? darkMode
+              ? 'primary.contrastText'
+              : 'primary.contrastText'
+            : darkMode
+              ? 'common.white'
+              : 'text.primary',
           borderRadius: isUser ? '20px 20px 0 20px' : '20px 20px 20px 0',
-          boxShadow: darkMode 
-            ? '0 2px 8px rgba(0, 0, 0, 0.5)'
-            : '0 2px 8px rgba(0, 0, 0, 0.1)',
+          boxShadow: darkMode ? '0 2px 8px rgba(0, 0, 0, 0.5)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
           transition: 'all 0.3s',
           border: darkMode ? `1px solid ${isUser ? 'primary.dark' : 'grey.700'}` : 'none',
         }}
@@ -456,47 +473,49 @@ const QuickActions = ({ onActionClick }) => {
       id: 'workout',
       icon: <FitnessCenterIcon />,
       label: 'Workout',
-      prompt: 'Create a 30-minute full body workout plan'
+      prompt: 'Create a 30-minute full body workout plan',
     },
     {
       id: 'meal',
       icon: <RestaurantIcon />,
       label: 'Meal Plan',
-      prompt: 'Suggest healthy meal ideas for today'
+      prompt: 'Suggest healthy meal ideas for today',
     },
     {
       id: 'reminder',
       icon: <ScheduleIcon />,
       label: 'Reminder',
-      prompt: 'Set a reminder for my workout'
+      prompt: 'Set a reminder for my workout',
     },
     {
       id: 'progress',
       icon: <PlaylistAddCheckIcon />,
       label: 'Progress',
-      prompt: 'Track my fitness progress'
-    }
+      prompt: 'Track my fitness progress',
+    },
   ];
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      gap: 1, 
-      overflowX: 'auto',
-      py: 1,
-      px: 2,
-      '&::-webkit-scrollbar': {
-        height: '4px',
-      },
-      '&::-webkit-scrollbar-track': {
-        background: 'transparent',
-      },
-      '&::-webkit-scrollbar-thumb': {
-        background: theme => theme.palette.grey[300],
-        borderRadius: '4px',
-      },
-    }}>
-      {actions.map(action => (
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 1,
+        overflowX: 'auto',
+        py: 1,
+        px: 2,
+        '&::-webkit-scrollbar': {
+          height: '4px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: (theme) => theme.palette.grey[300],
+          borderRadius: '4px',
+        },
+      }}
+    >
+      {actions.map((action) => (
         <Button
           key={action.id}
           variant="outlined"
@@ -510,8 +529,8 @@ const QuickActions = ({ onActionClick }) => {
             transition: 'all 0.3s',
             '&:hover': {
               transform: 'translateY(-2px)',
-              boxShadow: 1
-            }
+              boxShadow: 1,
+            },
           }}
         >
           {action.label}
@@ -524,7 +543,7 @@ const QuickActions = ({ onActionClick }) => {
 // Add a Welcome Screen component with featured capabilities
 const WelcomeScreen = ({ onActionClick }) => {
   const theme = useTheme();
-  
+
   const capabilities = [
     {
       id: 'workout',
@@ -532,7 +551,7 @@ const WelcomeScreen = ({ onActionClick }) => {
       title: 'Workout Plans',
       description: 'Create personalized workout routines based on your goals',
       prompt: 'Create a personalized workout plan',
-      color: theme.palette.primary.main
+      color: theme.palette.primary.main,
     },
     {
       id: 'nutrition',
@@ -540,7 +559,7 @@ const WelcomeScreen = ({ onActionClick }) => {
       title: 'Meal Planning',
       description: 'Get healthy meal ideas and nutrition advice',
       prompt: 'Plan my meals for the week',
-      color: theme.palette.success.main
+      color: theme.palette.success.main,
     },
     {
       id: 'reminders',
@@ -548,7 +567,7 @@ const WelcomeScreen = ({ onActionClick }) => {
       title: 'Reminders & Scheduling',
       description: 'Set reminders for workouts and track your progress',
       prompt: 'Set a workout reminder',
-      color: theme.palette.warning.main
+      color: theme.palette.warning.main,
     },
     {
       id: 'tracking',
@@ -556,28 +575,31 @@ const WelcomeScreen = ({ onActionClick }) => {
       title: 'Progress Tracking',
       description: 'Track your fitness journey and celebrate milestones',
       prompt: 'Help me track my progress',
-      color: theme.palette.info.main
-    }
+      color: theme.palette.info.main,
+    },
   ];
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-      p: 3,
-      textAlign: 'center' 
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        p: 3,
+        textAlign: 'center',
+      }}
+    >
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
         Welcome to Jarvis
       </Typography>
-      
+
       <Typography variant="body1" sx={{ mb: 4, maxWidth: '600px' }}>
-        Your personal AI fitness assistant. I can help you with workouts, nutrition, scheduling, and more.
+        Your personal AI fitness assistant. I can help you with workouts, nutrition, scheduling, and
+        more.
       </Typography>
-      
+
       <Grid container spacing={2} sx={{ maxWidth: '800px' }}>
         {capabilities.map((capability) => (
           <Grid item xs={12} sm={6} key={capability.id}>
@@ -596,13 +618,13 @@ const WelcomeScreen = ({ onActionClick }) => {
                 '&:hover': {
                   transform: 'translateY(-4px)',
                   boxShadow: 3,
-                  borderColor: capability.color
-                }
+                  borderColor: capability.color,
+                },
               }}
               onClick={() => onActionClick(capability.prompt)}
             >
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -611,7 +633,7 @@ const WelcomeScreen = ({ onActionClick }) => {
                   borderRadius: '50%',
                   mb: 2,
                   color: capability.color,
-                  backgroundColor: alpha(capability.color, 0.1)
+                  backgroundColor: alpha(capability.color, 0.1),
                 }}
               >
                 {capability.icon}
@@ -626,7 +648,7 @@ const WelcomeScreen = ({ onActionClick }) => {
           </Grid>
         ))}
       </Grid>
-      
+
       <Typography variant="body2" sx={{ mt: 4, color: 'text.secondary' }}>
         Try saying "Create a workout plan" or click one of the options above to get started.
       </Typography>
@@ -637,13 +659,8 @@ const WelcomeScreen = ({ onActionClick }) => {
 const JarvisChat = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
-  const {
-    getJarvisResponse,
-    conversationHistory,
-    clearConversation,
-    isProcessing,
-  } = useJarvis();
+
+  const { getJarvisResponse, conversationHistory, clearConversation, isProcessing } = useJarvis();
 
   const [input, setInput] = useState('');
   const [showAutomation, setShowAutomation] = useState(false);
@@ -674,10 +691,10 @@ const JarvisChat = () => {
       console.error('Invalid transcript received:', transcript);
       return;
     }
-    
+
     console.log('Received voice input:', transcript);
     setInput(transcript);
-    
+
     // Use setTimeout with a slightly longer delay to ensure state update before submission
     setTimeout(() => {
       if (transcript && transcript.trim()) {
@@ -707,26 +724,26 @@ const JarvisChat = () => {
       title: 'Schedule Workout',
       description: 'Set up a recurring workout schedule',
       icon: <ScheduleIcon />,
-      command: 'Schedule a workout routine for me every Monday, Wednesday, and Friday at 7 AM'
+      command: 'Schedule a workout routine for me every Monday, Wednesday, and Friday at 7 AM',
     },
     {
       title: 'Meal Prep Reminder',
       description: 'Get reminders for meal preparation',
       icon: <RestaurantIcon />,
-      command: 'Remind me to prepare my meals every Sunday at 3 PM'
+      command: 'Remind me to prepare my meals every Sunday at 3 PM',
     },
     {
       title: 'Progress Check',
       description: 'Set up automatic progress tracking',
       icon: <PlaylistAddCheckIcon />,
-      command: 'Track my workout progress and send me a weekly report every Sunday'
+      command: 'Track my workout progress and send me a weekly report every Sunday',
     },
     {
       title: 'Water Intake',
       description: 'Set up water intake reminders',
       icon: <TimerIcon />,
-      command: 'Remind me to drink water every 2 hours from 8 AM to 8 PM'
-    }
+      command: 'Remind me to drink water every 2 hours from 8 AM to 8 PM',
+    },
   ];
 
   const handleAutomationCommand = (command) => {
@@ -740,68 +757,67 @@ const JarvisChat = () => {
   };
 
   return (
-    <Box sx={{ 
-      height: '100%', 
-      display: 'flex', 
-      position: 'relative',
-      backgroundColor: showDarkMode ? 'grey.900' : 'background.default',
-      overflow: 'hidden',
-      color: showDarkMode ? 'common.white' : 'text.primary',
-      transition: 'background-color 0.3s, color 0.3s'
-    }}>
-      {/* Main Chat Area */}
-      <Box sx={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column',
+    <Box
+      sx={{
         height: '100%',
+        display: 'flex',
         position: 'relative',
-        transition: 'all 0.3s ease',
-        transform: showAutomation ? 'translateX(-100%)' : 'translateX(0)',
-        opacity: showAutomation ? 0 : 1,
-        width: '100%'
-      }}>
-        {/* Chat Header */}
-        <Box sx={{
-          p: 2,
-          backgroundColor: showDarkMode ? 'grey.800' : 'background.paper',
-          borderBottom: 1,
-          borderColor: 'divider',
+        backgroundColor: showDarkMode ? 'grey.900' : 'background.default',
+        overflow: 'hidden',
+        color: showDarkMode ? 'common.white' : 'text.primary',
+        transition: 'background-color 0.3s, color 0.3s',
+      }}
+    >
+      {/* Main Chat Area */}
+      <Box
+        sx={{
+          flex: 1,
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          position: 'sticky',
-          top: 0,
-          zIndex: 10,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-        }}>
+          flexDirection: 'column',
+          height: '100%',
+          position: 'relative',
+          transition: 'all 0.3s ease',
+          transform: showAutomation ? 'translateX(-100%)' : 'translateX(0)',
+          opacity: showAutomation ? 0 : 1,
+          width: '100%',
+        }}
+      >
+        {/* Chat Header */}
+        <Box
+          sx={{
+            p: 2,
+            backgroundColor: showDarkMode ? 'grey.800' : 'background.paper',
+            borderBottom: 1,
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+          }}
+        >
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Jarvis AI Assistant
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Tooltip title={showDarkMode ? "Light Mode" : "Dark Mode"}>
-              <IconButton 
-                onClick={toggleDarkMode}
-                size="small"
-              >
+            <Tooltip title={showDarkMode ? 'Light Mode' : 'Dark Mode'}>
+              <IconButton onClick={toggleDarkMode} size="small">
                 {showDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Tooltip>
             <Tooltip title="Automation Commands">
-              <IconButton 
+              <IconButton
                 onClick={() => setShowAutomation(!showAutomation)}
-                color={showAutomation ? "primary" : "default"}
+                color={showAutomation ? 'primary' : 'default'}
                 size="small"
               >
                 <AutoFixHighIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Clear Conversation">
-              <IconButton 
-                onClick={clearConversation} 
-                color="error" 
-                size="small"
-              >
+              <IconButton onClick={clearConversation} color="error" size="small">
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
@@ -809,30 +825,30 @@ const JarvisChat = () => {
         </Box>
 
         {/* Quick Action Buttons */}
-        {conversationHistory.length > 0 && (
-          <QuickActions onActionClick={handleQuickAction} />
-        )}
+        {conversationHistory.length > 0 && <QuickActions onActionClick={handleQuickAction} />}
 
         {/* Messages Area */}
-        <Box sx={{ 
-          flex: 1, 
-          overflow: 'auto', 
-          p: 3,
-          backgroundColor: showDarkMode ? 'grey.900' : 'grey.50',
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: theme.palette.grey[showDarkMode ? 700 : 300],
-            borderRadius: '4px',
-            '&:hover': {
-              background: theme.palette.grey[showDarkMode ? 600 : 400],
+        <Box
+          sx={{
+            flex: 1,
+            overflow: 'auto',
+            p: 3,
+            backgroundColor: showDarkMode ? 'grey.900' : 'grey.50',
+            '&::-webkit-scrollbar': {
+              width: '8px',
             },
-          },
-        }}>
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: theme.palette.grey[showDarkMode ? 700 : 300],
+              borderRadius: '4px',
+              '&:hover': {
+                background: theme.palette.grey[showDarkMode ? 600 : 400],
+              },
+            },
+          }}
+        >
           {conversationHistory.length === 0 ? (
             <WelcomeScreen onActionClick={handleQuickAction} />
           ) : (
@@ -886,7 +902,7 @@ const JarvisChat = () => {
               },
               '& .MuiOutlinedInput-input': {
                 color: showDarkMode ? 'common.white' : 'text.primary',
-              }
+              },
             }}
             InputProps={{
               endAdornment: (
@@ -910,69 +926,70 @@ const JarvisChat = () => {
               },
             }}
           >
-            {isProcessing ? (
-              <CircularProgress size={24} />
-            ) : (
-              <SendIcon />
-            )}
+            {isProcessing ? <CircularProgress size={24} /> : <SendIcon />}
           </IconButton>
         </Box>
       </Box>
 
       {/* Automation View */}
-      <Box sx={{ 
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        transition: 'all 0.3s ease',
-        transform: showAutomation ? 'translateX(0)' : 'translateX(100%)',
-        opacity: showAutomation ? 1 : 0,
-        backgroundColor: showDarkMode ? 'grey.800' : 'background.paper',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        <Box sx={{
-          p: 2,
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          transition: 'all 0.3s ease',
+          transform: showAutomation ? 'translateX(0)' : 'translateX(100%)',
+          opacity: showAutomation ? 1 : 0,
           backgroundColor: showDarkMode ? 'grey.800' : 'background.paper',
-          borderBottom: 1,
-          borderColor: 'divider',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>Automation Commands</Typography>
-          <IconButton 
-            onClick={() => setShowAutomation(false)}
-            size="small"
-          >
+          flexDirection: 'column',
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            backgroundColor: showDarkMode ? 'grey.800' : 'background.paper',
+            borderBottom: 1,
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Automation Commands
+          </Typography>
+          <IconButton onClick={() => setShowAutomation(false)} size="small">
             <ArrowBackIcon />
           </IconButton>
         </Box>
-        <Box sx={{ 
-          flex: 1, 
-          overflow: 'auto', 
-          p: 3,
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: theme.palette.grey[showDarkMode ? 700 : 300],
-            borderRadius: '4px',
-            '&:hover': {
-              background: theme.palette.grey[showDarkMode ? 600 : 400],
+        <Box
+          sx={{
+            flex: 1,
+            overflow: 'auto',
+            p: 3,
+            '&::-webkit-scrollbar': {
+              width: '8px',
             },
-          },
-          backgroundColor: showDarkMode ? 'grey.900' : 'background.default',
-        }}>
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: theme.palette.grey[showDarkMode ? 700 : 300],
+              borderRadius: '4px',
+              '&:hover': {
+                background: theme.palette.grey[showDarkMode ? 600 : 400],
+              },
+            },
+            backgroundColor: showDarkMode ? 'grey.900' : 'background.default',
+          }}
+        >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {automationCommands.map((cmd, index) => (
-              <Card 
-                key={index} 
+              <Card
+                key={index}
                 variant="outlined"
                 sx={{
                   transition: 'all 0.3s ease',
@@ -991,7 +1008,11 @@ const JarvisChat = () => {
                       {cmd.title}
                     </Typography>
                   </Box>
-                  <Typography variant="body2" color={showDarkMode ? 'text.secondary' : 'text.secondary'} sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    color={showDarkMode ? 'text.secondary' : 'text.secondary'}
+                    sx={{ mb: 2 }}
+                  >
                     {cmd.description}
                   </Typography>
                   <Button
@@ -1017,4 +1038,4 @@ const JarvisChat = () => {
   );
 };
 
-export default JarvisChat; 
+export default JarvisChat;

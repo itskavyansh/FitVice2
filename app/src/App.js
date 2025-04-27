@@ -13,7 +13,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
-import MuiAlert from "@mui/material/Alert";
+import MuiAlert from '@mui/material/Alert';
 
 // Material Dashboard 2 React components
 import MDBox from 'components/MDBox';
@@ -39,7 +39,7 @@ import createCache from '@emotion/cache';
 import routes from 'routes';
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from 'context';
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator, setLayout } from 'context';
 
 // Auth context and components
 import { AuthProvider, useAuth } from 'context/AuthContext';
@@ -120,6 +120,7 @@ import Chatbot from 'layouts/chatbot';
 import AuthCallback from './components/auth/AuthCallback';
 import Workouts from 'layouts/workouts';
 import ActiveWorkout from 'layouts/workouts/ActiveWorkout';
+import Landing from 'layouts/landing';
 
 export default function App() {
   return (
@@ -151,6 +152,18 @@ const AppContent = () => {
   const { pathname } = useLocation();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Set the correct layout based on pathname - this will run before first render
+  useEffect(() => {
+    const isLandingPage = pathname === '/' || pathname === '/landing';
+    const isAuthPage = pathname === '/signin' || pathname === '/signup';
+
+    if (isLandingPage || isAuthPage) {
+      setLayout(dispatch, 'vr');
+    } else {
+      setLayout(dispatch, 'dashboard');
+    }
+  }, [pathname, dispatch]);
 
   // Cache for the rtl
   useMemo(() => {
@@ -338,16 +351,22 @@ const AppContent = () => {
     </Dialog>
   );
 
-  const renderApp = () => (
-    <Box
-      sx={{
-        filter: invertColors ? 'invert(100%)' : 'none',
-      }}
-    >
-      {layout === 'dashboard' &&
-        pathname !== '/landing' &&
-        pathname !== '/signin' &&
-        pathname !== '/signup' && (
+  const renderApp = () => {
+    // Check if current page is landing, signin, or signup
+    const isPublicPage =
+      pathname === '/' ||
+      pathname === '/landing' ||
+      pathname === '/signin' ||
+      pathname === '/signup';
+
+    return (
+      <Box
+        sx={{
+          filter: invertColors ? 'invert(100%)' : 'none',
+        }}
+      >
+        {/* Only render sidenav if not on a public page and layout is dashboard */}
+        {!isPublicPage && layout === 'dashboard' && (
           <>
             <Sidenav
               color={sidenavColor}
@@ -362,113 +381,116 @@ const AppContent = () => {
             {chatbotDialog}
           </>
         )}
-      {layout === 'vr' && <Configurator />}
-      <Routes>
-        {getRoutes(routes)}
-        <Route
-          path="/signin"
-          element={
-            loading ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100vh',
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : user ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <SignIn />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            loading ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100vh',
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : user ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <SignUp />
-            )
-          }
-        />
-        <Route
-          path="/muscle-pedia"
-          element={
-            <PrivateRoute>
-              <MusclePedia />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/muscle-pedia/:muscleName"
-          element={
-            <PrivateRoute>
-              <ExerciseDetails />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/nutrition"
-          element={
-            <PrivateRoute>
-              <NutritionGuide />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/workouts"
-          element={
-            <PrivateRoute>
-              <Workouts />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/workouts/new"
-          element={
-            <PrivateRoute>
-              <ActiveWorkout />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/chatbot"
-          element={
-            <PrivateRoute>
-              <Chatbot />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/" element={<Navigate to="/landing" replace />} />
-        <Route path="*" element={<Navigate to="/landing" />} />
-      </Routes>
-    </Box>
-  );
+
+        {layout === 'vr' && <Configurator />}
+
+        <Routes>
+          {getRoutes(routes)}
+          <Route
+            path="/signin"
+            element={
+              loading ? (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <SignIn />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              loading ? (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <SignUp />
+              )
+            }
+          />
+          <Route
+            path="/muscle-pedia"
+            element={
+              <PrivateRoute>
+                <MusclePedia />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/muscle-pedia/:muscleName"
+            element={
+              <PrivateRoute>
+                <ExerciseDetails />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/nutrition"
+            element={
+              <PrivateRoute>
+                <NutritionGuide />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/workouts"
+            element={
+              <PrivateRoute>
+                <Workouts />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/workouts/new"
+            element={
+              <PrivateRoute>
+                <ActiveWorkout />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chatbot"
+            element={
+              <PrivateRoute>
+                <Chatbot />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="*" element={<Navigate to="/landing" />} />
+        </Routes>
+      </Box>
+    );
+  };
 
   return (
     <>
@@ -476,8 +498,10 @@ const AppContent = () => {
         <CacheProvider value={rtlCache}>
           <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
             <CssBaseline />
+            {/* Only render navbar if not on a public page */}
             {user &&
               pathname !== '/landing' &&
+              pathname !== '/' &&
               pathname !== '/signin' &&
               pathname !== '/signup' && <Navbar />}
             {renderApp()}
@@ -486,9 +510,12 @@ const AppContent = () => {
       ) : (
         <ThemeProvider theme={darkMode ? themeDark : theme}>
           <CssBaseline />
-          {user && pathname !== '/landing' && pathname !== '/signin' && pathname !== '/signup' && (
-            <Navbar />
-          )}
+          {/* Only render navbar if not on a public page */}
+          {user &&
+            pathname !== '/landing' &&
+            pathname !== '/' &&
+            pathname !== '/signin' &&
+            pathname !== '/signup' && <Navbar />}
           {renderApp()}
         </ThemeProvider>
       )}

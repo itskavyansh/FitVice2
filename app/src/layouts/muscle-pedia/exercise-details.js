@@ -48,7 +48,7 @@ function ExerciseDetails() {
 
     // Back Exercises
     'Pull-ups': 'https://www.youtube.com/embed/eGo4IYlbE5g',
-    'Deadlifts': 'https://www.youtube.com/embed/ytGaGIn3SjE',
+    Deadlifts: 'https://www.youtube.com/embed/ytGaGIn3SjE',
     'Bent-over Rows': 'https://www.youtube.com/embed/FWJR5Ve8bnQ',
     'Lat Pulldown': 'https://www.youtube.com/embed/CAwf7n6Luuc',
     'Seated Row': 'https://www.youtube.com/embed/GZbfZ033f74',
@@ -57,8 +57,8 @@ function ExerciseDetails() {
     'Face Pulls': 'https://www.youtube.com/embed/rep-qVOkqgk',
 
     // Leg Exercises
-    'Squats': 'https://www.youtube.com/embed/bEv6CCg2BC8',
-    'Lunges': 'https://www.youtube.com/embed/QOVaHwm-Q6U',
+    Squats: 'https://www.youtube.com/embed/bEv6CCg2BC8',
+    Lunges: 'https://www.youtube.com/embed/QOVaHwm-Q6U',
     'Leg Press': 'https://www.youtube.com/embed/IZxyjW7MPJQ',
     'Romanian Deadlifts': 'https://www.youtube.com/embed/JCXUYuzwNrM',
     'Bulgarian Split Squats': 'https://www.youtube.com/embed/2C-uNgKwPLE',
@@ -94,7 +94,7 @@ function ExerciseDetails() {
     'Upright Rows': 'https://www.youtube.com/embed/amCU-ziHITM',
     'Face Pulls': 'https://www.youtube.com/embed/rep-qVOkqgk',
     'Reverse Flyes': 'https://www.youtube.com/embed/ea_7Wm8-FwY',
-    'Shrugs': 'https://www.youtube.com/embed/cJRVVxmytaM',
+    Shrugs: 'https://www.youtube.com/embed/cJRVVxmytaM',
   };
 
   const exerciseTips = {
@@ -192,7 +192,7 @@ function ExerciseDetails() {
       'Extend legs fully',
       'Squeeze at the top',
       'Control the descent',
-      'Don\'t lock knees',
+      "Don't lock knees",
     ],
     'Leg Curls': [
       'Adjust pad to ankle height',
@@ -296,7 +296,7 @@ function ExerciseDetails() {
       'Pull weight up to chin',
       'Keep elbows high',
       'Control the descent',
-      'Don\'t use momentum',
+      "Don't use momentum",
     ],
     'Reverse Flyes': [
       'Bend over with back straight',
@@ -305,12 +305,12 @@ function ExerciseDetails() {
       'Control the descent',
       'Keep slight bend in elbows',
     ],
-    'Shrugs': [
+    Shrugs: [
       'Hold weight at sides',
       'Raise shoulders up',
       'Squeeze at top',
       'Control the descent',
-      'Don\'t roll shoulders',
+      "Don't roll shoulders",
     ],
   };
 
@@ -346,7 +346,7 @@ function ExerciseDetails() {
       'Control the descent',
       'Squeeze shoulder blades',
     ],
-    'Deadlifts': [
+    Deadlifts: [
       'Keep back straight',
       'Hinge at hips',
       'Keep bar close to legs',
@@ -362,14 +362,14 @@ function ExerciseDetails() {
     ],
 
     // Leg Exercises
-    'Squats': [
+    Squats: [
       'Keep back straight',
       'Knees aligned with toes',
       'Hips back as if sitting',
       'Chest up',
       'Drive through heels',
     ],
-    'Lunges': [
+    Lunges: [
       'Keep torso upright',
       'Front knee aligned with ankle',
       'Back knee nearly touching ground',
@@ -381,7 +381,7 @@ function ExerciseDetails() {
       'Feet shoulder-width apart',
       'Lower until knees at 90 degrees',
       'Drive through heels',
-      'Don\'t lock knees',
+      "Don't lock knees",
     ],
 
     // Bicep Exercises
@@ -420,7 +420,7 @@ function ExerciseDetails() {
     'Shoulder Press': [
       'Keep core engaged',
       'Press directly overhead',
-      'Don\'t lean back',
+      "Don't lean back",
       'Control the descent',
       'Keep wrists straight',
     ],
@@ -428,7 +428,7 @@ function ExerciseDetails() {
       'Keep slight bend in elbows',
       'Raise arms to shoulder height',
       'Control the movement',
-      'Don\'t swing the weights',
+      "Don't swing the weights",
       'Keep shoulders down',
     ],
   };
@@ -608,4 +608,4 @@ function ExerciseDetails() {
   );
 }
 
-export default ExerciseDetails; 
+export default ExerciseDetails;

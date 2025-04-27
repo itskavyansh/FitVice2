@@ -33,7 +33,7 @@ function MasterCard({ color, number, holder, expires }) {
 
   if (numbers.length < 16 || numbers.length > 16) {
     throw new Error(
-      "Invalid value for the prop number, the value for the number prop shouldn't be greater than or less than 16 digits"
+      "Invalid value for the prop number, the value for the number prop shouldn't be greater than or less than 16 digits",
     );
   }
 

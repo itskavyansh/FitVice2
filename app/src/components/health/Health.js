@@ -16,4 +16,4 @@ const Health = () => {
   );
 };
 
-export default Health; 
+export default Health;

@@ -201,17 +201,20 @@ function Chatbot({ isDialog, botName }) {
     setIsTyping(true);
 
     // Simulate bot thinking and typing
-    setTimeout(() => {
-      const botResponse = {
-        id: messages.length + 2,
-        text: getResponse(text),
-        sender: 'bot',
-        timestamp: new Date(),
-      };
+    setTimeout(
+      () => {
+        const botResponse = {
+          id: messages.length + 2,
+          text: getResponse(text),
+          sender: 'bot',
+          timestamp: new Date(),
+        };
 
-      setMessages((prev) => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 2000); // Random delay between 1-3 seconds
+        setMessages((prev) => [...prev, botResponse]);
+        setIsTyping(false);
+      },
+      1000 + Math.random() * 2000,
+    ); // Random delay between 1-3 seconds
   };
 
   const handleKeyPress = (e) => {

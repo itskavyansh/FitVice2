@@ -7,7 +7,23 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  background: #121212; /* Dark background instead of purple gradient */
+}
+
+/* Add background image and overlay */
+.auth-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.3);
+  opacity: 0.4;
+  z-index: 0;
 }
 
 /* Animated background */
@@ -137,19 +153,19 @@
   flex-direction: column;
   gap: 10px;
   max-width: 350px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(18, 18, 18, 0.8);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 20px;
   position: relative;
   z-index: 1;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .title {
   font-size: 28px;
-  color: royalblue;
+  color: #fff;
   font-weight: 600;
   letter-spacing: -1px;
   position: relative;
@@ -165,13 +181,13 @@
   width: 16px;
   border-radius: 50%;
   left: 0px;
-  background-color: royalblue;
+  background-color: #1976d2;
 }
 
 .title::before {
   width: 18px;
   height: 18px;
-  background-color: royalblue;
+  background-color: #1976d2;
 }
 
 .title::after {
@@ -181,7 +197,7 @@
 }
 
 .message, .signin {
-  color: rgba(88, 87, 87, 0.822);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
 }
 
@@ -190,11 +206,11 @@
 }
 
 .signin a {
-  color: royalblue;
+  color: #1976d2;
 }
 
 .signin a:hover {
-  text-decoration: underline royalblue;
+  text-decoration: underline #1976d2;
 }
 
 .flex {
@@ -211,9 +227,10 @@
   width: 100%;
   padding: 10px 10px 20px 10px;
   outline: 0;
-  border: 1px solid rgba(105, 105, 105, 0.397);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
 }
 
 .form label .input + span {
@@ -241,10 +258,14 @@
   color: green;
 }
 
+.form label .input:focus {
+  border: 1px solid rgba(25, 118, 210, 0.5);
+}
+
 .submit {
   border: none;
   outline: none;
-  background-color: royalblue;
+  background-color: #1976d2;
   padding: 10px;
   border-radius: 10px;
   color: #fff;
@@ -253,9 +274,9 @@
 }
 
 .submit:hover {
-  background-color: rgb(56, 90, 194);
+  background-color: #1565c0;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4);
+  box-shadow: 0 5px 15px rgba(25, 118, 210, 0.4);
 }
 
 @keyframes pulse {
@@ -284,7 +305,7 @@
   justify-content: center;
   gap: 10px;
   padding: 12px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -292,6 +313,8 @@
   transition: all 0.3s ease;
   width: 100%;
   position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
 }
 
 .social-btn img {
@@ -308,34 +331,47 @@
 }
 
 .social-btn.google {
-  background-color: #fff;
-  color: #757575;
-  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .social-btn.google:hover {
-  background-color: #f5f5f5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .social-btn.github {
-  background-color: #24292e;
+  background: rgba(36, 41, 46, 0.9);
   color: #fff;
 }
 
 .social-btn.github:hover {
-  background-color: #1b1f23;
+  background: rgba(36, 41, 46, 1);
 }
 
 .social-btn.linkedin {
-  background-color: #0077b5;
+  background: rgba(0, 119, 181, 0.9);
   color: #fff;
 }
 
 .social-btn.linkedin:hover {
-  background-color: #006699;
+  background: rgba(0, 119, 181, 1);
+}
+
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .social-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-} 
+}
+
+.message a, .signin a {
+  color: #1976d2;
+}
+
+.message a:hover, .signin a:hover {
+  text-decoration: underline #1976d2;
+}

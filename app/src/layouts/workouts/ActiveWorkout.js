@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button'; // Use standard Button here
+import Button from '@mui/material/Button'; // Use standyard Button here
 import IconButton from '@mui/material/IconButton';
 import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
@@ -33,36 +33,36 @@ function ActiveWorkout() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  // --- Handlers for adding exercises and sets --- 
+  // --- Handlers for adding exercises and sets ---
   // (Implementation will go here)
 
   const handleAddExercise = () => {
-      if (!currentExerciseName.trim()) return;
-      setExercises([...exercises, { name: currentExerciseName.trim(), sets: [] }]);
-      setCurrentExerciseName('');
+    if (!currentExerciseName.trim()) return;
+    setExercises([...exercises, { name: currentExerciseName.trim(), sets: [] }]);
+    setCurrentExerciseName('');
   };
 
   const handleAddSet = (exerciseIndex) => {
-     // Placeholder: add a default set
-     const updatedExercises = [...exercises];
-     updatedExercises[exerciseIndex].sets.push({ reps: 8, weight: 0, unit: 'kg', notes: '' });
-     setExercises(updatedExercises);
+    // Placeholder: add a default set
+    const updatedExercises = [...exercises];
+    updatedExercises[exerciseIndex].sets.push({ reps: 8, weight: 0, unit: 'kg', notes: '' });
+    setExercises(updatedExercises);
   };
 
   const handleSetChange = (exerciseIndex, setIndex, field, value) => {
-     const updatedExercises = [...exercises];
-     // Basic numeric conversion for reps/weight
-     const numericValue = (field === 'reps' || field === 'weight') ? Number(value) : value;
-     updatedExercises[exerciseIndex].sets[setIndex][field] = numericValue;
-     setExercises(updatedExercises);
+    const updatedExercises = [...exercises];
+    // Basic numeric conversion for reps/weight
+    const numericValue = field === 'reps' || field === 'weight' ? Number(value) : value;
+    updatedExercises[exerciseIndex].sets[setIndex][field] = numericValue;
+    setExercises(updatedExercises);
   };
 
   // --- Handler for finishing workout ---
   const handleFinishWorkout = async () => {
     setError(null);
     if (exercises.length === 0) {
-        setError('Please add at least one exercise.');
-        return;
+      setError('Please add at least one exercise.');
+      return;
     }
     // Add validation for empty sets etc. later
 
@@ -70,15 +70,16 @@ function ActiveWorkout() {
     const workoutData = {
       startTime,
       endTime: new Date(), // Mark end time
-      exercises: exercises.map(ex => ({ // Ensure structure matches backend
+      exercises: exercises.map((ex) => ({
+        // Ensure structure matches backend
         name: ex.name,
-        sets: ex.sets.map(set => ({ 
-          reps: Number(set.reps), 
-          weight: Number(set.weight), 
-          unit: set.unit || 'kg', 
-          notes: set.notes 
-        }))
-      }))
+        sets: ex.sets.map((set) => ({
+          reps: Number(set.reps),
+          weight: Number(set.weight),
+          unit: set.unit || 'kg',
+          notes: set.notes,
+        })),
+      })),
     };
 
     try {
@@ -100,7 +101,7 @@ function ActiveWorkout() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
-        <Grid container spacing={3}> 
+        <Grid container spacing={3}>
           <Grid item xs={12}>
             <Card>
               <MDBox
@@ -119,32 +120,34 @@ function ActiveWorkout() {
                 <MDTypography variant="h6" color="white">
                   Active Workout Session
                 </MDTypography>
-                 <MDButton 
-                    variant="contained" 
-                    color="white" 
-                    onClick={handleFinishWorkout}
-                    disabled={isSaving}
-                 >
-                    {isSaving ? 'Saving...' : 'Finish Workout'}
-                 </MDButton>
+                <MDButton
+                  variant="contained"
+                  color="white"
+                  onClick={handleFinishWorkout}
+                  disabled={isSaving}
+                >
+                  {isSaving ? 'Saving...' : 'Finish Workout'}
+                </MDButton>
               </MDBox>
               <MDBox pt={3} px={2} pb={2}>
-                 <Typography variant="subtitle1" gutterBottom>
-                    Started: {startTime.toLocaleString()}
-                 </Typography>
+                <Typography variant="subtitle1" gutterBottom>
+                  Started: {startTime.toLocaleString()}
+                </Typography>
 
-                 {/* Add Exercise Input */}
-                 <MDBox display="flex" alignItems="center" mb={2}>
-                    <TextField 
-                        label="New Exercise Name"
-                        variant="outlined"
-                        value={currentExerciseName}
-                        onChange={(e) => setCurrentExerciseName(e.target.value)}
-                        size="small"
-                        sx={{ flexGrow: 1, mr: 1 }}
-                    />
-                    <Button variant="contained" onClick={handleAddExercise}>Add Exercise</Button>
-                 </MDBox>
+                {/* Add Exercise Input */}
+                <MDBox display="flex" alignItems="center" mb={2}>
+                  <TextField
+                    label="New Exercise Name"
+                    variant="outlined"
+                    value={currentExerciseName}
+                    onChange={(e) => setCurrentExerciseName(e.target.value)}
+                    size="small"
+                    sx={{ flexGrow: 1, mr: 1 }}
+                  />
+                  <Button variant="contained" onClick={handleAddExercise}>
+                    Add Exercise
+                  </Button>
+                </MDBox>
 
                 {/* Display Exercises and Sets */}
                 {exercises.map((exercise, exIndex) => (
@@ -152,22 +155,51 @@ function ActiveWorkout() {
                     <Typography variant="h6">{exercise.name}</Typography>
                     {exercise.sets.map((set, setIndex) => (
                       <MDBox key={setIndex} display="flex" alignItems="center" gap={1} my={1}>
-                        <Typography variant="body2" sx={{ minWidth: '40px' }}>Set {setIndex + 1}</Typography>
-                        <TextField label="Reps" type="number" size="small" value={set.reps} onChange={(e) => handleSetChange(exIndex, setIndex, 'reps', e.target.value)} />
-                        <TextField label="Weight" type="number" size="small" value={set.weight} onChange={(e) => handleSetChange(exIndex, setIndex, 'weight', e.target.value)} />
+                        <Typography variant="body2" sx={{ minWidth: '40px' }}>
+                          Set {setIndex + 1}
+                        </Typography>
+                        <TextField
+                          label="Reps"
+                          type="number"
+                          size="small"
+                          value={set.reps}
+                          onChange={(e) =>
+                            handleSetChange(exIndex, setIndex, 'reps', e.target.value)
+                          }
+                        />
+                        <TextField
+                          label="Weight"
+                          type="number"
+                          size="small"
+                          value={set.weight}
+                          onChange={(e) =>
+                            handleSetChange(exIndex, setIndex, 'weight', e.target.value)
+                          }
+                        />
                         {/* Add Unit Selector Later */}
-                        <TextField label="Notes" size="small" value={set.notes} onChange={(e) => handleSetChange(exIndex, setIndex, 'notes', e.target.value)} sx={{flexGrow: 1}}/>
-                         {/* Add Delete Set Button Later */}
+                        <TextField
+                          label="Notes"
+                          size="small"
+                          value={set.notes}
+                          onChange={(e) =>
+                            handleSetChange(exIndex, setIndex, 'notes', e.target.value)
+                          }
+                          sx={{ flexGrow: 1 }}
+                        />
+                        {/* Add Delete Set Button Later */}
                       </MDBox>
                     ))}
-                    <Button onClick={() => handleAddSet(exIndex)} size="small" sx={{mt: 1}}>Add Set</Button>
+                    <Button onClick={() => handleAddSet(exIndex)} size="small" sx={{ mt: 1 }}>
+                      Add Set
+                    </Button>
                   </Card>
                 ))}
 
                 {error && (
-                    <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
+                  <Alert severity="error" sx={{ mt: 2 }}>
+                    {error}
+                  </Alert>
                 )}
-
               </MDBox>
             </Card>
           </Grid>
@@ -178,4 +210,4 @@ function ActiveWorkout() {
   );
 }
 
-export default ActiveWorkout; 
+export default ActiveWorkout;

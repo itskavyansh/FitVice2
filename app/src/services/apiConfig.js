@@ -67,10 +67,10 @@ const testBackendConnectivity = async (url) => {
       headers,
       timeout: 5000,
     });
-    
+
     const result = await response.text();
     console.log(`Backend ${url} health check result:`, response.status, result);
-    
+
     return response.ok;
   } catch (error) {
     console.warn(`Backend ${url} is not responding:`, error.message);
@@ -136,4 +136,4 @@ export default {
     credentials: isLocalDev ? false : true,
     withCredentials: isLocalDev ? false : true,
   },
-}; 
+};

@@ -101,7 +101,7 @@ function HorizontalBarChart({ icon, title, description, height, chart }) {
             <Bar data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart, height]
+        [chart, height],
       )}
     </MDBox>
   );

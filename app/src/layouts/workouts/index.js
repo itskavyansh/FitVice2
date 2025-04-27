@@ -39,26 +39,32 @@ function Workouts() {
       // The interceptor now returns the data directly
       // The expected structure is { success: true, data: [...], pagination: {...} }
       const response = await workoutService.getWorkouts(page);
-      
+
       // Check if the expected structure is present
-      if (response && typeof response.success === 'boolean' && Array.isArray(response.data) && typeof response.pagination === 'object') {
-         if (response.success) {
-           setWorkouts(response.data);
-           setPagination(response.pagination);
-         } else {
-           // Use the message from the response if available
-           const errorMessage = response.message || 'Failed to fetch workouts (API indicated failure).';
-           console.error("Error fetching workouts:", errorMessage);
-           setError(errorMessage); // Keep error state for potential future use, but won't display Alert
-         }
+      if (
+        response &&
+        typeof response.success === 'boolean' &&
+        Array.isArray(response.data) &&
+        typeof response.pagination === 'object'
+      ) {
+        if (response.success) {
+          setWorkouts(response.data);
+          setPagination(response.pagination);
+        } else {
+          // Use the message from the response if available
+          const errorMessage =
+            response.message || 'Failed to fetch workouts (API indicated failure).';
+          console.error('Error fetching workouts:', errorMessage);
+          setError(errorMessage); // Keep error state for potential future use, but won't display Alert
+        }
       } else {
-         // Handle unexpected response structure
-         console.error("Unexpected response structure from getWorkouts:", response);
-         setError('Received an unexpected response format from the server.'); // Keep error state
+        // Handle unexpected response structure
+        console.error('Unexpected response structure from getWorkouts:', response);
+        setError('Received an unexpected response format from the server.'); // Keep error state
       }
     } catch (err) {
       // Errors thrown by the service (e.g., network error, 401) are caught here
-      console.error("Error fetching workouts:", err);
+      console.error('Error fetching workouts:', err);
       setError(err.message || 'An error occurred while fetching workouts.'); // Keep error state
     } finally {
       setLoading(false);
@@ -67,14 +73,14 @@ function Workouts() {
 
   // Handler for starting a new workout - NAVIGATE
   const handleStartWorkout = () => {
-    console.log("Start New Workout clicked - Navigating...");
+    console.log('Start New Workout clicked - Navigating...');
     navigate('/workouts/new');
   };
-  
+
   // TODO: Handler for viewing workout details
   const handleViewDetails = (workoutId) => {
-     console.log("View details for workout:", workoutId);
-      // Navigate to a workout detail page
+    console.log('View details for workout:', workoutId);
+    // Navigate to a workout detail page
   };
 
   const renderWorkoutList = () => {
@@ -86,11 +92,13 @@ function Workouts() {
       );
     }
 
-    if (workouts.length === 0 && !loading && !error) { // Only show empty state if no error and not loading
+    if (workouts.length === 0 && !loading && !error) {
+      // Only show empty state if no error and not loading
       return (
         <MDBox display="flex" flexDirection="column" alignItems="center" mt={2} mb={2}>
           <MDTypography variant="body2" color="text" sx={{ textAlign: 'center', mb: 2 }}>
-            You haven't logged any workouts yet. Click "Start New Workout" to begin tracking your fitness journey!
+            You haven't logged any workouts yet. Click "Start New Workout" to begin tracking your
+            fitness journey!
           </MDTypography>
         </MDBox>
       );
@@ -98,14 +106,21 @@ function Workouts() {
 
     // Simple list display for now
     return (
-      <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0} sx={{ listStyle: 'none' }}>
+      <MDBox
+        component="ul"
+        display="flex"
+        flexDirection="column"
+        p={0}
+        m={0}
+        sx={{ listStyle: 'none' }}
+      >
         {workouts.map((workout) => (
-          <MDBox 
-            key={workout._id} 
-            component="li" 
-            py={1.5} 
-            px={2} 
-            mb={1} 
+          <MDBox
+            key={workout._id}
+            component="li"
+            py={1.5}
+            px={2}
+            mb={1}
             sx={{
               border: (theme) => `1px solid ${theme.palette.divider}`,
               borderRadius: '4px',
@@ -117,9 +132,9 @@ function Workouts() {
             <MDTypography variant="body2">
               Workout on: {new Date(workout.startTime).toLocaleString()}
             </MDTypography>
-            <MDButton 
-              variant="text" 
-              color="info" 
+            <MDButton
+              variant="text"
+              color="info"
               size="small"
               onClick={() => handleViewDetails(workout._id)}
             >
@@ -127,7 +142,7 @@ function Workouts() {
             </MDButton>
           </MDBox>
         ))}
-         {/* TODO: Add Pagination controls based on `pagination` state */}
+        {/* TODO: Add Pagination controls based on `pagination` state */}
       </MDBox>
     );
   };
@@ -155,11 +170,7 @@ function Workouts() {
                 <MDTypography variant="h6" color="white">
                   Workout Logbook
                 </MDTypography>
-                <MDButton 
-                  variant="contained" 
-                  color="white" 
-                  onClick={handleStartWorkout}
-                >
+                <MDButton variant="contained" color="white" onClick={handleStartWorkout}>
                   Start New Workout
                 </MDButton>
               </MDBox>
@@ -175,4 +186,4 @@ function Workouts() {
   );
 }
 
-export default Workouts; 
+export default Workouts;

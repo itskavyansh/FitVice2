@@ -92,4 +92,4 @@ class JarvisService {
   }
 }
 
-export default new JarvisService(); 
+export default new JarvisService();

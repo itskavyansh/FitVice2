@@ -43,14 +43,7 @@ import MDTypography from 'components/MDTypography';
 import configs from 'examples/Charts/BarCharts/ReportsBarChart/configs';
 
 // Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function ReportsBarChart({ color, title, description, date, chart }) {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
@@ -73,8 +66,8 @@ function ReportsBarChart({ color, title, description, date, chart }) {
                 padding: '1rem',
                 '& canvas': {
                   height: '100% !important',
-                  marginTop: '0 !important'
-                }
+                  marginTop: '0 !important',
+                },
               }}
             >
               <Bar data={data} options={options} redraw />

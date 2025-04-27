@@ -76,7 +76,7 @@ function DefaultDoughnutChart({ icon, title, description, height, chart }) {
             <Doughnut data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart, height]
+        [chart, height],
       )}
     </MDBox>
   );

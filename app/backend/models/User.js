@@ -58,9 +58,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  
+
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -71,7 +71,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     if (!candidatePassword) {
       throw new Error('Password is required');
@@ -83,14 +83,14 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 // Method to get public profile
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
   return userObject;
 };
 
 // Update the updatedAt timestamp before saving
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
@@ -99,15 +99,15 @@ userSchema.pre('save', function(next) {
 class InMemoryUser {
   static async findOne(query) {
     if (query._id) {
-      return inMemoryUsers.find(user => user._id.toString() === query._id.toString());
+      return inMemoryUsers.find((user) => user._id.toString() === query._id.toString());
     } else if (query.email) {
-      return inMemoryUsers.find(user => user.email === query.email);
+      return inMemoryUsers.find((user) => user.email === query.email);
     }
     return null;
   }
 
   static async findById(id) {
-    return inMemoryUsers.find(user => user._id.toString() === id.toString());
+    return inMemoryUsers.find((user) => user._id.toString() === id.toString());
   }
 
   constructor(userData) {
@@ -131,15 +131,17 @@ class InMemoryUser {
       this.password = await bcrypt.hash(this.password, salt);
       this._isPasswordModified = false;
     }
-    
+
     // Update or insert user
-    const existingUserIndex = inMemoryUsers.findIndex(user => user._id.toString() === this._id.toString());
+    const existingUserIndex = inMemoryUsers.findIndex(
+      (user) => user._id.toString() === this._id.toString(),
+    );
     if (existingUserIndex >= 0) {
       inMemoryUsers[existingUserIndex] = this;
     } else {
       inMemoryUsers.push(this);
     }
-    
+
     this.updatedAt = new Date();
     return this;
   }
@@ -183,8 +185,7 @@ if (process.env.USE_IN_MEMORY_DB === 'true') {
 }
 
 // Decide which model to use based on environment
-const User = process.env.USE_IN_MEMORY_DB === 'true' ? 
-  InMemoryUser : 
-  mongoose.model('User', userSchema);
+const User =
+  process.env.USE_IN_MEMORY_DB === 'true' ? InMemoryUser : mongoose.model('User', userSchema);
 
-module.exports = User; 
+module.exports = User;

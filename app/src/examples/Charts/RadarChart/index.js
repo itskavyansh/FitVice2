@@ -99,7 +99,7 @@ function RadarChart({ icon, title, description, height, chart }) {
             <Radar data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart]
+        [chart],
       )}
     </MDBox>
   );

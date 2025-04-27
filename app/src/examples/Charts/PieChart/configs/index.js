@@ -26,7 +26,7 @@ function configs(labels, datasets) {
     datasets.backgroundColors.forEach((color) =>
       gradients[color]
         ? backgroundColors.push(gradients[color].state)
-        : backgroundColors.push(dark.main)
+        : backgroundColors.push(dark.main),
     );
   } else {
     backgroundColors.push(dark.main);

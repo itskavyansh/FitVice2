@@ -39,7 +39,8 @@ import { CardContainer, CardBody, CardItem } from 'components/ui/3d-card';
 const muscles = [
   {
     name: 'Chest',
-    description: 'The chest muscles, or pectorals, are responsible for pushing movements and upper body strength.',
+    description:
+      'The chest muscles, or pectorals, are responsible for pushing movements and upper body strength.',
     exercises: [
       'Bench Press',
       'Push-ups',
@@ -48,9 +49,9 @@ const muscles = [
       'Decline Bench Press',
       'Dumbbell Press',
       'Cable Crossover',
-      'Pec Deck Machine'
+      'Pec Deck Machine',
     ],
-    image: chestImage
+    image: chestImage,
   },
   {
     name: 'Back',
@@ -63,9 +64,9 @@ const muscles = [
       'Seated Row',
       'T-Bar Row',
       'Single-Arm Dumbbell Row',
-      'Face Pulls'
+      'Face Pulls',
     ],
-    image: backImage
+    image: backImage,
   },
   {
     name: 'Legs',
@@ -78,9 +79,9 @@ const muscles = [
       'Bulgarian Split Squats',
       'Leg Extensions',
       'Leg Curls',
-      'Calf Raises'
+      'Calf Raises',
     ],
-    image: legsImage
+    image: legsImage,
   },
   {
     name: 'Biceps',
@@ -93,9 +94,9 @@ const muscles = [
       'Concentration Curls',
       'Cable Curls',
       'Zottman Curls',
-      'Spider Curls'
+      'Spider Curls',
     ],
-    image: bicepImage
+    image: bicepImage,
   },
   {
     name: 'Triceps',
@@ -108,9 +109,9 @@ const muscles = [
       'Close-Grip Bench Press',
       'Diamond Push-ups',
       'Tricep Kickbacks',
-      'Rope Pushdowns'
+      'Rope Pushdowns',
     ],
-    image: tricepImage
+    image: tricepImage,
   },
   {
     name: 'Shoulders',
@@ -123,10 +124,10 @@ const muscles = [
       'Upright Rows',
       'Face Pulls',
       'Reverse Flyes',
-      'Shrugs'
+      'Shrugs',
     ],
-    image: deltImage
-  }
+    image: deltImage,
+  },
 ];
 
 function MuscleCard({ muscle }) {
@@ -247,12 +248,12 @@ function MusclePedia() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <MDBox mb={3}>
-              <Typography 
-                variant="h2" 
+              <Typography
+                variant="h2"
                 fontWeight="bold"
                 sx={{
                   fontSize: '2.5rem',
-                  marginBottom: '0.5rem'
+                  marginBottom: '0.5rem',
                 }}
               >
                 MusclePedia

@@ -17,24 +17,24 @@ import MDBox from 'components/MDBox';
 const leaderboardData = [
   {
     rank: 1,
-    name: "John Doe",
+    name: 'John Doe',
     points: 1200,
     avatar: null,
-    level: "Expert"
+    level: 'Expert',
   },
   {
     rank: 2,
-    name: "Jane Smith",
+    name: 'Jane Smith',
     points: 1100,
     avatar: null,
-    level: "Advanced"
+    level: 'Advanced',
   },
   {
     rank: 3,
-    name: "Mike Johnson",
+    name: 'Mike Johnson',
     points: 900,
     avatar: null,
-    level: "Intermediate"
+    level: 'Intermediate',
   },
   // Add more users as needed
 ];
@@ -46,16 +46,11 @@ function Leaderboard() {
         position: 'relative',
         marginLeft: { sm: '250px' },
         width: { sm: 'calc(100% - 250px)' },
-        p: 3
+        p: 3,
       }}
     >
       <Card>
-        <MDBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          p={3}
-        >
+        <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
           <Typography variant="h6">Fitness Leaderboard</Typography>
         </MDBox>
         <TableContainer>
@@ -74,9 +69,7 @@ function Leaderboard() {
                   <TableCell>#{user.rank}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar src={user.avatar}>
-                        {user.name[0]}
-                      </Avatar>
+                      <Avatar src={user.avatar}>{user.name[0]}</Avatar>
                       {user.name}
                     </Box>
                   </TableCell>
@@ -92,4 +85,4 @@ function Leaderboard() {
   );
 }
 
-export default Leaderboard; 
+export default Leaderboard;

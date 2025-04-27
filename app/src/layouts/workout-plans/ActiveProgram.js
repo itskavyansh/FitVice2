@@ -47,7 +47,7 @@ function ActiveProgram({ program, onComplete }) {
     // Common warm-up and cool-down exercises
     const warmup = { name: 'Warm-up', duration: '10 min', completed: false };
     const cooldown = { name: 'Cool-down', duration: '5 min', completed: false };
-    
+
     // Strength training exercises
     if (category === 'strength') {
       // Full body workout
@@ -85,7 +85,7 @@ function ActiveProgram({ program, onComplete }) {
           ];
         }
       }
-      
+
       // Upper body workout
       if (program.title.includes('Upper Body')) {
         // Different exercises for each workout number
@@ -124,7 +124,7 @@ function ActiveProgram({ program, onComplete }) {
           ];
         }
       }
-      
+
       // Lower body workout
       if (program.title.includes('Lower Body')) {
         // Different exercises for each workout number
@@ -163,7 +163,7 @@ function ActiveProgram({ program, onComplete }) {
           ];
         }
       }
-      
+
       // 30-Day Strength Builder (default strength program)
       if (workoutNumber === 1) {
         return [
@@ -207,7 +207,7 @@ function ActiveProgram({ program, onComplete }) {
         ];
       }
     }
-    
+
     // Cardio exercises
     if (category === 'cardio') {
       if (workoutNumber === 1) {
@@ -245,7 +245,7 @@ function ActiveProgram({ program, onComplete }) {
         ];
       }
     }
-    
+
     // Flexibility exercises
     if (category === 'flexibility') {
       if (workoutNumber === 1) {
@@ -261,7 +261,7 @@ function ActiveProgram({ program, onComplete }) {
       } else if (workoutNumber === 2) {
         return [
           { name: 'Cat-Cow Stretch', sets: '10 reps', completed: false },
-          { name: 'Child\'s Pose', duration: '2 min', completed: false },
+          { name: "Child's Pose", duration: '2 min', completed: false },
           { name: 'Thread the Needle', sets: '5 each side', completed: false },
           { name: 'Pigeon Pose', duration: '2 min each side', completed: false },
           { name: 'Butterfly Stretch', duration: '2 min', completed: false },
@@ -281,7 +281,7 @@ function ActiveProgram({ program, onComplete }) {
       } else if (workoutNumber === 4) {
         return [
           { name: 'Dynamic Hip Circles', sets: '10 each direction', completed: false },
-          { name: 'World\'s Greatest Stretch', sets: '5 each side', completed: false },
+          { name: "World's Greatest Stretch", sets: '5 each side', completed: false },
           { name: 'Thread the Needle', sets: '5 each side', completed: false },
           { name: '90/90 Hip Stretch', duration: '2 min each side', completed: false },
           { name: 'Frog Stretch', duration: '2 min', completed: false },
@@ -294,13 +294,13 @@ function ActiveProgram({ program, onComplete }) {
           { name: 'Shoulder Rolls', sets: '10 each direction', completed: false },
           { name: 'Arm Circles', sets: '10 each direction', completed: false },
           { name: 'Cat-Cow Stretch', sets: '10 reps', completed: false },
-          { name: 'Child\'s Pose', duration: '2 min', completed: false },
+          { name: "Child's Pose", duration: '2 min', completed: false },
           { name: 'Thread the Needle', sets: '5 each side', completed: false },
           { name: 'Reclined Twist', duration: '1 min each side', completed: false },
         ];
       }
     }
-    
+
     // Default exercises
     return [
       warmup,
@@ -328,11 +328,11 @@ function ActiveProgram({ program, onComplete }) {
   };
 
   const handleExerciseToggle = (workoutId, exerciseIndex) => {
-    setCompletedExercises(prev => {
+    setCompletedExercises((prev) => {
       const key = `${workoutId}-${exerciseIndex}`;
       return {
         ...prev,
-        [key]: !prev[key]
+        [key]: !prev[key],
       };
     });
   };
@@ -345,7 +345,7 @@ function ActiveProgram({ program, onComplete }) {
   };
 
   const isWorkoutCompleted = (workoutId) => completedWorkouts.includes(workoutId);
-  
+
   const isExerciseCompleted = (workoutId, exerciseIndex) => {
     const key = `${workoutId}-${exerciseIndex}`;
     return completedExercises[key] || false;

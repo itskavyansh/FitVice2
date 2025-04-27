@@ -12,15 +12,11 @@ function LoadingScreen() {
       bgcolor="background.default"
     >
       <CircularProgress size={60} thickness={4} />
-      <Typography
-        variant="h6"
-        color="textSecondary"
-        sx={{ mt: 2 }}
-      >
+      <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
         Loading...
       </Typography>
     </Box>
   );
 }
 
-export default LoadingScreen; 
+export default LoadingScreen;

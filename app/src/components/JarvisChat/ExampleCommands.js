@@ -68,14 +68,10 @@ const ExampleCommands = () => {
           Example Commands
         </Box>
       </Typography>
-      
+
       <List>
         {commandCategories.map((category) => (
-          <Paper
-            key={category.title}
-            elevation={0}
-            sx={{ mb: 2, overflow: 'hidden' }}
-          >
+          <Paper key={category.title} elevation={0} sx={{ mb: 2, overflow: 'hidden' }}>
             <ListItem>
               <ListItemIcon>{category.icon}</ListItemIcon>
               <ListItemText primary={category.title} />
@@ -104,4 +100,4 @@ const ExampleCommands = () => {
   );
 };
 
-export default ExampleCommands; 
+export default ExampleCommands;

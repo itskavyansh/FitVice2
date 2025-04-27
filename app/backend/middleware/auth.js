@@ -5,13 +5,13 @@ const auth = async (req, res, next) => {
   try {
     // Log the incoming Authorization header for debugging
     console.log('[Auth Middleware] Authorization Header:', req.header('Authorization'));
-    
+
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'No authentication token provided' 
+        message: 'No authentication token provided',
       });
     }
 
@@ -19,9 +19,9 @@ const auth = async (req, res, next) => {
     const user = await User.findOne({ _id: decoded.userId });
 
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found',
       });
     }
 
@@ -31,22 +31,22 @@ const auth = async (req, res, next) => {
   } catch (error) {
     console.error('Auth middleware error:', error);
     if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid authentication token' 
+        message: 'Invalid authentication token',
       });
     }
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Authentication token has expired' 
+        message: 'Authentication token has expired',
       });
     }
-    res.status(401).json({ 
+    res.status(401).json({
       success: false,
-      message: 'Authentication failed' 
+      message: 'Authentication failed',
     });
   }
 };
 
-module.exports = auth; 
+module.exports = auth;

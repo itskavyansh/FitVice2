@@ -4,7 +4,7 @@ const GOOGLE_FIT_SCOPES = [
   'https://www.googleapis.com/auth/fitness.activity.read',
   'https://www.googleapis.com/auth/fitness.body.read',
   'https://www.googleapis.com/auth/fitness.heart_rate.read',
-  'https://www.googleapis.com/auth/fitness.sleep.read'
+  'https://www.googleapis.com/auth/fitness.sleep.read',
 ];
 
 class GoogleFitService {
@@ -26,7 +26,7 @@ class GoogleFitService {
         apiKey: this.apiKey,
         clientId: this.clientId,
         scope: GOOGLE_FIT_SCOPES.join(' '),
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/fitness/v1/rest']
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/fitness/v1/rest'],
       });
 
       this.isInitialized = true;
@@ -63,14 +63,17 @@ class GoogleFitService {
       const response = await gapi.client.fitness.users.dataset.aggregate({
         userId: 'me',
         resource: {
-          aggregateBy: [{
-            dataTypeName: 'com.google.step_count.delta',
-            dataSourceId: 'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'
-          }],
+          aggregateBy: [
+            {
+              dataTypeName: 'com.google.step_count.delta',
+              dataSourceId:
+                'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+            },
+          ],
           bucketByTime: { durationMillis: 86400000 },
           startTimeMillis: startTime,
-          endTimeMillis: endTime
-        }
+          endTimeMillis: endTime,
+        },
       });
       return response.result.bucket;
     } catch (error) {
@@ -84,14 +87,17 @@ class GoogleFitService {
       const response = await gapi.client.fitness.users.dataset.aggregate({
         userId: 'me',
         resource: {
-          aggregateBy: [{
-            dataTypeName: 'com.google.heart_rate.bpm',
-            dataSourceId: 'derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm'
-          }],
+          aggregateBy: [
+            {
+              dataTypeName: 'com.google.heart_rate.bpm',
+              dataSourceId:
+                'derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm',
+            },
+          ],
           bucketByTime: { durationMillis: 3600000 },
           startTimeMillis: startTime,
-          endTimeMillis: endTime
-        }
+          endTimeMillis: endTime,
+        },
       });
       return response.result.bucket;
     } catch (error) {
@@ -105,14 +111,16 @@ class GoogleFitService {
       const response = await gapi.client.fitness.users.dataset.aggregate({
         userId: 'me',
         resource: {
-          aggregateBy: [{
-            dataTypeName: 'com.google.sleep.segment',
-            dataSourceId: 'derived:com.google.sleep.segment:com.google.android.gms:sleep_segment'
-          }],
+          aggregateBy: [
+            {
+              dataTypeName: 'com.google.sleep.segment',
+              dataSourceId: 'derived:com.google.sleep.segment:com.google.android.gms:sleep_segment',
+            },
+          ],
           bucketByTime: { durationMillis: 86400000 },
           startTimeMillis: startTime,
-          endTimeMillis: endTime
-        }
+          endTimeMillis: endTime,
+        },
       });
       return response.result.bucket;
     } catch (error) {
@@ -126,14 +134,16 @@ class GoogleFitService {
       const response = await gapi.client.fitness.users.dataset.aggregate({
         userId: 'me',
         resource: {
-          aggregateBy: [{
-            dataTypeName: 'com.google.weight',
-            dataSourceId: 'derived:com.google.weight:com.google.android.gms:merge_weight'
-          }],
+          aggregateBy: [
+            {
+              dataTypeName: 'com.google.weight',
+              dataSourceId: 'derived:com.google.weight:com.google.android.gms:merge_weight',
+            },
+          ],
           bucketByTime: { durationMillis: 86400000 },
           startTimeMillis: startTime,
-          endTimeMillis: endTime
-        }
+          endTimeMillis: endTime,
+        },
       });
       return response.result.bucket;
     } catch (error) {
@@ -143,4 +153,4 @@ class GoogleFitService {
   }
 }
 
-export default new GoogleFitService(); 
+export default new GoogleFitService();

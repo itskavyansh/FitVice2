@@ -73,7 +73,7 @@ export const ChartCard = styled(Card)(({ theme }) => ({
     '& .chart-card-decoration': {
       transform: 'rotate(45deg) scale(1.2)',
       opacity: 0.2,
-    }
+    },
   },
   '&::after': {
     content: '""',
@@ -83,21 +83,21 @@ export const ChartCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: '4px',
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.info.main})`,
-  }
+  },
 }));
 
 export const WorkoutCard = styled(Card)(({ theme, active }) => ({
   position: 'relative',
   overflow: 'hidden',
   transition: 'all 0.3s ease',
-  background: active ? 
-    `linear-gradient(135deg, ${theme.palette.primary.light}22, ${theme.palette.primary.main}11)` : 
-    theme.palette.background.paper,
+  background: active
+    ? `linear-gradient(135deg, ${theme.palette.primary.light}22, ${theme.palette.primary.main}11)`
+    : theme.palette.background.paper,
   '&:hover': {
     transform: 'translateY(-5px) scale(1.02)',
-    boxShadow: active ? 
-      `0 15px 35px rgba(33, 150, 243, 0.2), 0 0 10px ${theme.palette.primary.main}66, 0 0 0 1px ${theme.palette.primary.main}22` : 
-      '0 10px 20px rgba(0, 0, 0, 0.1)',
+    boxShadow: active
+      ? `0 15px 35px rgba(33, 150, 243, 0.2), 0 0 10px ${theme.palette.primary.main}66, 0 0 0 1px ${theme.palette.primary.main}22`
+      : '0 10px 20px rgba(0, 0, 0, 0.1)',
     '& .workout-icon': {
       animation: `${floatAnimation} 2s ease-in-out infinite`,
     },
@@ -119,11 +119,11 @@ export const WorkoutCard = styled(Card)(({ theme, active }) => ({
 }));
 
 // Interactive Components
-export const ThreeDStatsCard = ({ icon, title, count, color = "primary", onClick }) => {
+export const ThreeDStatsCard = ({ icon, title, count, color = 'primary', onClick }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <StatsCard 
+    <StatsCard
       color={color}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -133,25 +133,31 @@ export const ThreeDStatsCard = ({ icon, title, count, color = "primary", onClick
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box>
-            <Typography variant="button" color="white" fontWeight="medium" mb={1} textTransform="uppercase">
+            <Typography
+              variant="button"
+              color="white"
+              fontWeight="medium"
+              mb={1}
+              textTransform="uppercase"
+            >
               {title}
             </Typography>
             <Typography variant="h3" fontWeight="bold">
               {count}
             </Typography>
           </Box>
-          <Box 
+          <Box
             className="stats-icon"
-            sx={{ 
-              height: 60, 
-              width: 60, 
-              borderRadius: '50%', 
-              display: 'flex', 
+            sx={{
+              height: 60,
+              width: 60,
+              borderRadius: '50%',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               background: 'rgba(255, 255, 255, 0.2)',
               transition: 'all 0.3s ease',
-              transform: hovered ? 'scale(1.1)' : 'scale(1)'
+              transform: hovered ? 'scale(1.1)' : 'scale(1)',
             }}
           >
             <Icon sx={{ fontSize: 30 }}>{icon}</Icon>
@@ -162,11 +168,19 @@ export const ThreeDStatsCard = ({ icon, title, count, color = "primary", onClick
   );
 };
 
-export const ThreeDWorkoutCard = ({ title, subtitle, description, modelType, color, active, onClick }) => {
+export const ThreeDWorkoutCard = ({
+  title,
+  subtitle,
+  description,
+  modelType,
+  color,
+  active,
+  onClick,
+}) => {
   const [hovered, setHovered] = useState(false);
-  
+
   return (
-    <WorkoutCard 
+    <WorkoutCard
       active={active}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -192,13 +206,15 @@ export const ThreeDWorkoutCard = ({ title, subtitle, description, modelType, col
         )}
       </CardContent>
       {onClick && (
-        <CardActions sx={{ 
-          justifyContent: 'flex-end',
-          background: hovered ? 
-            `linear-gradient(to right, transparent, ${color}22)` : 
-            'transparent',
-          transition: 'all 0.3s ease'
-        }}>
+        <CardActions
+          sx={{
+            justifyContent: 'flex-end',
+            background: hovered
+              ? `linear-gradient(to right, transparent, ${color}22)`
+              : 'transparent',
+            transition: 'all 0.3s ease',
+          }}
+        >
           <Button size="small" color="primary">
             Start
           </Button>
@@ -211,7 +227,7 @@ export const ThreeDWorkoutCard = ({ title, subtitle, description, modelType, col
 export const ThreeDChartCard = ({ children, ...props }) => {
   return (
     <ChartCard {...props}>
-      <Box 
+      <Box
         className="chart-card-decoration"
         sx={{
           position: 'absolute',
@@ -222,10 +238,10 @@ export const ThreeDChartCard = ({ children, ...props }) => {
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(33, 150, 243, 0.1), transparent 70%)',
           transition: 'all 0.5s ease',
-          zIndex: 0
+          zIndex: 0,
         }}
       />
       {children}
     </ChartCard>
   );
-}; 
+};

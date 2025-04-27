@@ -76,7 +76,7 @@ function PieChart({ icon, title, description, height, chart }) {
             <Pie data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart, height]
+        [chart, height],
       )}
     </MDBox>
   );

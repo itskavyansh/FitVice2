@@ -41,8 +41,8 @@ function configs(labels, datasets) {
           top: 30,
           right: 16,
           bottom: 16,
-          left: 16
-        }
+          left: 16,
+        },
       },
       plugins: {
         legend: {

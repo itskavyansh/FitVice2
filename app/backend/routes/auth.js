@@ -45,9 +45,9 @@ router.post('/signup', async (req, res) => {
     // Validate required fields
     if (!firstName || !lastName || !email || !password) {
       console.log('Missing required fields');
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'All fields are required' 
+        message: 'All fields are required',
       });
     }
 
@@ -55,9 +55,9 @@ router.post('/signup', async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already registered:', email);
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Email already registered' 
+        message: 'Email already registered',
       });
     }
 
@@ -73,11 +73,9 @@ router.post('/signup', async (req, res) => {
     console.log('User created successfully:', email);
 
     // Generate token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'your-secret-key', {
+      expiresIn: '7d',
+    });
 
     res.status(201).json({
       success: true,
@@ -87,14 +85,16 @@ router.post('/signup', async (req, res) => {
   } catch (error) {
     console.error('Signup error:', error);
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: Object.values(error.errors).map(err => err.message).join(', ') 
+        message: Object.values(error.errors)
+          .map((err) => err.message)
+          .join(', '),
       });
     }
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Server error during signup' 
+      message: 'Server error during signup',
     });
   }
 });
@@ -114,9 +114,9 @@ router.post('/login', async (req, res) => {
     // Validate required fields
     if (!email || !password) {
       console.log('Missing email or password');
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Email and password are required' 
+        message: 'Email and password are required',
       });
     }
 
@@ -124,9 +124,9 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       console.log('User not found:', email);
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid email or password' 
+        message: 'Invalid email or password',
       });
     }
 
@@ -136,20 +136,18 @@ router.post('/login', async (req, res) => {
 
     if (!isMatch) {
       console.log('Invalid password for user:', email);
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid email or password' 
+        message: 'Invalid email or password',
       });
     }
 
     console.log('Login successful:', email);
 
     // Generate token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'your-secret-key', {
+      expiresIn: '7d',
+    });
 
     // Set token in response header
     res.setHeader('Authorization', `Bearer ${token}`);
@@ -163,14 +161,16 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: Object.values(error.errors).map(err => err.message).join(', ') 
+        message: Object.values(error.errors)
+          .map((err) => err.message)
+          .join(', '),
       });
     }
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Server error during login' 
+      message: 'Server error during login',
     });
   }
 });
@@ -180,9 +180,9 @@ router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found',
       });
     }
     res.json({
@@ -191,9 +191,9 @@ router.get('/me', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Get current user error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Server error while fetching user data' 
+      message: 'Server error while fetching user data',
     });
   }
 });
@@ -203,9 +203,9 @@ router.put('/profile', auth, async (req, res) => {
   try {
     const updates = req.body;
     const allowedUpdates = ['firstName', 'lastName', 'email', 'phone', 'bio'];
-    
+
     // Filter out any fields that aren't allowed to be updated
-    Object.keys(updates).forEach(update => {
+    Object.keys(updates).forEach((update) => {
       if (allowedUpdates.includes(update)) {
         req.user[update] = updates[update];
       }
@@ -219,20 +219,22 @@ router.put('/profile', auth, async (req, res) => {
   } catch (error) {
     console.error('Update profile error:', error);
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: Object.values(error.errors).map(err => err.message).join(', ') 
+        message: Object.values(error.errors)
+          .map((err) => err.message)
+          .join(', '),
       });
     }
     if (error.code === 11000) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Email already in use' 
+        message: 'Email already in use',
       });
     }
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Server error while updating profile' 
+      message: 'Server error while updating profile',
     });
   }
 });
@@ -349,4 +351,4 @@ router.put('/profile', auth, async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

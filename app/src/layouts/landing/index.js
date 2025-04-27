@@ -366,30 +366,30 @@ function Landing() {
             mt: 0,
           }}
         >
-          <Grid 
-            container 
-            spacing={0} 
+          <Grid
+            container
+            spacing={0}
             alignItems="flex-start"
             sx={{
               flexDirection: { xs: 'column', md: 'row' },
-              gap: { xs: 4, md: 0 }
+              gap: { xs: 4, md: 0 },
             }}
           >
-            <Grid 
-              item 
-              xs={12} 
+            <Grid
+              item
+              xs={12}
               md={6}
               sx={{
                 order: { xs: 2, md: 1 },
-                mt: { xs: 0, md: '64px' }
+                mt: { xs: 0, md: '64px' },
               }}
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                style={{ 
-                  marginLeft: 0, 
+                style={{
+                  marginLeft: 0,
                   padding: '0 24px',
                 }}
               >
@@ -461,16 +461,16 @@ function Landing() {
                 </Button>
               </motion.div>
             </Grid>
-            <Grid 
-              item 
-              xs={12} 
+            <Grid
+              item
+              xs={12}
               md={6}
               sx={{
                 order: { xs: 1, md: 2 },
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                mt: { xs: 4, md: '64px' }
+                mt: { xs: 4, md: '64px' },
               }}
             >
               <motion.div

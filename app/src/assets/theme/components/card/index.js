@@ -27,7 +27,7 @@ const { borderWidth, borderRadius } = borders;
 const { md } = boxShadows;
 
 // Define a more subtle shadow (you can adjust this)
-const subtleShadow = "0rem 0.125rem 0.25rem rgba(0, 0, 0, 0.075)"; // Example: Lighter shadow
+const subtleShadow = '0rem 0.125rem 0.25rem rgba(0, 0, 0, 0.075)'; // Example: Lighter shadow
 
 const card = {
   styleOverrides: {

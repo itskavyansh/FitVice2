@@ -71,7 +71,7 @@ const authService = {
     try {
       // Use the robust login function that tries multiple approaches
       const result = await robustLogin(email, password);
-      
+
       // Handle the successful result
       if (result && result.token) {
         // Store token in localStorage
@@ -83,14 +83,14 @@ const authService = {
         console.log('Login successful for:', email);
         return result;
       }
-      
+
       // If mock authentication returns a response with success: false,
       // return it instead of throwing an error
       if (result && result.success === false) {
         console.log('Login unsuccessful but handled:', result.message);
         return result;
       }
-      
+
       throw new Error('Invalid response from authentication service');
     } catch (error) {
       console.error('Login error:', error);
@@ -148,18 +148,18 @@ const authService = {
       // Check if backend is down
       const { isBackendDown } = await import('./fallbackAuth');
       const backendDown = await isBackendDown();
-      
+
       if (backendDown) {
         console.log('Backend is down during getCurrentUser - using mock validation');
         // Use mock token validation
         const { mockVerifyToken } = await import('./mockAuthService');
         const result = await mockVerifyToken(token);
-        
+
         if (result.success && result.valid && result.user) {
           console.log('Mock token validation successful');
           return result.user;
         }
-        
+
         console.log('Mock token validation failed');
         localStorage.removeItem('token');
         return null;
@@ -200,7 +200,7 @@ const authService = {
           // Try mock validation as a fallback
           const { mockVerifyToken } = await import('./mockAuthService');
           const result = await mockVerifyToken(token);
-          
+
           if (result.success && result.valid && result.user) {
             console.log('Fallback mock token validation successful');
             return result.user;
@@ -305,20 +305,20 @@ const authService = {
       }
 
       console.log('Verifying token');
-      
+
       // Check if backend is down
       const { isBackendDown } = await import('./fallbackAuth');
       const backendDown = await isBackendDown();
-      
+
       if (backendDown) {
         console.log('Backend is down during verifyToken - using mock validation');
         // Use mock token validation
         const { mockVerifyToken } = await import('./mockAuthService');
         const result = await mockVerifyToken(token);
-        
+
         return result.success && result.valid;
       }
-      
+
       // Backend is up, use normal verification
       try {
         // Uses relative path: /api/auth/verify
@@ -329,7 +329,7 @@ const authService = {
         return isValid;
       } catch (apiError) {
         console.error('API verification error:', apiError.message);
-        
+
         // If the API call failed, try mock validation as fallback
         if (apiError.response?.status === 404 || !apiError.response) {
           console.log('API verification failed - attempting mock validation');
@@ -337,7 +337,7 @@ const authService = {
           const result = await mockVerifyToken(token);
           return result.success && result.valid;
         }
-        
+
         localStorage.removeItem('token');
         return false;
       }
@@ -375,19 +375,19 @@ const authService = {
       // Check if backend is down
       const { isBackendDown } = await import('./fallbackAuth');
       const backendDown = await isBackendDown();
-      
+
       if (backendDown) {
         console.log('Backend is down during initialization - using mock validation');
         // Use mock token validation
         const { mockVerifyToken } = await import('./mockAuthService');
         const result = await mockVerifyToken(token);
-        
+
         if (result.success && result.valid) {
           console.log('Mock token verification successful during initialization');
           return {
             authenticated: true,
             user: result.user,
-            offlineMode: true
+            offlineMode: true,
           };
         } else {
           console.log('Mock token validation failed during initialization');
@@ -395,7 +395,7 @@ const authService = {
           return { authenticated: false, offlineMode: true };
         }
       }
-      
+
       // Set the auth header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       console.log('Set auth header for initialization');
@@ -409,7 +409,7 @@ const authService = {
           console.log('Token verified during initialization:', response.data.user?.email);
           return {
             authenticated: true,
-            user: response.data.user
+            user: response.data.user,
           };
         } else {
           console.log('Token invalid during verification');
@@ -419,23 +419,23 @@ const authService = {
         }
       } catch (apiError) {
         console.error('API verification error during initialization:', apiError.message);
-        
+
         // If the API call failed, try mock validation as fallback
         if (apiError.response?.status === 404 || !apiError.response) {
           console.log('API verification failed - attempting mock validation');
           const { mockVerifyToken } = await import('./mockAuthService');
           const result = await mockVerifyToken(token);
-          
+
           if (result.success && result.valid) {
             console.log('Fallback mock verification successful');
             return {
               authenticated: true,
               user: result.user,
-              offlineMode: true
+              offlineMode: true,
             };
           }
         }
-        
+
         localStorage.removeItem('token');
         delete api.defaults.headers.common['Authorization'];
         return { authenticated: false };

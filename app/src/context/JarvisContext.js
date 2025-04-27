@@ -32,11 +32,11 @@ export const JarvisProvider = ({ children }) => {
       metadata: metadata.type ? metadata : { type: 'text', data: metadata },
     };
 
-    setConversationHistory(prev => [...prev, messageObj]);
+    setConversationHistory((prev) => [...prev, messageObj]);
   };
 
   const updateUserPreferences = (newPreferences) => {
-    setUserPreferences(prev => ({
+    setUserPreferences((prev) => ({
       ...prev,
       ...newPreferences,
     }));
@@ -49,18 +49,16 @@ export const JarvisProvider = ({ children }) => {
   const handleTaskCreation = async (taskDetails) => {
     try {
       const result = await jarvisService.createTask(taskDetails);
-      addToConversation(
-        'Task created successfully!',
-        false,
-        { type: 'task_created', data: { ...taskDetails, id: result.taskId } }
-      );
+      addToConversation('Task created successfully!', false, {
+        type: 'task_created',
+        data: { ...taskDetails, id: result.taskId },
+      });
       return result;
     } catch (error) {
-      addToConversation(
-        'Failed to create task. Please try again.',
-        false,
-        { type: 'error', error: error.message }
-      );
+      addToConversation('Failed to create task. Please try again.', false, {
+        type: 'error',
+        error: error.message,
+      });
       throw error;
     }
   };
@@ -68,18 +66,16 @@ export const JarvisProvider = ({ children }) => {
   const handleWorkoutPlanning = async (preferences) => {
     try {
       const plan = await jarvisService.createWorkoutPlan(preferences);
-      addToConversation(
-        'Here\'s your personalized workout plan!',
-        false,
-        { type: 'workout_plan', data: plan }
-      );
+      addToConversation("Here's your personalized workout plan!", false, {
+        type: 'workout_plan',
+        data: plan,
+      });
       return plan;
     } catch (error) {
-      addToConversation(
-        'Failed to create workout plan. Please try again.',
-        false,
-        { type: 'error', error: error.message }
-      );
+      addToConversation('Failed to create workout plan. Please try again.', false, {
+        type: 'error',
+        error: error.message,
+      });
       throw error;
     }
   };
@@ -87,18 +83,16 @@ export const JarvisProvider = ({ children }) => {
   const handleMealPlanning = async (preferences) => {
     try {
       const plan = await jarvisService.createMealPlan(preferences);
-      addToConversation(
-        'Here\'s your customized meal plan!',
-        false,
-        { type: 'meal_plan', data: plan }
-      );
+      addToConversation("Here's your customized meal plan!", false, {
+        type: 'meal_plan',
+        data: plan,
+      });
       return plan;
     } catch (error) {
-      addToConversation(
-        'Failed to create meal plan. Please try again.',
-        false,
-        { type: 'error', error: error.message }
-      );
+      addToConversation('Failed to create meal plan. Please try again.', false, {
+        type: 'error',
+        error: error.message,
+      });
       throw error;
     }
   };
@@ -112,10 +106,10 @@ export const JarvisProvider = ({ children }) => {
     try {
       // Add user message first
       addToConversation(userInput, true);
-      
+
       // Process the command
       const response = await jarvisService.processCommand(userInput);
-      
+
       if (response.message) {
         addToConversation(response.message, false, response);
       }
@@ -123,22 +117,21 @@ export const JarvisProvider = ({ children }) => {
       setLastAction({
         type: 'success',
         timestamp: new Date().toISOString(),
-        data: response
+        data: response,
       });
 
       return response;
     } catch (error) {
       console.error('Error getting Jarvis response:', error);
-      addToConversation(
-        'I apologize, but I encountered an error. Please try again.',
-        false,
-        { type: 'error', error: error.message }
-      );
-      
+      addToConversation('I apologize, but I encountered an error. Please try again.', false, {
+        type: 'error',
+        error: error.message,
+      });
+
       setLastAction({
         type: 'error',
         timestamp: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       });
 
       throw error;
@@ -162,11 +155,7 @@ export const JarvisProvider = ({ children }) => {
     handleMealPlanning,
   };
 
-  return (
-    <JarvisContext.Provider value={value}>
-      {children}
-    </JarvisContext.Provider>
-  );
+  return <JarvisContext.Provider value={value}>{children}</JarvisContext.Provider>;
 };
 
-export default JarvisContext; 
+export default JarvisContext;

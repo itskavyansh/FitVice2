@@ -76,7 +76,7 @@ function PolarChart({ icon, title, description, chart, height }) {
             <PolarArea data={data} options={options} redraw />
           </MDBox>
         ),
-        [chart]
+        [chart],
       )}
     </MDBox>
   );

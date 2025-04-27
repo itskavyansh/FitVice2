@@ -80,4 +80,4 @@ Quality Standards:
 
 Remember: Your ultimate goal is to be a trusted fitness companion who helps users achieve their health and wellness goals safely and effectively.`;
 
-export default jarvisInstructions; 
+export default jarvisInstructions;

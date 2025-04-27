@@ -36,8 +36,8 @@ If no specific intent is clear, default to 'general_query'. Extract parameters a
       role: 'system',
       content: systemPrompt,
     },
-    // Add history messages 
-    ...history.map(msg => ({ role: msg.role, content: msg.content })),
+    // Add history messages
+    ...history.map((msg) => ({ role: msg.role, content: msg.content })),
     // Add the current user input
     {
       role: 'user',
@@ -46,29 +46,28 @@ If no specific intent is clear, default to 'general_query'. Extract parameters a
   ];
 
   try {
-     console.log("Sending to Groq (Analyze Intent):", JSON.stringify(messages, null, 2)); // Log messages sent
+    console.log('Sending to Groq (Analyze Intent):', JSON.stringify(messages, null, 2)); // Log messages sent
     const chatCompletion = await groq.chat.completions.create({
       messages: messages, // Use the array with history
       model: groqModel,
       temperature: 0.5,
       stream: false,
-      response_format: { type: "json_object" }, // Request JSON output
+      response_format: { type: 'json_object' }, // Request JSON output
     });
 
     const text = chatCompletion.choices[0]?.message?.content || '';
-    console.log("Groq raw response (Analyze Intent):", text);
-    
+    console.log('Groq raw response (Analyze Intent):', text);
+
     try {
       const analysis = JSON.parse(text);
       if (!analysis.type || !analysis.data) {
-          throw new Error("Invalid JSON structure from Groq");
+        throw new Error('Invalid JSON structure from Groq');
       }
       return analysis;
     } catch (parseError) {
       console.error('Failed to parse Groq JSON response (Analyze Intent):', text, parseError);
       return { type: 'general_query', data: { query: input } };
     }
-
   } catch (error) {
     console.error('Error calling Groq API (Analyze Intent):', error);
     return { type: 'general_query', data: { query: input } };
@@ -131,11 +130,11 @@ Ensure the workout phase duration reflects the total requested duration minus wa
       model: groqModel,
       temperature: 0.7,
       stream: false,
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
     });
 
     const text = chatCompletion.choices[0]?.message?.content || '';
-    console.log("Groq workout plan raw response:", text);
+    console.log('Groq workout plan raw response:', text);
     const plan = JSON.parse(text);
     // Optional: Add further validation for the plan structure
     return { success: true, plan: plan };
@@ -211,11 +210,11 @@ Ensure the meal suggestions align with the preferences and restrictions. Aim to 
       model: groqModel,
       temperature: 0.8, // Slightly higher temp for more variety
       stream: false,
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
     });
 
     const text = chatCompletion.choices[0]?.message?.content || '';
-    console.log("Groq meal plan raw response:", text);
+    console.log('Groq meal plan raw response:', text);
     const plan = JSON.parse(text);
     // Optional: Add validation
     return { success: true, plan: plan };
@@ -259,7 +258,7 @@ const handleGeneralQueryWithGroq = async (query, history = []) => {
       content: systemPrompt,
     },
     // Add history messages (ensure alternating user/assistant roles if possible)
-    ...history.map(msg => ({ role: msg.role, content: msg.content })),
+    ...history.map((msg) => ({ role: msg.role, content: msg.content })),
     // Add the current user query
     {
       role: 'user',
@@ -268,7 +267,10 @@ const handleGeneralQueryWithGroq = async (query, history = []) => {
   ];
 
   try {
-    console.log("Sending to Groq (General Query - Revised Prompt):", JSON.stringify(messages, null, 2));
+    console.log(
+      'Sending to Groq (General Query - Revised Prompt):',
+      JSON.stringify(messages, null, 2),
+    );
     const chatCompletion = await groq.chat.completions.create({
       messages: messages,
       model: groqModel,
@@ -276,12 +278,17 @@ const handleGeneralQueryWithGroq = async (query, history = []) => {
       stream: false,
     });
 
-    const responseText = chatCompletion.choices[0]?.message?.content || 'Hmm, I seem to be speechless right now. 🤔 Could you try asking differently?';
-    console.log("Groq Raw Response (General Query - Revised Prompt):", responseText); // Log the raw response
+    const responseText =
+      chatCompletion.choices[0]?.message?.content ||
+      'Hmm, I seem to be speechless right now. 🤔 Could you try asking differently?';
+    console.log('Groq Raw Response (General Query - Revised Prompt):', responseText); // Log the raw response
     return { success: true, response: responseText };
   } catch (error) {
     console.error('Error handling general query with Groq:', error);
-    return { success: false, error: 'Oops! I ran into a small glitch trying to answer that. Please try again.' };
+    return {
+      success: false,
+      error: 'Oops! I ran into a small glitch trying to answer that. Please try again.',
+    };
   }
 };
 
@@ -290,7 +297,7 @@ router.post('/analyze', async (req, res) => {
   try {
     const { input, history } = req.body; // Accept history
     if (!input) {
-        return res.status(400).json({ error: 'Input text is required' });
+      return res.status(400).json({ error: 'Input text is required' });
     }
     const analysis = await analyzeWithGroq(input, history); // Pass history
     res.json(analysis);
@@ -303,120 +310,125 @@ router.post('/analyze', async (req, res) => {
 router.post('/command', auth, async (req, res) => {
   console.log(`[Jarvis Command] Received command for user: ${req.user?.id}`); // Log user ID
   try {
-    const { command, history } = req.body; 
-     if (!command) {
-        console.log("[Jarvis Command] Error: Command text is required");
-        return res.status(400).json({ error: 'Command text is required' });
+    const { command, history } = req.body;
+    if (!command) {
+      console.log('[Jarvis Command] Error: Command text is required');
+      return res.status(400).json({ error: 'Command text is required' });
     }
     console.log(`[Jarvis Command] Analyzing command: "${command}"`);
     const analysis = await analyzeWithGroq(command, history);
-    console.log("[Jarvis Command] Analysis complete:", JSON.stringify(analysis, null, 2));
-    
+    console.log('[Jarvis Command] Analysis complete:', JSON.stringify(analysis, null, 2));
+
     let result;
     let responseStatus = 200; // Default success status
 
     switch (analysis.type) {
       case 'create_task':
-        console.log("[Jarvis Command] Handling type: create_task");
+        console.log('[Jarvis Command] Handling type: create_task');
         try {
           const taskData = analysis.data;
           const newTask = new Task({
-            user: req.user.id, 
-            title: taskData.title || 'Untitled Task', 
-            dueDate: taskData.dueDate ? new Date(taskData.dueDate) : null, 
+            user: req.user.id,
+            title: taskData.title || 'Untitled Task',
+            dueDate: taskData.dueDate ? new Date(taskData.dueDate) : null,
             priority: taskData.priority || 'medium',
           });
           await newTask.save();
-          console.log("[Jarvis Command] Task saved successfully:", newTask._id);
-          result = { 
-            message: `Task "${newTask.title}" created successfully.`, 
+          console.log('[Jarvis Command] Task saved successfully:', newTask._id);
+          result = {
+            message: `Task "${newTask.title}" created successfully.`,
             type: 'task_created', // Specific type for frontend
-            data: newTask 
+            data: newTask,
           };
         } catch (taskError) {
           console.error('[Jarvis Command] Error creating task:', taskError);
           responseStatus = 500; // Indicate server error for task save
-          result = { 
-            message: 'Analyzed: Create task, but failed to save to database.', 
-            error: taskError.message, 
-            data: analysis.data 
+          result = {
+            message: 'Analyzed: Create task, but failed to save to database.',
+            error: taskError.message,
+            data: analysis.data,
           };
         }
         break;
       case 'plan_workout':
-        console.log("[Jarvis Command] Handling type: plan_workout");
+        console.log('[Jarvis Command] Handling type: plan_workout');
         const workoutData = analysis.data;
         const workoutPlanResult = await generateWorkoutPlanWithGroq(
           workoutData.goal,
           workoutData.duration_minutes,
-          workoutData.intensity
+          workoutData.intensity,
         );
         if (workoutPlanResult.success) {
-          console.log("[Jarvis Command] Workout plan generated.");
-          result = { 
-            message: `Workout plan "${workoutPlanResult.plan?.planTitle || 'Plan'}" generated successfully.`, 
-            type: 'workout_plan', 
-            data: workoutPlanResult.plan 
+          console.log('[Jarvis Command] Workout plan generated.');
+          result = {
+            message: `Workout plan "${workoutPlanResult.plan?.planTitle || 'Plan'}" generated successfully.`,
+            type: 'workout_plan',
+            data: workoutPlanResult.plan,
           };
         } else {
-          console.error("[Jarvis Command] Failed to generate workout plan:", workoutPlanResult.error);
+          console.error(
+            '[Jarvis Command] Failed to generate workout plan:',
+            workoutPlanResult.error,
+          );
           responseStatus = 500;
-          result = { 
+          result = {
             message: 'Analyzed: Plan workout, but failed to generate the plan.',
             error: workoutPlanResult.error,
-            data: analysis.data
+            data: analysis.data,
           };
         }
         break;
       case 'plan_meal':
-         console.log("[Jarvis Command] Handling type: plan_meal");
+        console.log('[Jarvis Command] Handling type: plan_meal');
         const mealData = analysis.data;
         const mealPlanResult = await generateMealPlanWithGroq(
           mealData.preferences,
           mealData.restrictions,
-          mealData.calories
+          mealData.calories,
         );
         if (mealPlanResult.success) {
-          console.log("[Jarvis Command] Meal plan generated.");
-          result = { 
-            message: `Meal plan "${mealPlanResult.plan?.planTitle || 'Plan'}" generated successfully.`, 
-            type: 'meal_plan', 
-            data: mealPlanResult.plan 
+          console.log('[Jarvis Command] Meal plan generated.');
+          result = {
+            message: `Meal plan "${mealPlanResult.plan?.planTitle || 'Plan'}" generated successfully.`,
+            type: 'meal_plan',
+            data: mealPlanResult.plan,
           };
         } else {
-          console.error("[Jarvis Command] Failed to generate meal plan:", mealPlanResult.error);
+          console.error('[Jarvis Command] Failed to generate meal plan:', mealPlanResult.error);
           responseStatus = 500;
-          result = { 
+          result = {
             message: 'Analyzed: Plan meal, but failed to generate the plan.',
             error: mealPlanResult.error,
-            data: analysis.data
+            data: analysis.data,
           };
         }
         break;
       default: // general_query
-        console.log("[Jarvis Command] Handling type: general_query");
+        console.log('[Jarvis Command] Handling type: general_query');
         const queryResponse = await handleGeneralQueryWithGroq(analysis.data.query, history);
         if (queryResponse.success) {
-            console.log("[Jarvis Command] General query answered.");
-           result = { 
-             message: queryResponse.response, 
-             type: 'general_response',
-             data: analysis.data 
-           };
+          console.log('[Jarvis Command] General query answered.');
+          result = {
+            message: queryResponse.response,
+            type: 'general_response',
+            data: analysis.data,
+          };
         } else {
-           console.error("[Jarvis Command] Failed to answer general query:", queryResponse.error);
-           responseStatus = 500;
-           result = { 
-            message: queryResponse.error, 
+          console.error('[Jarvis Command] Failed to answer general query:', queryResponse.error);
+          responseStatus = 500;
+          result = {
+            message: queryResponse.error,
             type: 'error',
-            data: analysis.data
-           };
+            data: analysis.data,
+          };
         }
     }
-    
-    console.log(`[Jarvis Command] Sending response (Status ${responseStatus}):`, JSON.stringify(result));
-    res.status(responseStatus).json(result);
 
+    console.log(
+      `[Jarvis Command] Sending response (Status ${responseStatus}):`,
+      JSON.stringify(result),
+    );
+    res.status(responseStatus).json(result);
   } catch (error) {
     // Catch errors occurring *before* the switch statement or outside specific try/catches
     console.error('[Jarvis Command] Top-level error processing command:', error);
@@ -424,4 +436,4 @@ router.post('/command', auth, async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

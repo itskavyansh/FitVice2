@@ -223,7 +223,9 @@ function WorkoutPlanCard({ plan, onClick }) {
           },
         }}
       >
-        <Box> {/* Wrapper for top content */}
+        <Box>
+          {' '}
+          {/* Wrapper for top content */}
           <CardItem translateZ={50}>
             <MDTypography
               className="card-content"
@@ -258,13 +260,13 @@ function WorkoutPlanCard({ plan, onClick }) {
           </CardItem>
           <CardItem translateZ={70} sx={{ mt: 2 }}>
             <Chip
-               className="card-content"
-               icon={<FlagIcon />}
-               label={plan.level}
-               size="small"
-               variant="outlined"
-               sx={{ mr: 1, mb: 1 }}
-             />
+              className="card-content"
+              icon={<FlagIcon />}
+              label={plan.level}
+              size="small"
+              variant="outlined"
+              sx={{ mr: 1, mb: 1 }}
+            />
             <Chip
               className="card-content"
               icon={<TimerIcon />}
@@ -273,7 +275,7 @@ function WorkoutPlanCard({ plan, onClick }) {
               variant="outlined"
               sx={{ mr: 1, mb: 1 }}
             />
-             <Chip
+            <Chip
               className="card-content"
               icon={<AccessTimeIcon />}
               label={plan.timePerWorkout}
@@ -393,7 +395,9 @@ function WorkoutPlans() {
 
             <Grid container spacing={3}>
               {filteredPlans.map((plan) => (
-                <Grid item xs={12} md={6} lg={4} key={plan.id}> {/* Adjusted grid size */}
+                <Grid item xs={12} md={6} lg={4} key={plan.id}>
+                  {' '}
+                  {/* Adjusted grid size */}
                   <WorkoutPlanCard plan={plan} onClick={handlePlanClick} />
                 </Grid>
               ))}

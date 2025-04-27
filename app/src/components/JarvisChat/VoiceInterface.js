@@ -28,7 +28,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [autoRetry, setAutoRetry] = useState(false);
-  
+
   // Monitor online status
   useEffect(() => {
     const handleOnline = () => {
@@ -40,7 +40,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
         setAutoRetry(false);
       }
     };
-    
+
     const handleOffline = () => {
       console.log('Network connection lost');
       setIsOnline(false);
@@ -56,10 +56,10 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
         }
       }
     };
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -69,13 +69,13 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
   // Create recognition instance with better browser support
   const createRecognitionInstance = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       console.warn('Speech Recognition API not supported in this browser');
       setError('Voice recognition is not supported in your browser');
       return null;
     }
-    
+
     try {
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = false;
@@ -93,7 +93,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
 
       recognitionInstance.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
-        
+
         if (event.error === 'network') {
           setNetworkError(true);
           if (!navigator.onLine) {
@@ -112,7 +112,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
         } else {
           setError(`Speech recognition error: ${event.error}`);
         }
-        
+
         setIsListening(false);
       };
 
@@ -138,12 +138,12 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
   useEffect(() => {
     const recognitionInstance = createRecognitionInstance();
     setRecognition(recognitionInstance);
-    
+
     // Initialize speech synthesis
     if ('speechSynthesis' in window) {
       setSpeechSynthesis(window.speechSynthesis);
       console.log('Speech synthesis initialized successfully');
-      
+
       // Force load voices
       window.speechSynthesis.onvoiceschanged = () => {
         const voices = window.speechSynthesis.getVoices();
@@ -171,16 +171,16 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
       setAutoRetry(true);
       return;
     }
-    
+
     setNetworkError(false);
     setError(null);
-    setRetryCount(prev => prev + 1);
-    
+    setRetryCount((prev) => prev + 1);
+
     // Create a new instance if needed
     if (!recognition || retryCount > 2) {
       const newRecognition = createRecognitionInstance();
       setRecognition(newRecognition);
-      
+
       if (newRecognition) {
         setTimeout(() => {
           startListening(newRecognition);
@@ -193,14 +193,14 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
 
   const startListening = (recognitionInstance) => {
     if (!recognitionInstance) return;
-    
+
     if (!isOnline) {
       setError('Cannot start voice recognition while offline');
       setNetworkError(true);
       setAutoRetry(true);
       return;
     }
-    
+
     try {
       recognitionInstance.start();
       setIsListening(true);
@@ -248,7 +248,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
     // Find a good voice
     const voices = speechSynthesis.getVoices();
     const preferredVoice = voices.find(
-      voice => voice.name.includes('Google') || voice.name.includes('Male')
+      (voice) => voice.name.includes('Google') || voice.name.includes('Male'),
     );
     if (preferredVoice) {
       utterance.voice = preferredVoice;
@@ -271,31 +271,20 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
   return (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
       <Tooltip title={voiceEnabled ? 'Disable voice' : 'Enable voice'}>
-        <IconButton
-          color={voiceEnabled ? 'primary' : 'default'}
-          onClick={toggleVoice}
-          size="small"
-        >
+        <IconButton color={voiceEnabled ? 'primary' : 'default'} onClick={toggleVoice} size="small">
           {voiceEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
         </IconButton>
       </Tooltip>
 
       {!isOnline ? (
         <Tooltip title="Waiting for network connection">
-          <IconButton
-            color="warning"
-            size="small"
-          >
+          <IconButton color="warning" size="small">
             <WifiOffIcon />
           </IconButton>
         </Tooltip>
       ) : networkError ? (
         <Tooltip title="Retry voice recognition">
-          <IconButton
-            color="warning"
-            onClick={retryRecognition}
-            size="small"
-          >
+          <IconButton color="warning" onClick={retryRecognition} size="small">
             <RefreshIcon />
           </IconButton>
         </Tooltip>
@@ -334,7 +323,7 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
           </Typography>
         </Fade>
       )}
-      
+
       {autoRetry && !isListening && (
         <Fade in={true}>
           <Typography variant="caption" color="text.secondary">
@@ -342,16 +331,16 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
           </Typography>
         </Fade>
       )}
-      
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={5000} 
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={5000}
         onClose={handleCloseError}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={handleCloseError} 
-          severity="error" 
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
           variant="filled"
           action={
             networkError && isOnline ? (
@@ -368,4 +357,4 @@ const VoiceInterface = ({ onVoiceInput, isProcessing, disabled }) => {
   );
 };
 
-export default VoiceInterface; 
+export default VoiceInterface;

@@ -21,9 +21,6 @@ import Icon from '@mui/material/Icon';
 import MDBox from 'components/MDBox';
 import MDTypography from 'components/MDTypography';
 
-// Material Dashboard 2 React example components
-import TimelineItem from 'examples/Timeline/TimelineItem';
-
 function OrdersOverview() {
   return (
     <Card sx={{ height: '100%' }}>
@@ -45,37 +42,125 @@ function OrdersOverview() {
         </MDBox>
       </MDBox>
       <MDBox p={2}>
-        <TimelineItem
-          color="success"
-          icon="restaurant_menu"
-          title="Healthy Breakfast Ideas"
-          dateTime="Today 7:20 AM"
-        />
-        <TimelineItem
-          color="error"
-          icon="fitness_center"
-          title="Pre-workout Nutrition Guide"
-          dateTime="Yesterday 11:00 AM"
-        />
-        <TimelineItem
-          color="info"
-          icon="self_improvement"
-          title="Stress Management Tips"
-          dateTime="Yesterday 9:34 PM"
-        />
-        <TimelineItem
-          color="warning"
-          icon="health_and_safety"
-          title="Hydration Guidelines"
-          dateTime="2 days ago 2:20 PM"
-        />
-        <TimelineItem
-          color="primary"
-          icon="restaurant"
-          title="Post-workout Meal Plans"
-          dateTime="3 days ago 4:54 PM"
-          lastItem
-        />
+        <MDBox mb={3} display="flex" alignItems="center">
+          <MDBox
+            width="3rem"
+            height="3rem"
+            bgColor="info"
+            variant="gradient"
+            borderRadius="50%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            shadow="md"
+          >
+            <Icon sx={{ color: 'white', fontSize: '1.5rem' }}>restaurant_menu</Icon>
+          </MDBox>
+          <MDBox ml={2}>
+            <MDTypography variant="h6" fontWeight="medium">
+              Healthy Breakfast Ideas
+            </MDTypography>
+            <MDTypography variant="caption" color="text">
+              Start your day with nutritious options
+            </MDTypography>
+          </MDBox>
+        </MDBox>
+
+        <MDBox mb={3} display="flex" alignItems="center">
+          <MDBox
+            width="3rem"
+            height="3rem"
+            bgColor="error"
+            variant="gradient"
+            borderRadius="50%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            shadow="md"
+          >
+            <Icon sx={{ color: 'white', fontSize: '1.5rem' }}>fitness_center</Icon>
+          </MDBox>
+          <MDBox ml={2}>
+            <MDTypography variant="h6" fontWeight="medium">
+              Pre-workout Nutrition
+            </MDTypography>
+            <MDTypography variant="caption" color="text">
+              Fuel your workouts properly
+            </MDTypography>
+          </MDBox>
+        </MDBox>
+
+        <MDBox mb={3} display="flex" alignItems="center">
+          <MDBox
+            width="3rem"
+            height="3rem"
+            bgColor="info"
+            variant="gradient"
+            borderRadius="50%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            shadow="md"
+          >
+            <Icon sx={{ color: 'white', fontSize: '1.5rem' }}>self_improvement</Icon>
+          </MDBox>
+          <MDBox ml={2}>
+            <MDTypography variant="h6" fontWeight="medium">
+              Stress Management
+            </MDTypography>
+            <MDTypography variant="caption" color="text">
+              Balance mind and body wellness
+            </MDTypography>
+          </MDBox>
+        </MDBox>
+
+        <MDBox mb={3} display="flex" alignItems="center">
+          <MDBox
+            width="3rem"
+            height="3rem"
+            bgColor="warning"
+            variant="gradient"
+            borderRadius="50%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            shadow="md"
+          >
+            <Icon sx={{ color: 'white', fontSize: '1.5rem' }}>health_and_safety</Icon>
+          </MDBox>
+          <MDBox ml={2}>
+            <MDTypography variant="h6" fontWeight="medium">
+              Hydration Guidelines
+            </MDTypography>
+            <MDTypography variant="caption" color="text">
+              Stay hydrated throughout the day
+            </MDTypography>
+          </MDBox>
+        </MDBox>
+
+        <MDBox display="flex" alignItems="center">
+          <MDBox
+            width="3rem"
+            height="3rem"
+            bgColor="success"
+            variant="gradient"
+            borderRadius="50%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            shadow="md"
+          >
+            <Icon sx={{ color: 'white', fontSize: '1.5rem' }}>restaurant</Icon>
+          </MDBox>
+          <MDBox ml={2}>
+            <MDTypography variant="h6" fontWeight="medium">
+              Post-workout Nutrition
+            </MDTypography>
+            <MDTypography variant="caption" color="text">
+              Optimize recovery with proper meals
+            </MDTypography>
+          </MDBox>
+        </MDBox>
       </MDBox>
     </Card>
   );

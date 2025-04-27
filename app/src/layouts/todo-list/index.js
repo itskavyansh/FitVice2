@@ -73,8 +73,10 @@ const TodoList = () => {
         return parsedTodos.map((todo) => ({
           id: todo.id || Date.now() + Math.random(),
           text: todo.text || '',
-          dailyCompletions: todo.dailyCompletions && todo.dailyCompletions.length === 7
-            ? todo.dailyCompletions : Array(7).fill(false),
+          dailyCompletions:
+            todo.dailyCompletions && todo.dailyCompletions.length === 7
+              ? todo.dailyCompletions
+              : Array(7).fill(false),
           weeklyCompletions: todo.weeklyCompletions || {},
           priority: todo.priority || 'medium',
           starred: todo.starred || false,
@@ -84,7 +86,7 @@ const TodoList = () => {
         }));
       }
     } catch (error) {
-        console.error("Failed to parse todos from localStorage:", error);
+      console.error('Failed to parse todos from localStorage:', error);
     }
     return [];
   });
@@ -104,9 +106,10 @@ const TodoList = () => {
   const getCurrentDay = () => new Date().getDay();
 
   const getDayName = (index, format = 'short') => {
-    const days = format === 'short'
-      ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-      : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const days =
+      format === 'short'
+        ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+        : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[index];
   };
 
@@ -119,36 +122,40 @@ const TodoList = () => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  const handleAddTodo = useCallback((e) => {
-    e.preventDefault();
-    if (newTodo.trim() === '') return;
+  const handleAddTodo = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (newTodo.trim() === '') return;
 
-    const newTask = {
-      id: Date.now(),
-      text: newTodo.trim(),
-      dailyCompletions: Array(7).fill(false),
-      weeklyCompletions: {},
-      priority: 'medium',
-      starred: false,
-      dueDate: newTodoDueDate ? dayjs(newTodoDueDate).toISOString() : null,
-      history: [],
-      createdAt: new Date().toISOString(),
-    };
+      const newTask = {
+        id: Date.now(),
+        text: newTodo.trim(),
+        dailyCompletions: Array(7).fill(false),
+        weeklyCompletions: {},
+        priority: 'medium',
+        starred: false,
+        dueDate: newTodoDueDate ? dayjs(newTodoDueDate).toISOString() : null,
+        history: [],
+        createdAt: new Date().toISOString(),
+      };
 
-    setTodos((prevTodos) => [newTask, ...prevTodos]);
-    setNewTodo('');
-    setNewTodoDueDate(null);
-  }, [newTodo, newTodoDueDate]);
+      setTodos((prevTodos) => [newTask, ...prevTodos]);
+      setNewTodo('');
+      setNewTodoDueDate(null);
+    },
+    [newTodo, newTodoDueDate],
+  );
 
   const updateTodo = useCallback((id, updates) => {
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => (todo.id === id ? { ...todo, ...updates } : todo))
-      );
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? { ...todo, ...updates } : todo)),
+    );
   }, []);
 
-  const handleToggleToday = useCallback((id) => {
+  const handleToggleToday = useCallback(
+    (id) => {
       const currentDay = getCurrentDay();
-      const todo = todos.find(t => t.id === id);
+      const todo = todos.find((t) => t.id === id);
       if (!todo) return;
 
       const newDailyCompletions = [...todo.dailyCompletions];
@@ -157,17 +164,17 @@ const TodoList = () => {
 
       updateTodo(id, {
         dailyCompletions: newDailyCompletions,
-        history: [
-          ...todo.history,
-          { date: new Date().toISOString(), action, day: currentDay },
-        ],
+        history: [...todo.history, { date: new Date().toISOString(), action, day: currentDay }],
       });
-  }, [todos, updateTodo]);
+    },
+    [todos, updateTodo],
+  );
 
-  const handleDailyToggle = useCallback((id, dayIndex) => {
+  const handleDailyToggle = useCallback(
+    (id, dayIndex) => {
       if (isDayInFuture(dayIndex)) return;
 
-      const todo = todos.find(t => t.id === id);
+      const todo = todos.find((t) => t.id === id);
       if (!todo) return;
 
       const newDailyCompletions = [...todo.dailyCompletions];
@@ -176,12 +183,11 @@ const TodoList = () => {
 
       updateTodo(id, {
         dailyCompletions: newDailyCompletions,
-        history: [
-          ...todo.history,
-          { date: new Date().toISOString(), action, day: dayIndex },
-        ],
+        history: [...todo.history, { date: new Date().toISOString(), action, day: dayIndex }],
       });
-  }, [todos, updateTodo]);
+    },
+    [todos, updateTodo],
+  );
 
   const handleOpenHistory = useCallback((todo) => {
     setSelectedTodo(todo);
@@ -222,7 +228,7 @@ const TodoList = () => {
   const handleToggleStar = useCallback((id) => {
     setTodos((prevTodos) => {
       const updatedTodos = prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, starred: !todo.starred } : todo
+        todo.id === id ? { ...todo, starred: !todo.starred } : todo,
       );
       return updatedTodos.sort((a, b) => {
         if (a.starred !== b.starred) return b.starred ? 1 : -1;
@@ -235,10 +241,14 @@ const TodoList = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'high': return 'error';
-      case 'medium': return 'warning';
-      case 'low': return 'info';
-      default: return 'default';
+      case 'high':
+        return 'error';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'info';
+      default:
+        return 'default';
     }
   };
 
@@ -246,21 +256,24 @@ const TodoList = () => {
     const color = getPriorityColor(priority);
     if (color === 'default' || color === 'info') return null;
     return (
-        <Tooltip title={`${priority.charAt(0).toUpperCase() + priority.slice(1)} Priority`}>
-             <PriorityHighIcon color={color} sx={{ fontSize: '1rem' }} />
-        </Tooltip>
+      <Tooltip title={`${priority.charAt(0).toUpperCase() + priority.slice(1)} Priority`}>
+        <PriorityHighIcon color={color} sx={{ fontSize: '1rem' }} />
+      </Tooltip>
     );
   };
 
-  const handleDragEnd = useCallback((result) => {
-    if (!result.destination || result.destination.index === result.source.index) {
-      return;
-    }
-    const items = Array.from(todos);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setTodos(items);
-  }, [todos]);
+  const handleDragEnd = useCallback(
+    (result) => {
+      if (!result.destination || result.destination.index === result.source.index) {
+        return;
+      }
+      const items = Array.from(todos);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      setTodos(items);
+    },
+    [todos],
+  );
 
   const handleCalendarOpen = useCallback((event, todo) => {
     setCalendarAnchorEl(event.currentTarget);
@@ -291,7 +304,7 @@ const TodoList = () => {
           return { ...todo, weeklyCompletions: updatedWeeklyCompletions };
         }
         return todo;
-      })
+      }),
     );
   }, []);
 
@@ -374,7 +387,7 @@ const TodoList = () => {
                           borderRadius: 1,
                           px: 3,
                           color: 'white !important',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         Add Task
@@ -394,13 +407,13 @@ const TodoList = () => {
                   <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId="todos">
                       {(providedDroppable) => (
-                        <List {...providedDroppable.droppableProps} ref={providedDroppable.innerRef} sx={{ py: 0 }}>
+                        <List
+                          {...providedDroppable.droppableProps}
+                          ref={providedDroppable.innerRef}
+                          sx={{ py: 0 }}
+                        >
                           {todos.map((todo, index) => (
-                            <Draggable
-                              key={todo.id}
-                              draggableId={String(todo.id)}
-                              index={index}
-                            >
+                            <Draggable key={todo.id} draggableId={String(todo.id)} index={index}>
                               {(providedDraggable) => (
                                 <ListItem
                                   ref={providedDraggable.innerRef}
@@ -437,31 +450,41 @@ const TodoList = () => {
                                   >
                                     <DragIndicatorIcon sx={{ fontSize: '1.25rem' }} />
                                   </Box>
-                                  
+
                                   <Checkbox
                                     checked={todo.dailyCompletions[getCurrentDay()]}
                                     onChange={() => handleToggleToday(todo.id)}
-                                    sx={{ 
-                                        p: 0,
-                                        mr: 1.5, 
-                                        mt: 0.5,
-                                        color: 'primary.main' 
+                                    sx={{
+                                      p: 0,
+                                      mr: 1.5,
+                                      mt: 0.5,
+                                      color: 'primary.main',
                                     }}
                                   />
 
                                   <Box sx={{ flexGrow: 1, mr: 1, mt: 0.5 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+                                    <Box
+                                      sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                        gap: 0.5,
+                                        mb: 1,
+                                      }}
+                                    >
                                       {getPriorityIcon(todo.priority)}
                                       <Typography
                                         variant="body1"
                                         sx={{
                                           fontWeight: 500,
-                                          textDecoration:
-                                            todo.dailyCompletions[getCurrentDay()] ? 'line-through' : 'none',
-                                          color:
-                                            todo.dailyCompletions[getCurrentDay()] ? 'text.disabled' : 'text.primary',
+                                          textDecoration: todo.dailyCompletions[getCurrentDay()]
+                                            ? 'line-through'
+                                            : 'none',
+                                          color: todo.dailyCompletions[getCurrentDay()]
+                                            ? 'text.disabled'
+                                            : 'text.primary',
                                           wordBreak: 'break-word',
-                                          mr: 'auto'
+                                          mr: 'auto',
                                         }}
                                       >
                                         {todo.text}
@@ -474,31 +497,62 @@ const TodoList = () => {
                                           sx={{
                                             height: 'auto',
                                             fontSize: '0.75rem',
-                                            color: dayjs().isAfter(dayjs(todo.dueDate)) ? 'error.main' : 'text.secondary',
-                                            borderColor: dayjs().isAfter(dayjs(todo.dueDate)) ? 'error.light' : 'action.disabled',
+                                            color: dayjs().isAfter(dayjs(todo.dueDate))
+                                              ? 'error.main'
+                                              : 'text.secondary',
+                                            borderColor: dayjs().isAfter(dayjs(todo.dueDate))
+                                              ? 'error.light'
+                                              : 'action.disabled',
                                             mt: { xs: 0.5, sm: 0 },
                                             ml: 1,
                                           }}
                                         />
                                       )}
                                     </Box>
-                                    
+
                                     <Stack
                                       direction="row"
                                       spacing={0.5}
-                                      sx={{ alignItems: 'center', flexWrap: 'wrap'}}
+                                      sx={{ alignItems: 'center', flexWrap: 'wrap' }}
                                     >
-                                      {Array(7).fill(0).map((_, dayIndex) => {
+                                      {Array(7)
+                                        .fill(0)
+                                        .map((_, dayIndex) => {
                                           const isFutureDay = isDayInFuture(dayIndex);
                                           return (
-                                            <Tooltip key={dayIndex} title={getDayName(dayIndex, 'full')} placement="top">
+                                            <Tooltip
+                                              key={dayIndex}
+                                              title={getDayName(dayIndex, 'full')}
+                                              placement="top"
+                                            >
                                               <Checkbox
                                                 checked={todo.dailyCompletions[dayIndex]}
-                                                onChange={() => handleDailyToggle(todo.id, dayIndex)}
+                                                onChange={() =>
+                                                  handleDailyToggle(todo.id, dayIndex)
+                                                }
                                                 size="small"
                                                 disabled={isFutureDay}
-                                                icon={<Box sx={{ width: 16, height: 16, borderRadius: '4px', border: '1px solid', borderColor: 'action.disabled' }} />}
-                                                checkedIcon={<Box sx={{ width: 16, height: 16, borderRadius: '4px', bgcolor: 'primary.light' }} />}
+                                                icon={
+                                                  <Box
+                                                    sx={{
+                                                      width: 16,
+                                                      height: 16,
+                                                      borderRadius: '4px',
+                                                      border: '1px solid',
+                                                      borderColor: 'action.disabled',
+                                                    }}
+                                                  />
+                                                }
+                                                checkedIcon={
+                                                  <Box
+                                                    sx={{
+                                                      width: 16,
+                                                      height: 16,
+                                                      borderRadius: '4px',
+                                                      bgcolor: 'primary.light',
+                                                    }}
+                                                  />
+                                                }
                                                 sx={{
                                                   p: 0.5,
                                                   opacity: isFutureDay ? 0.5 : 1,
@@ -506,7 +560,7 @@ const TodoList = () => {
                                                   color: 'transparent',
                                                   '&.Mui-disabled': {
                                                     cursor: 'not-allowed',
-                                                  }
+                                                  },
                                                 }}
                                               />
                                             </Tooltip>
@@ -531,18 +585,18 @@ const TodoList = () => {
                                   <Stack
                                     direction={{ xs: 'column', sm: 'row' }}
                                     spacing={0.5}
-                                    sx={{ 
-                                        alignItems: 'center', 
-                                        mt: { xs: 1, sm: 0.5 }
+                                    sx={{
+                                      alignItems: 'center',
+                                      mt: { xs: 1, sm: 0.5 },
                                     }}
                                   >
-                                    <Tooltip title={todo.starred ? "Unstar" : "Star"}>
+                                    <Tooltip title={todo.starred ? 'Unstar' : 'Star'}>
                                       <IconButton
                                         size="small"
                                         onClick={() => handleToggleStar(todo.id)}
-                                        sx={{ 
-                                            color: todo.starred ? 'warning.main' : 'action.disabled',
-                                            '&:hover': { backgroundColor: 'action.hover' }
+                                        sx={{
+                                          color: todo.starred ? 'warning.main' : 'action.disabled',
+                                          '&:hover': { backgroundColor: 'action.hover' },
                                         }}
                                       >
                                         <StarIcon sx={{ fontSize: '1rem' }} />
@@ -550,12 +604,12 @@ const TodoList = () => {
                                     </Tooltip>
                                     <Tooltip title="View History">
                                       <IconButton
-                                        size="small" 
+                                        size="small"
                                         aria-label="history"
                                         onClick={() => handleOpenHistory(todo)}
-                                        sx={{ 
-                                            color: 'text.secondary',
-                                            '&:hover': { backgroundColor: 'action.hover' }
+                                        sx={{
+                                          color: 'text.secondary',
+                                          '&:hover': { backgroundColor: 'action.hover' },
                                         }}
                                       >
                                         <MoreVertIcon sx={{ fontSize: '1rem' }} />
@@ -566,9 +620,9 @@ const TodoList = () => {
                                         size="small"
                                         aria-label="edit"
                                         onClick={() => handleOpenEdit(todo)}
-                                        sx={{ 
-                                            color: 'text.secondary',
-                                            '&:hover': { backgroundColor: 'action.hover' }
+                                        sx={{
+                                          color: 'text.secondary',
+                                          '&:hover': { backgroundColor: 'action.hover' },
                                         }}
                                       >
                                         <EditIcon sx={{ fontSize: '1rem' }} />
@@ -579,9 +633,9 @@ const TodoList = () => {
                                         size="small"
                                         aria-label="delete"
                                         onClick={() => openDeleteConfirm(todo.id)}
-                                        sx={{ 
-                                            color: 'error.main',
-                                            '&:hover': { backgroundColor: 'action.hover' }
+                                        sx={{
+                                          color: 'error.main',
+                                          '&:hover': { backgroundColor: 'action.hover' },
                                         }}
                                       >
                                         <DeleteIcon sx={{ fontSize: '1rem' }} />
@@ -629,8 +683,10 @@ const TodoList = () => {
             },
           }}
         >
-          <DialogTitle sx={{ bgcolor: 'primary.main', color: 'white', fontSize: '1.1rem', py: 1.5, px: 2 }}>
-             {`History: ${selectedTodo?.text?.substring(0, 50)}${selectedTodo?.text?.length > 50 ? '...' : ''}`}
+          <DialogTitle
+            sx={{ bgcolor: 'primary.main', color: 'white', fontSize: '1.1rem', py: 1.5, px: 2 }}
+          >
+            {`History: ${selectedTodo?.text?.substring(0, 50)}${selectedTodo?.text?.length > 50 ? '...' : ''}`}
           </DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
             {selectedTodo?.history?.length > 0 ? (
@@ -648,7 +704,11 @@ const TodoList = () => {
                       <TableRow key={index} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                         <TableCell>{dayjs(entry.date).format('MMM D, YYYY h:mm A')}</TableCell>
                         <TableCell>
-                          <Chip label={entry.action} size="small" color={entry.action === 'completed' ? 'success' : 'default'} />
+                          <Chip
+                            label={entry.action}
+                            size="small"
+                            color={entry.action === 'completed' ? 'success' : 'default'}
+                          />
                         </TableCell>
                         <TableCell>{getDayName(entry.day, 'full')}</TableCell>
                       </TableRow>
@@ -663,31 +723,88 @@ const TodoList = () => {
             )}
           </DialogContent>
           <DialogActions sx={{ px: 2, pb: 2 }}>
-            <Button onClick={handleCloseHistory} variant="outlined" size="small">Close</Button>
+            <Button onClick={handleCloseHistory} variant="outlined" size="small">
+              Close
+            </Button>
           </DialogActions>
         </Dialog>
 
-        <Dialog open={editDialogOpen} onClose={handleCloseEdit} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '12px' } }}>
-          <DialogTitle sx={{ bgcolor: 'primary.main', color: 'white', fontSize: '1.1rem', py: 1.5, px: 2 }}>Edit Task</DialogTitle>
+        <Dialog
+          open={editDialogOpen}
+          onClose={handleCloseEdit}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{ sx: { borderRadius: '12px' } }}
+        >
+          <DialogTitle
+            sx={{ bgcolor: 'primary.main', color: 'white', fontSize: '1.1rem', py: 1.5, px: 2 }}
+          >
+            Edit Task
+          </DialogTitle>
           <DialogContent sx={{ pt: '20px !important', pb: 2 }}>
             <Stack spacing={2}>
-              <TextField label="Task Text" value={editText} onChange={(e) => setEditText(e.target.value)} fullWidth variant="outlined" margin="dense" />
-              <TextField select label="Priority" value={editPriority} onChange={(e) => setEditPriority(e.target.value)} fullWidth variant="outlined" margin="dense" SelectProps={{ native: true }}>
+              <TextField
+                label="Task Text"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+              />
+              <TextField
+                select
+                label="Priority"
+                value={editPriority}
+                onChange={(e) => setEditPriority(e.target.value)}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                SelectProps={{ native: true }}
+              >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </TextField>
-              <DateTimePicker label="Due Date (Optional)" value={editDueDate} onChange={setEditDueDate} ampm={true} slotProps={{ textField: { size: 'small', fullWidth: true, margin: 'dense' } }} />
+              <DateTimePicker
+                label="Due Date (Optional)"
+                value={editDueDate}
+                onChange={setEditDueDate}
+                ampm={true}
+                slotProps={{ textField: { size: 'small', fullWidth: true, margin: 'dense' } }}
+              />
             </Stack>
           </DialogContent>
           <DialogActions sx={{ px: 2, pb: 2 }}>
-            <Button onClick={handleCloseEdit} variant="outlined" size="small">Cancel</Button>
-            <Button onClick={handleSaveEdit} variant="contained" size="small" sx={{ color: 'white !important' }} color="primary">Save Changes</Button>
+            <Button onClick={handleCloseEdit} variant="outlined" size="small">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveEdit}
+              variant="contained"
+              size="small"
+              sx={{ color: 'white !important' }}
+              color="primary"
+            >
+              Save Changes
+            </Button>
           </DialogActions>
         </Dialog>
 
-        <Dialog open={deleteConfirmOpen} onClose={closeDeleteConfirm} maxWidth="xs" PaperProps={{ sx: { borderRadius: '12px', p: 1 } }}>
-          <DialogTitle sx={{ bgcolor: 'transparent', color: 'error.main', textAlign: 'center', pt: 2, fontSize: '1.1rem' }}>
+        <Dialog
+          open={deleteConfirmOpen}
+          onClose={closeDeleteConfirm}
+          maxWidth="xs"
+          PaperProps={{ sx: { borderRadius: '12px', p: 1 } }}
+        >
+          <DialogTitle
+            sx={{
+              bgcolor: 'transparent',
+              color: 'error.main',
+              textAlign: 'center',
+              pt: 2,
+              fontSize: '1.1rem',
+            }}
+          >
             <DeleteIcon sx={{ verticalAlign: 'middle', mr: 0.5 }} /> Confirm Deletion
           </DialogTitle>
           <DialogContent sx={{ pt: 1, pb: 2 }}>
@@ -696,8 +813,18 @@ const TodoList = () => {
             </Typography>
           </DialogContent>
           <DialogActions sx={{ pb: 2, justifyContent: 'center' }}>
-            <Button onClick={closeDeleteConfirm} variant="outlined" size="small" sx={{ mr: 1 }}>Cancel</Button>
-            <Button onClick={confirmDeleteTodo} variant="contained" color="error" size="small" sx={{ color: 'white !important' }}>Delete</Button>
+            <Button onClick={closeDeleteConfirm} variant="outlined" size="small" sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmDeleteTodo}
+              variant="contained"
+              color="error"
+              size="small"
+              sx={{ color: 'white !important' }}
+            >
+              Delete
+            </Button>
           </DialogActions>
         </Dialog>
 
@@ -711,7 +838,9 @@ const TodoList = () => {
         >
           <DateCalendar
             onChange={(newDate) => {
-              if (selectedTodoForCalendar) { handleCalendarDateSelect(newDate, selectedTodoForCalendar.id); }
+              if (selectedTodoForCalendar) {
+                handleCalendarDateSelect(newDate, selectedTodoForCalendar.id);
+              }
             }}
             slots={{ day: DayWithBadge }}
             slotProps={{
@@ -730,27 +859,27 @@ const TodoList = () => {
 };
 
 const DayWithBadge = (props) => {
-    const { day, outsideCurrentMonth, todos, selectedTodoId, ...other } = props;
-    const todo = todos?.find((t) => t.id === selectedTodoId);
-    let isCompleted = false;
-    if (todo && !outsideCurrentMonth) {
-        const weekStart = dayjs(day).startOf('week').format('YYYY-MM-DD');
-        const dateStr = dayjs(day).format('YYYY-MM-DD');
-        isCompleted = todo.weeklyCompletions?.[weekStart]?.[dateStr] || false;
-    }
+  const { day, outsideCurrentMonth, todos, selectedTodoId, ...other } = props;
+  const todo = todos?.find((t) => t.id === selectedTodoId);
+  let isCompleted = false;
+  if (todo && !outsideCurrentMonth) {
+    const weekStart = dayjs(day).startOf('week').format('YYYY-MM-DD');
+    const dateStr = dayjs(day).format('YYYY-MM-DD');
+    isCompleted = todo.weeklyCompletions?.[weekStart]?.[dateStr] || false;
+  }
 
-    return (
-        <Badge
-            key={props.day.toString()}
-            overlap="circular"
-            variant="dot"
-            color={isCompleted ? "success" : "default"}
-            invisible={!isCompleted || outsideCurrentMonth}
-            sx={{ '& .MuiBadge-badge': { width: 6, height: 6, minWidth: 6, borderRadius: '50%' } }}
-        >
-            <PickersDay {...other} day={day} outsideCurrentMonth={outsideCurrentMonth} />
-        </Badge>
-    );
+  return (
+    <Badge
+      key={props.day.toString()}
+      overlap="circular"
+      variant="dot"
+      color={isCompleted ? 'success' : 'default'}
+      invisible={!isCompleted || outsideCurrentMonth}
+      sx={{ '& .MuiBadge-badge': { width: 6, height: 6, minWidth: 6, borderRadius: '50%' } }}
+    >
+      <PickersDay {...other} day={day} outsideCurrentMonth={outsideCurrentMonth} />
+    </Badge>
+  );
 };
 
 export default TodoList;

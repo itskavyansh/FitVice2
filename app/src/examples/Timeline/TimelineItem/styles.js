@@ -15,10 +15,10 @@ Coded by www.creative-tim.com
 
 function timelineItem(theme) {
   return {
-    "& .timeline-icon": {
+    '& .timeline-icon': {
       boxShadow: theme.shadows[3],
     },
   };
 }
 
-export default timelineItem; 
+export default timelineItem;

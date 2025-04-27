@@ -53,7 +53,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 function ReportsLineChart({ color, title, description, date, chart }) {
@@ -77,8 +77,8 @@ function ReportsLineChart({ color, title, description, date, chart }) {
                 padding: '1rem',
                 '& canvas': {
                   height: '100% !important',
-                  marginTop: '0 !important'
-                }
+                  marginTop: '0 !important',
+                },
               }}
             >
               <Line data={data} options={options} redraw />

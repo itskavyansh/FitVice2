@@ -14,14 +14,7 @@ import {
   ListItemIcon,
   Divider,
 } from '@mui/material';
-import {
-  DirectionsRun,
-  Favorite,
-  Bedtime,
-  Scale,
-  Refresh,
-  TrendingUp,
-} from '@mui/icons-material';
+import { DirectionsRun, Favorite, Bedtime, Scale, Refresh, TrendingUp } from '@mui/icons-material';
 import googleFitService from 'services/googleFitService';
 
 const GoogleFitIntegration = () => {
@@ -114,9 +107,7 @@ const GoogleFitIntegration = () => {
         {data.map((item, index) => (
           <React.Fragment key={index}>
             <ListItem>
-              <ListItemIcon>
-                {icon}
-              </ListItemIcon>
+              <ListItemIcon>{icon}</ListItemIcon>
               <ListItemText
                 primary={`${new Date(item.startTimeMillis).toLocaleDateString()}`}
                 secondary={`${item.value[0].fpVal || item.value[0].intVal} ${unit}`}
@@ -219,4 +210,4 @@ const GoogleFitIntegration = () => {
   );
 };
 
-export default GoogleFitIntegration; 
+export default GoogleFitIntegration;

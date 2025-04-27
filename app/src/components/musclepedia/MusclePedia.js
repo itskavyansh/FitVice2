@@ -16,4 +16,4 @@ const MusclePedia = () => {
   );
 };
 
-export default MusclePedia; 
+export default MusclePedia;

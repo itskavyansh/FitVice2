@@ -206,51 +206,53 @@ const NutritionGuide = () => {
   const [aiError, setAiError] = useState('');
   const [nutritionTips, setNutritionTips] = useState([
     {
-      title: "Stay Hydrated",
-      description: "Drink at least 8 glasses of water daily to maintain optimal body function.",
-      icon: "WaterDrop"
+      title: 'Stay Hydrated',
+      description: 'Drink at least 8 glasses of water daily to maintain optimal body function.',
+      icon: 'WaterDrop',
     },
     {
-      title: "Balanced Diet",
-      description: "Include a variety of fruits, vegetables, proteins, and whole grains in your meals.",
-      icon: "Restaurant"
+      title: 'Balanced Diet',
+      description:
+        'Include a variety of fruits, vegetables, proteins, and whole grains in your meals.',
+      icon: 'Restaurant',
     },
     {
-      title: "Portion Control",
-      description: "Be mindful of portion sizes to maintain a healthy weight and energy levels.",
-      icon: "LocalDining"
+      title: 'Portion Control',
+      description: 'Be mindful of portion sizes to maintain a healthy weight and energy levels.',
+      icon: 'LocalDining',
     },
     {
-      title: "Regular Exercise",
-      description: "Combine good nutrition with regular physical activity for best results.",
-      icon: "FitnessCenter"
-    }
+      title: 'Regular Exercise',
+      description: 'Combine good nutrition with regular physical activity for best results.',
+      icon: 'FitnessCenter',
+    },
   ]);
-  
+
   // Add recipe tips state
   const [recipeTips, setRecipeTips] = useState([
     {
-      title: "Mise en Place",
-      description: "Prepare and organize all ingredients before starting to cook for better efficiency.",
-      icon: "Restaurant"
+      title: 'Mise en Place',
+      description:
+        'Prepare and organize all ingredients before starting to cook for better efficiency.',
+      icon: 'Restaurant',
     },
     {
-      title: "Temperature Control",
+      title: 'Temperature Control',
       description: "Learn to control heat levels - high heat isn't always best for cooking.",
-      icon: "LocalDining"
+      icon: 'LocalDining',
     },
     {
-      title: "Fresh Ingredients",
-      description: "Use fresh, quality ingredients for the best flavor in your dishes.",
-      icon: "FoodBank"
+      title: 'Fresh Ingredients',
+      description: 'Use fresh, quality ingredients for the best flavor in your dishes.',
+      icon: 'FoodBank',
     },
     {
-      title: "Seasoning Balance",
-      description: "Season throughout cooking, not just at the end, for better flavor development.",
-      icon: "EmojiFoodBeverage"
-    }
+      title: 'Seasoning Balance',
+      description: 'Season throughout cooking, not just at the end, for better flavor development.',
+      icon: 'EmojiFoodBeverage',
+    },
   ]);
-  
+
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [currentRecipeTipIndex, setCurrentRecipeTipIndex] = useState(0);
   const [tipsLoading, setTipsLoading] = useState(false);
@@ -344,49 +346,49 @@ const NutritionGuide = () => {
       } else {
         console.error('API returned error:', response.message);
         setError(response.message || 'Failed to generate recipe. Please try again.');
-        
+
         // Create a sample recipe as fallback when API fails
         const mainIngredient = ingredients.split(',')[0].trim();
         setRecipe({
           title: `Simple ${mainIngredient.charAt(0).toUpperCase() + mainIngredient.slice(1)} Recipe`,
           description: `A healthy recipe featuring ${ingredients}. This is a fallback recipe created when the API connection failed.`,
-          ingredients: ingredients.split(',').map(i => `${i.trim()} - as needed`),
+          ingredients: ingredients.split(',').map((i) => `${i.trim()} - as needed`),
           instructions: [
             `Prepare ${mainIngredient} and other ingredients`,
-            "Cook according to your preference",
-            "Enjoy your meal!"
+            'Cook according to your preference',
+            'Enjoy your meal!',
           ],
           nutritionInfo: {
-            calories: "350",
-            protein: "15g",
-            carbs: "40g",
-            fat: "10g"
+            calories: '350',
+            protein: '15g',
+            carbs: '40g',
+            fat: '10g',
           },
-          image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`
+          image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`,
         });
       }
     } catch (err) {
       console.error('Recipe generation error:', err);
       setError('An error occurred while generating the recipe. Please try again.');
-      
+
       // Create a sample recipe as fallback when there's an exception
       const mainIngredient = ingredients.split(',')[0].trim();
       setRecipe({
         title: `Simple ${mainIngredient.charAt(0).toUpperCase() + mainIngredient.slice(1)} Recipe`,
         description: `A healthy recipe featuring ${ingredients}. This is a sample recipe created when we couldn't connect to our AI service.`,
-        ingredients: ingredients.split(',').map(i => `${i.trim()} - as needed`),
+        ingredients: ingredients.split(',').map((i) => `${i.trim()} - as needed`),
         instructions: [
           `Prepare ${mainIngredient} and other ingredients`,
-          "Cook according to your preference",
-          "Enjoy your meal!"
+          'Cook according to your preference',
+          'Enjoy your meal!',
         ],
         nutritionInfo: {
-          calories: "350",
-          protein: "15g",
-          carbs: "40g",
-          fat: "10g"
+          calories: '350',
+          protein: '15g',
+          carbs: '40g',
+          fat: '10g',
         },
-        image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`
+        image: `https://source.unsplash.com/random/800x600/?food,recipe,${mainIngredient}`,
       });
     } finally {
       setLoading(false);
@@ -498,25 +500,29 @@ const NutritionGuide = () => {
         <Typography variant="h6" gutterBottom sx={{ color: 'text.primary', mb: 2 }}>
           Cooking Tips
         </Typography>
-        <Box sx={{ 
-          position: 'relative', 
-          width: '100%', 
-          overflow: 'hidden',
-          height: '150px',
-        }}>
-          <CarouselTrack sx={{ 
-            transform: `translateX(-${currentRecipeTipIndex * 100}%)`,
-            display: 'flex',
+        <Box
+          sx={{
+            position: 'relative',
             width: '100%',
-            height: '100%',
-          }}>
+            overflow: 'hidden',
+            height: '150px',
+          }}
+        >
+          <CarouselTrack
+            sx={{
+              transform: `translateX(-${currentRecipeTipIndex * 100}%)`,
+              display: 'flex',
+              width: '100%',
+              height: '100%',
+            }}
+          >
             {recipeCarouselItems.map((tip, index) => {
               const IconComponent = iconMap[tip.icon] || RestaurantIcon;
               return (
-                <Box 
-                  key={index} 
-                  sx={{ 
-                    width: '100%', 
+                <Box
+                  key={index}
+                  sx={{
+                    width: '100%',
                     flexShrink: 0,
                     position: 'relative',
                     zIndex: 2,
@@ -527,15 +533,17 @@ const NutritionGuide = () => {
                   <Grow in={true} timeout={500}>
                     <TipCard index={index % recipeTips.length} sx={{ height: '100%' }}>
                       <StyledCardContent>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center',
-                          marginBottom: 1,
-                        }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginBottom: 1,
+                          }}
+                        >
                           <IconWrapper>
                             <Zoom in={true} timeout={500}>
-                              <IconComponent 
-                                sx={{ 
+                              <IconComponent
+                                sx={{
                                   color: 'white',
                                   fontSize: '1.5rem',
                                 }}
@@ -543,9 +551,9 @@ const NutritionGuide = () => {
                             </Zoom>
                           </IconWrapper>
                           <TitleWrapper>
-                            <Typography 
+                            <Typography
                               variant="h6"
-                              sx={{ 
+                              sx={{
                                 color: 'white',
                                 fontWeight: 'bold',
                                 textShadow: '0 2px 4px rgba(0,0,0,0.2)',
@@ -558,9 +566,9 @@ const NutritionGuide = () => {
                           </TitleWrapper>
                         </Box>
                         <DescriptionWrapper>
-                          <Typography 
+                          <Typography
                             variant="body1"
-                            sx={{ 
+                            sx={{
                               color: 'white',
                               fontSize: '1rem',
                               lineHeight: 1.6,
@@ -579,10 +587,10 @@ const NutritionGuide = () => {
               );
             })}
           </CarouselTrack>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
               alignItems: 'center',
               mt: 2,
               gap: 2,
@@ -590,31 +598,31 @@ const NutritionGuide = () => {
               zIndex: 3,
             }}
           >
-            <IconButton 
-              onClick={handlePrevRecipeTip} 
-              sx={{ 
+            <IconButton
+              onClick={handlePrevRecipeTip}
+              sx={{
                 '&:hover': { transform: 'scale(1.2)' },
                 transition: 'transform 0.2s ease-in-out',
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                }
+                },
               }}
             >
               <NavigateBeforeIcon />
             </IconButton>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {currentRecipeTipIndex % recipeTips.length + 1} / {recipeTips.length}
+              {(currentRecipeTipIndex % recipeTips.length) + 1} / {recipeTips.length}
             </Typography>
-            <IconButton 
-              onClick={handleNextRecipeTip} 
-              sx={{ 
+            <IconButton
+              onClick={handleNextRecipeTip}
+              sx={{
                 '&:hover': { transform: 'scale(1.2)' },
                 transition: 'transform 0.2s ease-in-out',
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                }
+                },
               }}
             >
               <NavigateNextIcon />
@@ -625,10 +633,10 @@ const NutritionGuide = () => {
 
       {recipe && (
         <RecipeCard>
-          <CardMedia 
-            component="img" 
-            height="200" 
-            image={recipe.image} 
+          <CardMedia
+            component="img"
+            height="200"
+            image={recipe.image}
             alt={recipe.title}
             onError={(e) => {
               console.log('Image failed to load, using fallback');
@@ -673,13 +681,15 @@ const NutritionGuide = () => {
               {recipe.ingredients &&
                 recipe.ingredients.map((ingredient, index) => (
                   <Grid item key={index}>
-                    <Chip 
-                      label={typeof ingredient === 'string' 
-                        ? ingredient 
-                        : (ingredient.name && ingredient.quantity)
-                          ? `${ingredient.name} - ${ingredient.quantity}`
-                          : (ingredient.name || JSON.stringify(ingredient))} 
-                      size="small" 
+                    <Chip
+                      label={
+                        typeof ingredient === 'string'
+                          ? ingredient
+                          : ingredient.name && ingredient.quantity
+                            ? `${ingredient.name} - ${ingredient.quantity}`
+                            : ingredient.name || JSON.stringify(ingredient)
+                      }
+                      size="small"
                     />
                   </Grid>
                 ))}
@@ -756,25 +766,29 @@ const NutritionGuide = () => {
               <CircularProgress />
             </Box>
           ) : nutritionTips.length > 0 ? (
-            <Box sx={{ 
-              position: 'relative', 
-              width: '100%', 
-              overflow: 'hidden',
-              height: '150px',
-            }}>
-              <CarouselTrack sx={{ 
-                transform: `translateX(-${currentTipIndex * 100}%)`,
-                display: 'flex',
+            <Box
+              sx={{
+                position: 'relative',
                 width: '100%',
-                height: '100%',
-              }}>
+                overflow: 'hidden',
+                height: '150px',
+              }}
+            >
+              <CarouselTrack
+                sx={{
+                  transform: `translateX(-${currentTipIndex * 100}%)`,
+                  display: 'flex',
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
                 {carouselItems.map((tip, index) => {
                   const IconComponent = iconMap[tip.icon] || RestaurantIcon;
                   return (
-                    <Box 
-                      key={index} 
-                      sx={{ 
-                        width: '100%', 
+                    <Box
+                      key={index}
+                      sx={{
+                        width: '100%',
                         flexShrink: 0,
                         position: 'relative',
                         zIndex: 2,
@@ -785,15 +799,17 @@ const NutritionGuide = () => {
                       <Grow in={true} timeout={500}>
                         <TipCard index={index % nutritionTips.length} sx={{ height: '100%' }}>
                           <StyledCardContent>
-                            <Box sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center',
-                              marginBottom: 1,
-                            }}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                marginBottom: 1,
+                              }}
+                            >
                               <IconWrapper>
                                 <Zoom in={true} timeout={500}>
-                                  <IconComponent 
-                                    sx={{ 
+                                  <IconComponent
+                                    sx={{
                                       color: 'white',
                                       fontSize: '1.5rem',
                                     }}
@@ -801,9 +817,9 @@ const NutritionGuide = () => {
                                 </Zoom>
                               </IconWrapper>
                               <TitleWrapper>
-                                <Typography 
+                                <Typography
                                   variant="h6"
-                                  sx={{ 
+                                  sx={{
                                     color: 'white',
                                     fontWeight: 'bold',
                                     textShadow: '0 2px 4px rgba(0,0,0,0.2)',
@@ -816,9 +832,9 @@ const NutritionGuide = () => {
                               </TitleWrapper>
                             </Box>
                             <DescriptionWrapper>
-                              <Typography 
+                              <Typography
                                 variant="body1"
-                                sx={{ 
+                                sx={{
                                   color: 'white',
                                   fontSize: '1rem',
                                   lineHeight: 1.6,
@@ -837,10 +853,10 @@ const NutritionGuide = () => {
                   );
                 })}
               </CarouselTrack>
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
                   alignItems: 'center',
                   mt: 2,
                   gap: 2,
@@ -848,33 +864,33 @@ const NutritionGuide = () => {
                   zIndex: 3,
                 }}
               >
-                <IconButton 
-                  onClick={handlePrevTip} 
+                <IconButton
+                  onClick={handlePrevTip}
                   disabled={tipsLoading}
-                  sx={{ 
+                  sx={{
                     '&:hover': { transform: 'scale(1.2)' },
                     transition: 'transform 0.2s ease-in-out',
                     backgroundColor: 'rgba(0, 0, 0, 0.1)',
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    }
+                    },
                   }}
                 >
                   <NavigateBeforeIcon />
                 </IconButton>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {currentTipIndex % nutritionTips.length + 1} / {nutritionTips.length}
+                  {(currentTipIndex % nutritionTips.length) + 1} / {nutritionTips.length}
                 </Typography>
-                <IconButton 
-                  onClick={handleNextTip} 
+                <IconButton
+                  onClick={handleNextTip}
                   disabled={tipsLoading}
-                  sx={{ 
+                  sx={{
                     '&:hover': { transform: 'scale(1.2)' },
                     transition: 'transform 0.2s ease-in-out',
                     backgroundColor: 'rgba(0, 0, 0, 0.1)',
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    }
+                    },
                   }}
                 >
                   <NavigateNextIcon />

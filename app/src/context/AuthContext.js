@@ -90,18 +90,18 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Logging in user:', email);
       const response = await authService.login(email, password);
-      
+
       // Only set user if login was successful
       if (response.success && response.user) {
         console.log('Login successful, setting user state');
         setUser(response.user);
         return { success: true };
       }
-      
+
       // Handle unsuccessful login
-      return { 
-        success: false, 
-        error: response.message || 'Login failed. Please check your credentials.' 
+      return {
+        success: false,
+        error: response.message || 'Login failed. Please check your credentials.',
       };
     } catch (error) {
       console.error('Login error:', error);
@@ -113,21 +113,21 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Signing up user:', userData.email);
       const response = await authService.signup(userData);
-      
+
       console.log('Signup response received:', {
         success: response.success,
         hasToken: !!response.token,
-        hasUser: !!response.user
+        hasUser: !!response.user,
       });
-      
+
       // Check if response has expected format
       if (response.success && response.token) {
         // Store token in localStorage
         localStorage.setItem('token', response.token);
-        
+
         // Set default authorization header for future requests
         authService.setupAuthHeaderForServiceCalls();
-        
+
         if (response.user) {
           console.log('Signup successful, setting user state');
           setUser(response.user);
@@ -145,12 +145,12 @@ export const AuthProvider = ({ children }) => {
           }
         }
       }
-      
+
       // If we get here, something went wrong with the signup
       console.error('Signup failed - invalid response:', response);
-      return { 
-        success: false, 
-        error: response.message || 'Signup failed. Please try again.'
+      return {
+        success: false,
+        error: response.message || 'Signup failed. Please try again.',
       };
     } catch (error) {
       console.error('Signup error:', error);
@@ -222,13 +222,13 @@ export const AuthProvider = ({ children }) => {
     try {
       // Store the token
       localStorage.setItem('token', token);
-      
+
       // Set the auth header
       authService.setupAuthHeaderForServiceCalls();
-      
+
       // Get user data
       const userData = await authService.getCurrentUser();
-      
+
       if (userData) {
         setUser(userData);
         return { success: true };

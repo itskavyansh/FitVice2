@@ -25,7 +25,7 @@ function Timeline({ children, dark }) {
       p={2}
       position="relative"
       sx={{
-        backgroundColor: dark ? "rgba(30, 30, 30, 0.8)" : "transparent",
+        backgroundColor: dark ? 'rgba(30, 30, 30, 0.8)' : 'transparent',
         borderRadius: 2,
       }}
     >
@@ -45,4 +45,4 @@ Timeline.propTypes = {
   dark: PropTypes.bool,
 };
 
-export default Timeline; 
+export default Timeline;

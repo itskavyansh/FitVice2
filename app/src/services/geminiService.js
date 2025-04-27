@@ -43,25 +43,32 @@ Please provide the recipe in this exact JSON format:
   }
 }`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 1000,
+              topP: 0.8,
+              topK: 40,
+            },
+          }),
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1000,
-            topP: 0.8,
-            topK: 40
-          }
-        })
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to generate recipe');
@@ -69,29 +76,29 @@ Please provide the recipe in this exact JSON format:
 
       const data = await response.json();
       const recipeText = data.candidates[0].content.parts[0].text;
-      
+
       // Extract JSON from the response
       const jsonMatch = recipeText.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('Invalid recipe format received');
       }
-      
+
       const recipeData = JSON.parse(jsonMatch[0]);
-      
+
       // Ensure image URL is properly formatted
       if (!recipeData.image) {
         recipeData.image = `https://source.unsplash.com/400x300/?food,${ingredients.split(',')[0].trim()}`;
       }
-      
+
       return {
         success: true,
-        data: recipeData
+        data: recipeData,
       };
     } catch (error) {
       console.error('Error generating recipe:', error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -117,25 +124,32 @@ Please format your response in clear paragraphs with:
 3. Practical recommendations
 4. Any relevant precautions or considerations`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 1000,
+              topP: 0.8,
+              topK: 40,
+            },
+          }),
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1000,
-            topP: 0.8,
-            topK: 40
-          }
-        })
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to get health advice');
@@ -143,16 +157,16 @@ Please format your response in clear paragraphs with:
 
       const data = await response.json();
       const answer = data.candidates[0].content.parts[0].text;
-      
+
       return {
         success: true,
-        data: answer
+        data: answer,
       };
     } catch (error) {
       console.error('Error getting health advice:', error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -188,25 +202,32 @@ Format the response as a JSON array with this exact structure:
 
 Use these Material-UI icons: Restaurant, LocalDining, FoodBank, Nutrition, HealthAndSafety, FitnessCenter, WaterDrop, Favorite, Lightbulb, EmojiFoodBeverage`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${this.apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.8,
+              maxOutputTokens: 1000,
+              topP: 0.9,
+              topK: 40,
+            },
+          }),
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 1000,
-            topP: 0.9,
-            topK: 40
-          }
-        })
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to get nutrition tips');
@@ -214,35 +235,35 @@ Use these Material-UI icons: Restaurant, LocalDining, FoodBank, Nutrition, Healt
 
       const data = await response.json();
       const tipsText = data.candidates[0].content.parts[0].text;
-      
+
       // Extract JSON from the response
       const jsonMatch = tipsText.match(/\[[\s\S]*\]/);
       if (!jsonMatch) {
         throw new Error('Invalid tips format received');
       }
-      
+
       const tipsData = JSON.parse(jsonMatch[0]);
-      
+
       // Validate and ensure each tip has all required fields
-      const validatedTips = tipsData.map(tip => ({
+      const validatedTips = tipsData.map((tip) => ({
         title: tip.title || 'Nutrition Tip',
         description: tip.description || 'Practical advice for better health',
         icon: tip.icon || 'Nutrition',
-        color: tip.color || 'primary'
+        color: tip.color || 'primary',
       }));
-      
+
       return {
         success: true,
-        data: validatedTips
+        data: validatedTips,
       };
     } catch (error) {
       console.error('Error getting nutrition tips:', error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
 }
 
-export default new GeminiService(); 
+export default new GeminiService();

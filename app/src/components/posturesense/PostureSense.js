@@ -16,4 +16,4 @@ const PostureSense = () => {
   );
 };
 
-export default PostureSense; 
+export default PostureSense;

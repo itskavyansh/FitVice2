@@ -13,7 +13,7 @@ const AuthCallback = () => {
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
-        
+
         if (token) {
           await loginWithToken(token);
           navigate('/dashboard');
@@ -37,7 +37,7 @@ const AuthCallback = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 2
+        gap: 2,
       }}
     >
       <CircularProgress />
@@ -46,4 +46,4 @@ const AuthCallback = () => {
   );
 };
 
-export default AuthCallback; 
+export default AuthCallback;
