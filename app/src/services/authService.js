@@ -451,8 +451,8 @@ const authService = {
 
   loginWithGoogle: async () => {
     try {
-      // Redirect to Google OAuth - Uses relative path
-      window.location.href = `${apiConfig.API_BASE_URL}/auth/google`;
+      // Redirect to Google OAuth - Uses relative path with /api prefix
+      window.location.href = `${apiConfig.API_BASE_URL}/api/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
       throw new Error('Google login failed. Please try again.');

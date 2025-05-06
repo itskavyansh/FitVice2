@@ -7,6 +7,8 @@ const recipeRoutes = require('./routes/recipes');
 const jarvisRoutes = require('./routes/jarvis');
 const path = require('path');
 const fs = require('fs');
+const passport = require('./config/passport');
+const session = require('express-session');
 
 const app = express();
 
@@ -52,6 +54,24 @@ app.use(
     exposedHeaders: ['Authorization'],
   }),
 );
+
+// Session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
+
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 
 // Health check endpoint

@@ -55,6 +55,7 @@ import ActiveWorkout from 'layouts/workouts/ActiveWorkout';
 // Auth components
 import SignIn from 'components/auth/SignIn';
 import SignUp from 'components/auth/SignUp';
+import OAuthCallback from './components/auth/OAuthCallback';
 
 // @mui icons
 import Icon from '@mui/material/Icon';
@@ -77,6 +78,16 @@ const routes = [
     icon: <Icon fontSize="small">person_add</Icon>,
     route: '/signup',
     component: <SignUp />,
+    noAuth: true,
+    hideInNav: true,
+  },
+  {
+    type: 'collapse',
+    name: 'OAuth Callback',
+    key: 'oauth-callback',
+    icon: <Icon fontSize="small">sync</Icon>,
+    route: '/oauth-callback',
+    component: <OAuthCallback />,
     noAuth: true,
     hideInNav: true,
   },

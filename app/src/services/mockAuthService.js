@@ -1,6 +1,6 @@
 /**
  * Mock Authentication Service
- * Provides offline authentication capabilities when backend is unavailable
+ * Provides offline authentication simulation for development and fallback scenarios
  */
 
 // Mock user database

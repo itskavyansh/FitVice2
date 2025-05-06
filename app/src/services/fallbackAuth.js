@@ -4,7 +4,6 @@
  */
 
 import axios from 'axios';
-import { mockLogin, mockSignup } from './mockAuthService';
 import apiConfig from './apiConfig';
 
 // Check if the backend is down by making a ping request
@@ -274,7 +273,7 @@ export const robustSignup = async (email, password, username) => {
   const backendDown = await isBackendDown();
   if (backendDown) {
     console.log('Backend is down - using mock authentication for signup');
-    return await mockSignup(email, password, username);
+    return await mockLogin(email, password);
   }
 
   // Define multiple authentication approaches
@@ -392,5 +391,9 @@ export const robustSignup = async (email, password, username) => {
 
   // If all approaches failed, try mock authentication as a final fallback
   console.log('All regular signup approaches failed - falling back to mock authentication');
-  return await mockSignup(email, password, username);
+  return await mockLogin(email, password);
+};
+
+const mockLogin = async (email, password) => {
+  return Promise.reject(new Error('Mock authentication is not available.'));
 };

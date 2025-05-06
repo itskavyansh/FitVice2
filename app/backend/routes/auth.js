@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
+const passport = require('../config/passport');
 
 const router = express.Router();
 
@@ -350,5 +351,29 @@ router.put('/profile', auth, async (req, res) => {
     });
   }
 });
+
+// Google OAuth routes
+router.get('/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+  })
+);
+
+router.get('/google/callback',
+  passport.authenticate('google', { session: false }),
+  (req, res) => {
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: req.user._id },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+
+    // Redirect to frontend with token
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontendUrl}/oauth-callback?token=${token}`);
+  }
+);
 
 module.exports = router;
