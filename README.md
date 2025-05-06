@@ -86,7 +86,7 @@ This project is licensed under the MIT License.
 
 ### Installation
 ```bash```  
-git clone https://github.com/yourusername/fitvice.git  
+git clone https://github.com/Kav-Senpai/FitVice2.git  
 cd fitvice  
 npm install  
 npm start
