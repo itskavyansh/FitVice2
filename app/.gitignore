@@ -25,6 +25,7 @@ package-lock.json
 yarn.lock
 
 app/backend/.env
+app/.env
 .env
 
 commit.sh
