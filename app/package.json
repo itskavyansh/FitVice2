@@ -107,6 +107,5 @@
   },
   "overrides": {
     "svgo": "^3.2.0"
-  },
-  "proxy": "http://localhost:3001"
+  }
 }

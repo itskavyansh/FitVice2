@@ -14,6 +14,8 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
 import MuiAlert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 // Material Dashboard 2 React components
 import MDBox from 'components/MDBox';
@@ -121,6 +123,7 @@ import AuthCallback from './components/auth/AuthCallback';
 import Workouts from 'layouts/workouts';
 import ActiveWorkout from 'layouts/workouts/ActiveWorkout';
 import Landing from 'layouts/landing';
+import OAuthCallback from './components/auth/OAuthCallback';
 
 export default function App() {
   return (
@@ -352,12 +355,13 @@ const AppContent = () => {
   );
 
   const renderApp = () => {
-    // Check if current page is landing, signin, or signup
+    // Check if current page is landing, signin, signup, or oauth-callback
     const isPublicPage =
       pathname === '/' ||
       pathname === '/landing' ||
       pathname === '/signin' ||
-      pathname === '/signup';
+      pathname === '/signup' ||
+      pathname === '/oauth-callback';
 
     return (
       <Box
@@ -484,9 +488,32 @@ const AppContent = () => {
               </PrivateRoute>
             }
           />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/" element={<Landing />} />
-          <Route path="*" element={<Navigate to="/landing" />} />
+          <Route path="/oauth-callback" element={<OAuthCallback />} />
+          <Route
+            path="/debug"
+            element={
+              <Box sx={{ p: 4 }}>
+                <Typography variant="h4">Debug Info</Typography>
+                <Typography>User: {user ? 'Logged in' : 'Not logged in'}</Typography>
+                <Typography>Loading: {loading ? 'Yes' : 'No'}</Typography>
+                <Typography>Token: {localStorage.getItem('token') ? 'Exists' : 'None'}</Typography>
+                <Typography>Pathname: {pathname}</Typography>
+                <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
+              </Box>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              user ? <Navigate to="/dashboard" replace /> : <Landing />
+            }
+          />
+          <Route
+            path="*"
+            element={
+              user ? <Navigate to="/dashboard" replace /> : <Navigate to="/landing" />
+            }
+          />
         </Routes>
       </Box>
     );

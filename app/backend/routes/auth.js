@@ -372,6 +372,7 @@ router.get('/google/callback',
 
     // Redirect to frontend with token
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    console.log('Redirecting to frontend with token:', `${frontendUrl}/oauth-callback?token=${token}`);
     res.redirect(`${frontendUrl}/oauth-callback?token=${token}`);
   }
 );
